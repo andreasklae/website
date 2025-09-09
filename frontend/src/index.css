@@ -1,0 +1,112 @@
+/* Import JetBrains Mono font for code elements */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+    transition: background-color 800ms ease-in-out;
+  }
+  
+  body.dark-theme {
+    background-color: #0d1117;
+  }
+
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-500;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Enhanced Glassmorphism utility classes */
+  .glass {
+    @apply backdrop-blur-md bg-white/20 border border-white/30 shadow-lg;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-md bg-black/20 border border-white/20 shadow-lg;
+  }
+
+  .glass-bubble {
+    @apply backdrop-blur-lg bg-white/25 border border-white/40 shadow-xl transition-all duration-300;
+  }
+
+  .glass-nav {
+    @apply backdrop-blur-xl shadow-2xl;
+  }
+
+  .glass-nav-item {
+    @apply hover:scale-105 hover:shadow-lg;
+  }
+
+  /* Button styles with enhanced glassmorphism */
+  .btn-primary {
+    @apply glass-bubble px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply glass-bubble px-6 py-3 bg-white/20 border-2 border-white/40 text-current rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:bg-white/30 hover:shadow-xl focus:ring-2 focus:ring-white/50 focus:ring-offset-2;
+  }
+
+  .btn-glass {
+    @apply glass-bubble px-6 py-3 hover:bg-white/30 text-current rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-xl focus:ring-2 focus:ring-white/50 focus:ring-offset-2;
+  }
+
+  /* Enhanced Card styles */
+  .card {
+    @apply glass-bubble bg-white/80 rounded-xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+
+  .card-glass {
+    @apply glass-bubble rounded-xl p-6 transition-all duration-300 hover:bg-white/30 hover:scale-105 hover:shadow-xl;
+  }
+
+  .card-glass-dark {
+    @apply backdrop-blur-2xl bg-white/25 border border-white/40 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white/35 hover:border-white/60;
+  }
+
+  .card-dark {
+    @apply glass-bubble bg-ide-surface/80 border border-ide-border/50 rounded-xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl;
+  }
+
+  /* IDE theme specific styles */
+  .ide-theme {
+    @apply bg-ide-bg text-ide-text;
+  }
+
+  .ide-surface {
+    @apply bg-ide-surface border-ide-border;
+  }
+
+  /* Code decoration elements */
+  .code-decoration {
+    @apply font-mono text-ide-accent-purple opacity-60;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

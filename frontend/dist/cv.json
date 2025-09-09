@@ -1,0 +1,166 @@
+{
+    "name": {
+      "en": "Andreas Klæboe",
+      "no": "Andreas Klæboe"
+    },
+    "role": {
+      "en": "MSc student in Informatics: Programming and Systems Architecture • Photographer",
+      "no": "Masterstudent i informatikk: programmering og systemarkitektur • Fotograf"
+    },
+    "summary": {
+      "en": "Master’s student at the University of Oslo with a finished BSc in Informatics (Design, Use, Interaction). Experience spans software, UX/UI, photography, coaching, and service. Exchange term in Berlin focused on algorithms and machine learning.",
+      "no": "Masterstudent ved Universitetet i Oslo med fullført bachelor i informatikk (design, bruk, interaksjon). Erfaring innen programvare, UX/UI, fotografering, coaching og service. Utvekslingsopphold i Berlin med fokus på algoritmer og maskinlæring."
+    },
+    "contacts": {
+      "location": {
+        "en": "Oslo, Norway",
+        "no": "Oslo, Norge"
+      },
+      "email": "andreasklaeboe@gmail.com",
+      "phone": "+47 967 98 001",
+      "github": "https://github.com/andreasklae?tab=repositories",
+      "linkedin": "",
+      "site": ""
+    },
+    "languagesSpoken": [
+      {
+        "language": { "en": "Norwegian", "no": "Norsk" },
+        "proficiency": { "en": "Native", "no": "Morsmål" }
+      },
+      {
+        "language": { "en": "English", "no": "Engelsk" },
+        "proficiency": { "en": "Fluent", "no": "Flytende" },
+        "certification": "TOEFL 110/120 (Advanced)"
+      }
+    ],
+    "skills": {
+      "en": { "Languages": [], "Frameworks": [], "Tools": [] },
+      "no": { "Språk": [], "Rammeverk": [], "Verktøy": [] }
+    },
+    "experience": [
+      {
+        "title": { "en": "Bartender", "no": "Bartender" },
+        "org": { "en": "Highbury Pub", "no": "Highbury Pub" },
+        "start": "2025-03",
+        "end": "2025-09",
+        "bullets": {
+          "en": ["Part-time bartender in Majorstuen, Oslo (weekends)."],
+          "no": ["Deltidsbartender i Majorstuen (helger)."]
+        }
+      },
+      {
+        "title": { "en": "Bartender", "no": "Bartender" },
+        "org": { "en": "Fru Burums", "no": "Fru Burums" },
+        "start": "2022-09",
+        "end": "2024-09",
+        "bullets": {
+          "en": ["Part-time bartender in Frogner (weekends)."],
+          "no": ["Deltidsbartender i Frogner (helger)."]
+        }
+      },
+      {
+        "title": { "en": "Bartender", "no": "Bartender" },
+        "org": { "en": "Fru Burums", "no": "Fru Burums" },
+        "start": "2025-09",
+        "end": "present",
+        "bullets": {
+          "en": ["Part-time bartender in Frogner (weekends)."],
+          "no": ["Deltidsbartender i Frogner (helger)."]
+        }
+      },
+      {
+        "title": { "en": "Substitute Teacher", "no": "Vikar lærer" },
+        "org": { "en": "Ramstad Ungdomsskole", "no": "Ramstad Ungdomsskole" },
+        "start": "2020-11",
+        "end": "2022-06",
+        "bullets": {
+          "en": ["Substitute teaching between high school and bachelor’s studies; also during breaks from military service."],
+          "no": ["Vikariering mellom videregående og bachelorstudier; også i pauser fra førstegangstjenesten."]
+        }
+      },
+      {
+        "title": { "en": "Gymnastics Coach", "no": "Turntrener" },
+        "org": { "en": "Holmen Tropp & Turn", "no": "Holmen Tropp & Turn" },
+        "start": "2017-09",
+        "end": "2021-04",
+        "bullets": {
+          "en": [
+            "Coached younger gymnasts.",
+            "Competitive background: bronze at European Championship; multiple national golds."
+          ],
+          "no": [
+            "Trente yngre gymnaster.",
+            "Konkurransebakgrunn: bronse i EM; flere NM-gull."
+          ]
+        }
+      },
+      {
+        "title": { "en": "Military Service", "no": "Førstegangstjeneste" },
+        "org": { "en": "Norwegian Coastguard (KV Sortland)", "no": "Kystvakten (KV Sortland)" },
+        "start": "2021-04",
+        "end": "2022-04",
+        "bullets": {
+          "en": ["Served as gunner, fireman, and representative for the privates."],
+          "no": ["Tjenestegjorde som skytter, brannmann og tillitsvalgt for mannskapet."]
+        }
+      }
+    ],
+    "education": [
+      {
+        "degree": {
+          "en": "MSc in Informatics: Programming and Systems Architecture",
+          "no": "Master i informatikk: programmering og systemarkitektur"
+        },
+        "school": {
+          "en": "University of Oslo",
+          "no": "Universitetet i Oslo"
+        },
+        "start": "2025-08",
+        "end": "present",
+        "bullets": { "en": [], "no": [] }
+      },
+      {
+        "degree": {
+          "en": "BSc in Informatics: Design, Use, Interaction",
+          "no": "Bachelor i informatikk: design, bruk, interaksjon"
+        },
+        "school": {
+          "en": "University of Oslo",
+          "no": "Universitetet i Oslo"
+        },
+        "start": "2022-08",
+        "end": "2025-06",
+        "bullets": { "en": [], "no": [] }
+      },
+      {
+        "degree": {
+          "en": "Exchange Studies (Algorithms and Machine Learning)",
+          "no": "Utvekslingsstudier (algoritmer og maskinlæring)"
+        },
+        "school": {
+          "en": "Freie Universität Berlin",
+          "no": "Freie Universität Berlin"
+        },
+        "start": "2024-10",
+        "end": "2025-03",
+        "bullets": {
+          "en": ["Courses in algorithms and machine learning."],
+          "no": ["Emner i algoritmer og maskinlæring."]
+        }
+      },
+      {
+        "degree": {
+          "en": "Upper Secondary Studies (General, Science and Mathematics)",
+          "no": "Videregående opplæring (studiespesialisering, realfag og matematikk)"
+        },
+        "school": {
+          "en": "Stabekk Upper Secondary School",
+          "no": "Stabekk videregående skole"
+        },
+        "start": "2017-08",
+        "end": "2020-06",
+        "bullets": { "en": [], "no": [] }
+      }
+    ]
+  }
+  
