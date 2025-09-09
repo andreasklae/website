@@ -29,7 +29,10 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: cd frontend && npm install --omit=optional
+        run: |
+          cd frontend
+          npm install --omit=optional
+          npm install @rollup/rollup-linux-x64-gnu
 
       - name: Build
         run: cd frontend && npm run build
