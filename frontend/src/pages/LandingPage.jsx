@@ -138,29 +138,103 @@ const LandingPage = () => {
       </section>
 
       {/* Featured Projects Section */}
-      <section className="py-20 relative">
+      <section className="py-20 relative overflow-visible">
         {/* Background with prominent gradient for glassmorphism to blur */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-sky-200 to-orange-200"></div>
+        
+        {/* Header - Centered */}
         <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              {getText({ en: 'Featured Work', no: 'Utvalgt arbeid' })}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {getText({
-                en: 'A selection of my recent projects spanning software development, UX design, and technical innovation.',
-                no: 'Et utvalg av mine nyeste prosjekter innen programvareutvikling, UX-design og teknisk innovasjon.'
-              })}
-            </p>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                {getText({ en: 'Featured Work', no: 'Utvalgt arbeid' })}
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                {getText({
+                  en: 'A selection of my recent projects spanning software development, UX design, and technical innovation.',
+                  no: 'Et utvalg av mine nyeste prosjekter innen programvareutvikling, UX-design og teknisk innovasjon.'
+                })}
+              </p>
+            </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Mobile: Horizontal scroll - Direct under gradient */}
+        <div className="md:hidden relative z-10 py-2">
+          <div className="flex gap-6 overflow-x-auto py-2 scrollbar-hide snap-x snap-mandatory px-6">
+              {featuredProjects.map((project, index) => (
+                <div
+                  key={project.id}
+                  className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6 flex-shrink-0 w-80 snap-center"
+                  style={{ 
+                    borderRadius: '2rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                >
+                  {/* Project Image */}
+                  <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
+                    {project.photos && project.photos[0] && (
+                      <img
+                        src={project.photos[0]}
+                        alt={getText(project.title)}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+
+                  {/* Project Info */}
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    {getText(project.title)}
+                  </h3>
+                  <p className="text-gray-700 mb-4 line-clamp-3">
+                    {getText(project.description)}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tags.slice(0, 3).map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="px-3 py-1 backdrop-blur-sm bg-blue-500/20 text-blue-700 text-xs rounded-full border border-blue-300/40"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* View Project Button */}
+                  <Link
+                    to={`/software#${project.id}`}
+                    className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      borderColor: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '2rem',
+                      color: '#374151'
+                    }}
+                  >
+                    <span>{getText({ en: 'View Project', no: 'Se prosjekt' })}</span>
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Desktop: Grid layout - Centered container */}
+        <div className="hidden md:block relative z-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredProjects.map((project, index) => (
-              <Link
+              <div
                 key={project.id}
-                to={`/software#${project.id}`}
-                className="group card-glass-dark rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 cursor-pointer block"
+                className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6"
+                style={{ 
+                  borderRadius: '2rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                }}
               >
                 {/* Project Image */}
                 <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
@@ -168,13 +242,13 @@ const LandingPage = () => {
                     <img
                       src={project.photos[0]}
                       alt={getText(project.title)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   )}
                 </div>
 
                 {/* Project Info */}
-                <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   {getText(project.title)}
                 </h3>
                 <p className="text-gray-700 mb-4 line-clamp-3">
@@ -193,19 +267,30 @@ const LandingPage = () => {
                   ))}
                 </div>
 
-                {/* View Project Indicator */}
-                <div className="flex items-center text-blue-600 group-hover:text-blue-700 font-medium text-sm transition-colors">
+                {/* View Project Button */}
+                <Link
+                  to={`/software#${project.id}`}
+                  className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '2rem',
+                    color: '#374151'
+                  }}
+                >
                   <span>{getText({ en: 'View Project', no: 'Se prosjekt' })}</span>
-                  <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
+            </div>
           </div>
+        </div>
 
-          {/* View All Projects Button */}
-          <div className="text-center mt-12">
+        {/* View All Projects Button */}
+        <div className="text-center mt-12 relative z-10">
             <Link
               to="/software"
               className="btn-primary inline-flex items-center"
@@ -215,8 +300,6 @@ const LandingPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
-          </div>
-        </div>
         </div>
       </section>
 

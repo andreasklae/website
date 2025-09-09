@@ -21,8 +21,8 @@ export const portfolioProjects = [
   {
     id: 'fjordquest',
     title: {
-      en: 'Fjord Quest Adventure Website',
-      no: 'Fjord Quest Adventure Nettside'
+      en: 'Fjord Quest Adventure',
+      no: 'Fjord Quest Adventure'
     },
     description: {
       en: 'A high-end travel website for a Norwegian luxury travel company. Built with React, Tailwind, and shadcn/ui.',
