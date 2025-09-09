@@ -9,7 +9,9 @@
     "build": "cd frontend && npm run build",
     "preview": "cd frontend && npm run preview",
     "lint": "cd frontend && npm run lint",
-    "install-deps": "cd frontend && npm install"
+    "install-deps": "cd frontend && npm install",
+    "deploy": "cd frontend && npm run build && npm run deploy",
+    "predeploy": "cd frontend && npm run build"
   },
   "keywords": [
     "portfolio",

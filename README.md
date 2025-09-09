@@ -104,13 +104,41 @@ The website is fully responsive and works across:
 
 ## 🚀 Deployment
 
+### GitHub Pages (Automatic)
+
+The website is configured for automatic deployment to GitHub Pages via GitHub Actions:
+
+1. **Push to main/master branch** - Automatically triggers deployment
+2. **GitHub Actions workflow** - Builds and deploys the site
+3. **Live URL** - Available at `https://andreasklae.github.io/website/`
+
+### Manual Deployment
+
 To build for production:
 
 ```bash
 npm run build
 ```
 
-The built files will be in `frontend/dist/` and can be deployed to any static hosting service.
+To deploy manually to GitHub Pages:
+
+```bash
+npm run deploy
+```
+
+### Configuration
+
+- **Base path**: Configured for GitHub Pages (`/website/`)
+- **GitHub Actions**: Automatic deployment on push to main
+- **Build output**: `frontend/dist/` directory
+- **Static hosting**: Compatible with any static hosting service
+
+### GitHub Pages Setup
+
+1. Go to your repository Settings → Pages
+2. Set Source to "GitHub Actions"
+3. The workflow will automatically deploy on push to main branch
+4. Your site will be available at `https://yourusername.github.io/website/`
 
 ## 📄 Data Sources
 
