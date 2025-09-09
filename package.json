@@ -1,0 +1,30 @@
+{
+  "name": "andreas-klaeboe-portfolio",
+  "version": "1.0.0",
+  "description": "Modern, bilingual portfolio website for Andreas Klæboe",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd frontend && npm run dev",
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "lint": "cd frontend && npm run lint",
+    "install-deps": "cd frontend && npm install"
+  },
+  "keywords": [
+    "portfolio",
+    "react",
+    "photography",
+    "software-engineering",
+    "bilingual"
+  ],
+  "author": "Andreas Klæboe <andreasklaeboe@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}
