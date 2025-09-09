@@ -31,8 +31,10 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
-          npm install
-          npm install @esbuild/linux-x64
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
+          npm install --include=optional
+          npm ls @esbuild/linux-x64 || npm install @esbuild/linux-x64
           npm uninstall fsevents || true
 
       - name: Build
