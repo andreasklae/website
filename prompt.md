@@ -7,6 +7,8 @@ Build a modern, bilingual personal website for **Andreas Klæboe** with three ma
 - `/software` → Software Engineering / Programming page (IDE-style dark theme, includes education, courses, projects)  
 - `/photography` → Photography page (light theme, with highlights and stories)
 
+The website should also have a footer
+
 Cursor should analyze the current repo to locate JSONs, Markdown files, images, and other content.  
 JSON files are always the **single source of truth** for structured content.  
 Markdown files are **not sources of content** — they are there only to give Cursor context about what to display and how to structure it. Do not extract user-facing text from Markdown.  
