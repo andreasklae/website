@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
-          npm install --omit=optional
-          npm install @rollup/rollup-linux-x64-gnu
+          npm install
+          npm uninstall fsevents || true
 
       - name: Build
         run: cd frontend && npm run build
