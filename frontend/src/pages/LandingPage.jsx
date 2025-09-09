@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { loadCVData, portfolioProjects, parseMarkdownText, photographyHighlights } from '../utils/data.jsx'
+import { getAssetPath } from '../utils/paths'
 
 const LandingPage = () => {
   const { getText } = useLanguage()
@@ -39,7 +40,7 @@ const LandingPage = () => {
                   <div className="relative">
                     <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl">
                       <img
-                        src="profilepicture.jpeg"
+                        src={getAssetPath("profilepicture.jpeg")}
                         alt="Andreas Klæboe"
                         className="w-full h-full object-cover"
                       />
@@ -122,7 +123,7 @@ const LandingPage = () => {
               <div className="relative">
                 <div className="w-80 xl:w-96 h-80 xl:h-96 rounded-2xl overflow-hidden shadow-2xl">
                   <img
-                    src="profilepicture.jpeg"
+                    src={getAssetPath("profilepicture.jpeg")}
                     alt="Andreas Klæboe"
                     className="w-full h-full object-cover"
                   />

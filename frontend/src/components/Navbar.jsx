@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageToggle from './LanguageToggle'
+import { getAssetPath } from '../utils/paths'
 
 const Navbar = () => {
   const { getText } = useLanguage()
@@ -51,7 +52,7 @@ const Navbar = () => {
                     </div>
                   ) : (
                     <img
-                      src="ak-logo.svg"
+                      src={getAssetPath("ak-logo.svg")}
                       alt="AK Logo"
                       className="w-full h-full"
                     />

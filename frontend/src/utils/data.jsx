@@ -1,16 +1,18 @@
+import { getAssetPath } from './paths'
+
 // Data loading utilities
 export const loadPersonalData = async () => {
-  const response = await fetch('personal.json')
+  const response = await fetch(getAssetPath('personal.json'))
   return response.json()
 }
 
 export const loadCVData = async () => {
-  const response = await fetch('cv.json')
+  const response = await fetch(getAssetPath('cv.json'))
   return response.json()
 }
 
 export const loadCoursesData = async () => {
-  const response = await fetch('courses.json')
+  const response = await fetch(getAssetPath('courses.json'))
   return response.json()
 }
 
@@ -30,10 +32,10 @@ export const portfolioProjects = [
     type: 'website',
     link: 'https://www.fjordquestadventure.no/',
     photos: [
-'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage.jpg',
-'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage2.jpg',
-'portfolio/Software engineering/Fjordquest adventure/Photos/activitiespage.jpg'
-    ]
+      'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage.jpg',
+      'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage2.jpg',
+      'portfolio/Software engineering/Fjordquest adventure/Photos/activitiespage.jpg'
+    ].map(path => getAssetPath(path))
   },
   {
     id: 'in1060',
@@ -48,11 +50,11 @@ export const portfolioProjects = [
     tags: ['Arduino', 'ESP32', 'IoT', 'Hardware', 'C++'],
     type: 'hardware',
     photos: [
-'portfolio/Software engineering/IN1060/photos/prototype_finished_front.png',
-'portfolio/Software engineering/IN1060/photos/prototype_finished.png',
-'portfolio/Software engineering/IN1060/photos/UI_sketch_3d.png',
-'portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_1.png'
-    ],
+      'portfolio/Software engineering/IN1060/photos/prototype_finished_front.png',
+      'portfolio/Software engineering/IN1060/photos/prototype_finished.png',
+      'portfolio/Software engineering/IN1060/photos/UI_sketch_3d.png',
+      'portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_1.png'
+    ].map(path => getAssetPath(path)),
     pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'
   },
   {
@@ -68,11 +70,11 @@ export const portfolioProjects = [
     tags: ['Android', 'Kotlin', 'MVVM', 'AI', 'UX Design'],
     type: 'mobile',
     photos: [
-'portfolio/Software engineering/IN2000/Photos/front_page.png',
-'portfolio/Software engineering/IN2000/Photos/farevarsel_screen_map.png',
-'portfolio/Software engineering/IN2000/Photos/location_search.png',
-'portfolio/Software engineering/IN2000/Photos/Settings_screen.png'
-    ],
+      'portfolio/Software engineering/IN2000/Photos/front_page.png',
+      'portfolio/Software engineering/IN2000/Photos/farevarsel_screen_map.png',
+      'portfolio/Software engineering/IN2000/Photos/location_search.png',
+      'portfolio/Software engineering/IN2000/Photos/Settings_screen.png'
+    ].map(path => getAssetPath(path)),
     pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf'
   },
   {
@@ -95,7 +97,7 @@ export const portfolioProjects = [
 ]
 
 // Photography highlights - actual images from the portfolio
-export const photographyHighlights = [
+const highlightImages = [
   'portfolio/photography/highlights/0A5732E0-D733-479F-91AF-98E56141EB38_1_105_c.jpeg',
   'portfolio/photography/highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg',
   'portfolio/photography/highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
@@ -114,6 +116,8 @@ export const photographyHighlights = [
   'portfolio/photography/highlights/B5B1E9A7-5D79-4D27-89E1-1D682658288F_1_105_c.jpeg'
 ]
 
+export const photographyHighlights = highlightImages.map(path => getAssetPath(path))
+
 export const photographyStories = [
   {
     id: 'stavern-sommer-2025',
@@ -121,7 +125,7 @@ export const photographyStories = [
       en: 'Stavern Summer 2025',
       no: 'Stavern sommer 2025'
     },
-    coverImage: './portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg',
+    coverImage: getAssetPath('portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'),
     description: {
       en: 'Long Norwegian summer days with late sunsets, coastal walks, festival celebrations, and quiet moments in nature.',
       no: 'Lange norske sommerdager med sene solnedganger, kystturer, festivalglade og stille øyeblikk i naturen.'
