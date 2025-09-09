@@ -7,7 +7,7 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename={import.meta.env.PROD ? '/website' : '/'}>
+    <BrowserRouter>
       <LanguageProvider>
         <App />
       </LanguageProvider>
