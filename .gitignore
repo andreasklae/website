@@ -1,0 +1,19 @@
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Large PDFs (optional - uncomment if needed)
+# *.pdf
+
+# Large images (optional - uncomment if needed)  
+# *.JPG
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
