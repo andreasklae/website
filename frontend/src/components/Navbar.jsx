@@ -51,7 +51,7 @@ const Navbar = () => {
                     </div>
                   ) : (
                     <img
-                      src="/ak-logo.svg"
+                      src="ak-logo.svg"
                       alt="AK Logo"
                       className="w-full h-full"
                     />

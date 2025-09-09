@@ -39,7 +39,7 @@ const LandingPage = () => {
                   <div className="relative">
                     <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl">
                       <img
-                        src="/profilepicture.jpeg"
+                        src="profilepicture.jpeg"
                         alt="Andreas Klæboe"
                         className="w-full h-full object-cover"
                       />
@@ -122,7 +122,7 @@ const LandingPage = () => {
               <div className="relative">
                 <div className="w-80 xl:w-96 h-80 xl:h-96 rounded-2xl overflow-hidden shadow-2xl">
                   <img
-                    src="/profilepicture.jpeg"
+                    src="profilepicture.jpeg"
                     alt="Andreas Klæboe"
                     className="w-full h-full object-cover"
                   />
