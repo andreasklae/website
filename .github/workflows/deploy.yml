@@ -35,6 +35,7 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install --include=optional
           npm ls @esbuild/linux-x64 || npm install @esbuild/linux-x64
+          npm ls @rollup/rollup-linux-x64-gnu || npm install @rollup/rollup-linux-x64-gnu
           npm uninstall fsevents || true
 
       - name: Build
