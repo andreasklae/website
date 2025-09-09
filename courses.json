@@ -95,7 +95,7 @@
         "en": "From user needs to product decisions: field studies, prototyping, and iterative evaluation. You practice turning insights into tangible UX improvements.",
         "no": "Fra brukerbehov til produktbeslutninger: feltarbeid, prototyping og iterativ evaluering. Du øver på å omsette innsikt til konkrete UX-forbedringer."
       },
-      "portfolioLink": "placeholder"
+      "portfolioLink": "/software/projects/in1060"
     },
     {
       "code": "IN2020",
@@ -144,7 +144,7 @@
         "en": "Team-based system development with modern practices: planning, requirements, testing, CI, and delivery. The outcome is a working product and a documented process.",
         "no": "Teambasert systemutvikling med moderne praksis: planlegging, krav, testing, CI og levering. Resultatet er et fungerende produkt og en dokumentert prosess."
       },
-      "portfolioLink": "placeholder"
+      "portfolioLink": "/software/projects/in2000"
     },
     {
       "code": "IN2150",
@@ -314,7 +314,7 @@
         "en": "Team project building a Python package for graph neural networks on biomedical data (e.g., drug-combination prediction). Involves data prep, model training, baselines, evaluation, and documentation.",
         "no": "Teamprosjekt som bygger en Python-pakke for graf-nevrale nettverk på biomedisinske data (f.eks. prediksjon av legemiddelkombinasjoner). Innebærer dataprosessering, modelltrening, baseliner, evaluering og dokumentasjon."
       },
-      "portfolioLink": "placeholder"
+      "portfolioLink": "/software/projects/ml-project"
     }
   ]
   

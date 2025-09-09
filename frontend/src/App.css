@@ -1,0 +1,38 @@
+.App {
+  min-height: 100vh;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply ring-2 ring-offset-2 ring-primary-500 outline-none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  @apply bg-dark-surface;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-dark-muted;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-dark-text;
+}
