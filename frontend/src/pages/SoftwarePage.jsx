@@ -891,7 +891,7 @@ const SoftwarePage = () => {
                   </a>
                   {course.pdfExam && (
                     <a
-                      href={course.pdfExam.split('/').map(part => encodeURIComponent(part)).join('/')}
+                      href={course.pdfExam}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
