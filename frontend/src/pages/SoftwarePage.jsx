@@ -549,69 +549,69 @@ const SoftwarePage = () => {
             <div className="flex flex-wrap gap-8 items-center justify-center max-w-4xl mx-auto">
               {/* Web Technologies (Most Popular) */}
               {/* JavaScript */}
-              <img src="/IT logos/programming languages/javascript.svg" alt="JavaScript" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/javascript.svg" alt="JavaScript" className="w-20 h-20 object-contain" />
               
               {/* HTML */}
-              <img src="/IT logos/others/html.svg" alt="HTML" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/html.svg" alt="HTML" className="w-20 h-20 object-contain" />
               
               {/* CSS */}
-              <img src="/IT logos/others/css.svg" alt="CSS" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/css.svg" alt="CSS" className="w-20 h-20 object-contain" />
               
               {/* React */}
-              <img src="/IT logos/frameworks/react.svg" alt="React" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/frameworks/react.svg" alt="React" className="w-20 h-20 object-contain" />
               
               {/* Tailwind CSS */}
-              <img src="/IT logos/frameworks/tailwind-svgrepo-com.svg" alt="Tailwind CSS" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/frameworks/tailwind-svgrepo-com.svg" alt="Tailwind CSS" className="w-20 h-20 object-contain" />
               
               {/* Python & ML */}
               {/* Python */}
-              <img src="/IT logos/programming languages/python.svg" alt="Python" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/python.svg" alt="Python" className="w-20 h-20 object-contain" />
               
               {/* PyTorch */}
-              <img src="/IT logos/others/pytorch-svgrepo-com.svg" alt="PyTorch" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/pytorch-svgrepo-com.svg" alt="PyTorch" className="w-20 h-20 object-contain" />
               
               {/* Java Family */}
               {/* Java */}
-              <img src="/IT logos/programming languages/java.svg" alt="Java" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/java.svg" alt="Java" className="w-20 h-20 object-contain" />
               
               {/* Kotlin */}
-              <img src="/IT logos/programming languages/kotlin.svg" alt="Kotlin" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/kotlin.svg" alt="Kotlin" className="w-20 h-20 object-contain" />
               
               {/* C Family */}
               {/* C++ */}
-              <img src="/IT logos/programming languages/c++.svg" alt="C++" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/c++.svg" alt="C++" className="w-20 h-20 object-contain" />
               
               {/* C */}
-              <img src="/IT logos/programming languages/c.svg" alt="C" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/programming languages/c.svg" alt="C" className="w-20 h-20 object-contain" />
               
               {/* Version Control */}
               {/* Git */}
-              <img src="/IT logos/others/git.svg" alt="Git" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/git.svg" alt="Git" className="w-20 h-20 object-contain" />
               
               {/* Github */}
-              <img src="/IT logos/cloud/github.svg" alt="Github" className="w-20 h-20 object-contain invert" />
+              <img src="./IT logos/cloud/github.svg" alt="Github" className="w-20 h-20 object-contain invert" />
               
               {/* Database */}
               {/* SQL (PostgreSQL) */}
-              <img src="/IT logos/databases/postgresql-vertical.svg" alt="SQL" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/databases/postgresql-vertical.svg" alt="SQL" className="w-20 h-20 object-contain" />
               
               {/* Cloud & DevOps */}
               {/* Azure */}
-              <img src="/IT logos/cloud/azure.svg" alt="Azure" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/cloud/azure.svg" alt="Azure" className="w-20 h-20 object-contain" />
               
               {/* Mobile Development */}
               {/* Android Studio */}
-              <img src="/IT logos/ides/android-studio.svg" alt="Android Studio" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/ides/android-studio.svg" alt="Android Studio" className="w-20 h-20 object-contain" />
               
               {/* Jetpack Compose */}
-              <img src="/IT logos/others/jetpackcompose-original.svg" alt="Jetpack Compose" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/jetpackcompose-original.svg" alt="Jetpack Compose" className="w-20 h-20 object-contain" />
               
               {/* Hardware */}
               {/* Arduino */}
-              <img src="/IT logos/others/arduino-official.svg" alt="Arduino" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/arduino-official.svg" alt="Arduino" className="w-20 h-20 object-contain" />
               
               {/* Raspberry Pi */}
-              <img src="/IT logos/others/raspberry-pi.svg" alt="Raspberry Pi" className="w-20 h-20 object-contain" />
+              <img src="./IT logos/others/raspberry-pi.svg" alt="Raspberry Pi" className="w-20 h-20 object-contain" />
             </div>
           </div>
         </section>
