@@ -151,7 +151,7 @@ export const portfolioProjects = [
     type: 'mobile',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf',
-    pdfAward: './portfolio/Software engineering/IN2000/Pris for app IN2000 -v24 (1).pdf',
+    pdfAward: './portfolio/Software%20engineering/IN2000/Pris%20for%20app%20IN2000%20-v24%20(1).pdf',
     githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {

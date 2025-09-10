@@ -32,13 +32,17 @@ const ProjectCard = ({ project }) => {
 
   const handleDownloadPDF = () => {
     if (project.pdfReport) {
-      window.open(project.pdfReport, '_blank')
+      // Encode the URL to handle spaces and special characters
+      const encodedUrl = project.pdfReport.split('/').map(part => encodeURIComponent(part)).join('/')
+      window.open(encodedUrl, '_blank')
     }
   }
 
   const handleDownloadAward = () => {
     if (project.pdfAward) {
-      window.open(project.pdfAward, '_blank')
+      // Encode the URL to handle spaces and special characters
+      const encodedUrl = project.pdfAward.split('/').map(part => encodeURIComponent(part)).join('/')
+      window.open(encodedUrl, '_blank')
     }
   }
 
