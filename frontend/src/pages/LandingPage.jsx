@@ -1,26 +1,56 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
-import { loadCVData, portfolioProjects, parseMarkdownText, photographyHighlights } from '../utils/data.jsx'
+import { loadCVData, portfolioProjects, parseMarkdownText, photographyHighlights, loadPhotosManifest } from '../utils/data.jsx'
 import { getAssetPath } from '../utils/paths'
 
 const LandingPage = () => {
   const { getText } = useLanguage()
   const [cvData, setCvData] = useState(null)
+  const [featuredProjects, setFeaturedProjects] = useState([])
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const cv = await loadCVData()
+        const [cv, photosManifest] = await Promise.all([
+          loadCVData(),
+          loadPhotosManifest()
+        ])
         setCvData(cv)
+        
+        // Load featured projects with their photos
+        const projects = portfolioProjects.slice(0, 3).map(project => ({
+          ...project,
+          photos: photosManifest[project.id] ? photosManifest[project.id].map(path => getAssetPath(path)) : []
+        }))
+        setFeaturedProjects(projects)
       } catch (error) {
-        console.error('Error loading CV data:', error)
+        console.error('Error loading data:', error)
       }
     }
     loadData()
   }, [])
 
-  const featuredProjects = portfolioProjects.slice(0, 3) // Show first 3 projects
+  // Function to render description with clickable citations
+  const renderDescription = (description) => {
+    const text = getText(description)
+    if (text.includes('Yang et al.')) {
+      const parts = text.split('Yang et al.')
+      return (
+        <>
+          {parts[0]}
+          <button
+            onClick={() => window.open('https://pubmed.ncbi.nlm.nih.gov/34472609/', '_blank')}
+            className="inline-flex items-center text-blue-600 hover:text-blue-500 underline transition-colors duration-200"
+          >
+            Yang et al.
+          </button>
+          {parts[1]}
+        </>
+      )
+    }
+    return text
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 animate-page-enter">
@@ -191,7 +221,7 @@ const LandingPage = () => {
         {/* Mobile: Horizontal scroll - Direct under gradient */}
         <div className="md:hidden relative z-10 py-2">
           <div className="flex gap-6 overflow-x-auto py-2 scrollbar-hide snap-x snap-mandatory px-6">
-              {featuredProjects.map((project, index) => (
+              {featuredProjects.length > 0 ? featuredProjects.map((project, index) => (
                 <div
                   key={project.id}
                   className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6 flex-shrink-0 w-80 snap-center"
@@ -216,7 +246,7 @@ const LandingPage = () => {
                     {getText(project.title)}
                   </h3>
                   <p className="text-gray-700 mb-4 line-clamp-3">
-                    {getText(project.description)}
+                    {renderDescription(project.description)}
                   </p>
 
                   {/* Tags */}
@@ -248,7 +278,11 @@ const LandingPage = () => {
                     </svg>
                   </Link>
                 </div>
-              ))}
+              )) : (
+                <div className="flex-shrink-0 w-80 snap-center flex items-center justify-center">
+                  <div className="text-gray-500">Loading projects...</div>
+                </div>
+              )}
           </div>
         </div>
 
@@ -256,7 +290,7 @@ const LandingPage = () => {
         <div className="hidden md:block relative z-10">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProjects.map((project, index) => (
+            {featuredProjects.length > 0 ? featuredProjects.map((project, index) => (
               <div
                 key={project.id}
                 className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6"
@@ -281,7 +315,7 @@ const LandingPage = () => {
                   {getText(project.title)}
                 </h3>
                 <p className="text-gray-700 mb-4 line-clamp-3">
-                  {getText(project.description)}
+                  {renderDescription(project.description)}
                 </p>
 
                 {/* Tags */}
@@ -313,7 +347,11 @@ const LandingPage = () => {
                   </svg>
                 </Link>
               </div>
-            ))}
+            )) : (
+              <div className="col-span-full flex items-center justify-center py-12">
+                <div className="text-gray-500">Loading projects...</div>
+              </div>
+            )}
             </div>
           </div>
         </div>

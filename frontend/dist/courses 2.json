@@ -1,0 +1,320 @@
+[
+    {
+      "code": "EXPHIL03",
+      "name": { "en": "Examen Philosophicum", "no": "Examen Philosophicum" },
+      "semester": { "en": "Autumn 2023", "no": "Høst 2023" },
+      "ects": 10,
+      "grade": "A",
+      "link": "https://www.uio.no/studier/emner/hf/ifikk/EXPHIL03/",
+      "tags": {
+        "en": ["philosophy"],
+        "no": ["filosofi"]
+      },
+      "summary": {
+        "en": "Intro to philosophical thinking about knowledge, ethics, and argumentation. Builds habits of clear reasoning and critical reading you reuse across disciplines.",
+        "no": "Introduksjon til filosofisk tenkning om kunnskap, etikk og argumentasjon. Bygger vaner for klar tenkning og kritisk lesing som brukes på tvers av fag."
+      }
+    },
+  
+    {
+      "code": "IN1000",
+      "name": { "en": "Introduction to Object-oriented Programming", "no": "Introduksjon til objektorientert programmering" },
+      "semester": { "en": "Autumn 2022", "no": "Høst 2022" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1000/index-eng.html",
+      "tags": {
+        "en": ["informatics", "programming"],
+        "no": ["informatikk", "programmering"]
+      },
+      "summary": {
+        "en": "First programming course using OOP—classes, objects, control flow, and simple program design. Emphasis on readable code and practical exercises.",
+        "no": "Første programmeringsfag med OOP—klasser, objekter, kontrollflyt og enkel programdesign. Vekt på lesbar kode og praktiske øvinger."
+      }
+    },
+    {
+      "code": "IN1020",
+      "name": { "en": "Introduction to Computer Technology", "no": "Introduksjon til datateknologi" },
+      "semester": { "en": "Autumn 2022", "no": "Høst 2022" },
+      "ects": 10,
+      "grade": "Pass",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1020/index-eng.html",
+      "tags": {
+        "en": ["informatics", "algorithms-and-data"],
+        "no": ["informatikk", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "How computers work: from bits and logic to hardware components and system building blocks. Builds intuition you need for later systems courses.",
+        "no": "Hvordan datamaskiner fungerer: fra biter og logikk til maskinvarekomponenter og systemenes byggeklosser. Bygger intuisjon for senere systemfag."
+      }
+    },
+    {
+      "code": "IN1050",
+      "name": { "en": "Introduction to Design, Use, Interaction", "no": "Introduksjon til design, bruk, interaksjon" },
+      "semester": { "en": "Autumn 2022", "no": "Høst 2022" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1050/index-eng.html",
+      "tags": {
+        "en": ["informatics", "design"],
+        "no": ["informatikk", "design"]
+      },
+      "summary": {
+        "en": "Foundations of HCI: how people use technology, core design concepts, and prototyping/evaluation. Establishes a user-centred mindset for later projects.",
+        "no": "Grunnleggende HCI: hvordan folk bruker teknologi, sentrale designbegreper og prototyping/evaluering. Etablerer et brukerorientert tankesett for senere prosjekter."
+      }
+    },
+    {
+      "code": "IN1030",
+      "name": { "en": "Systems, Requirements and Consequences", "no": "Systemer, krav og konsekvenser" },
+      "semester": { "en": "Spring 2023", "no": "Vår 2023" },
+      "ects": 10,
+      "grade": "Pass",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1030/index-eng.html",
+      "tags": {
+        "en": ["informatics", "design"],
+        "no": ["informatikk", "design"]
+      },
+      "summary": {
+        "en": "Looks at digital systems in context—stakeholders, requirements, risks, and societal impact. Trains you to think beyond code and weigh trade-offs.",
+        "no": "Ser på digitale systemer i kontekst—interessenter, krav, risiko og samfunnsmessig påvirkning. Trener deg i å tenke utover kode og vurdere avveiinger."
+      }
+    },
+    {
+      "code": "IN1060",
+      "name": { "en": "Use-Oriented Design", "no": "Brukerorientert design" },
+      "semester": { "en": "Spring 2023", "no": "Vår 2023" },
+      "ects": 10,
+      "grade": "C",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1060/index-eng.html",
+      "tags": {
+        "en": ["informatics", "design"],
+        "no": ["informatikk", "design"]
+      },
+      "summary": {
+        "en": "From user needs to product decisions: field studies, prototyping, and iterative evaluation. You practice turning insights into tangible UX improvements.",
+        "no": "Fra brukerbehov til produktbeslutninger: feltarbeid, prototyping og iterativ evaluering. Du øver på å omsette innsikt til konkrete UX-forbedringer."
+      },
+      "portfolioLink": "/software#in1060"
+    },
+    {
+      "code": "IN2020",
+      "name": { "en": "Methods in Interaction Design", "no": "Metoder i interaksjonsdesign" },
+      "semester": { "en": "Autumn 2023", "no": "Høst 2023" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2020/index-eng.html",
+      "tags": {
+        "en": ["informatics", "design"],
+        "no": ["informatikk", "design"]
+      },
+      "summary": {
+        "en": "Research methods for HCI: qualitative and quantitative techniques, study design, and analysis. Helps you choose and justify methods in real projects.",
+        "no": "Forskningsmetoder for HCI: kvalitative og kvantitative teknikker, studiedesign og analyse. Hjelper deg å velge og begrunne metoder i ekte prosjekter."
+      }
+    },
+    {
+      "code": "IN1010",
+      "name": { "en": "Object-oriented Programming", "no": "Objektorientert programmering" },
+      "semester": { "en": "Spring 2024", "no": "Vår 2024" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN1010/index-eng.html",
+      "tags": {
+        "en": ["informatics", "programming"],
+        "no": ["informatikk", "programmering"]
+      },
+      "summary": {
+        "en": "Deeper OOP after IN1000—abstraction, inheritance, interfaces, and working in larger codebases. Focus on designing maintainable software.",
+        "no": "Dypere OOP etter IN1000—abstraksjon, arv, grensesnitt og arbeid i større kodebaser. Fokus på å designe vedlikeholdbar programvare."
+      }
+    },
+    {
+      "code": "IN2000",
+      "name": { "en": "Software Engineering with Project Work", "no": "Programvareutvikling med prosjektarbeid" },
+      "semester": { "en": "Spring 2024", "no": "Vår 2024" },
+      "ects": 20,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2000/index-eng.html",
+      "tags": {
+        "en": ["informatics", "programming", "design", "software-engineering"],
+        "no": ["informatikk", "programmering", "design", "programvareutvikling"]
+      },
+      "summary": {
+        "en": "Team-based system development with modern practices: planning, requirements, testing, CI, and delivery. The outcome is a working product and a documented process.",
+        "no": "Teambasert systemutvikling med moderne praksis: planlegging, krav, testing, CI og levering. Resultatet er et fungerende produkt og en dokumentert prosess."
+      },
+      "portfolioLink": "/software#in2000"
+    },
+    {
+      "code": "IN2150",
+      "name": { "en": "IT in Organizations", "no": "IT i organisasjoner" },
+      "semester": { "en": "Spring 2024", "no": "Vår 2024" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2150/index-eng.html",
+      "tags": {
+        "en": ["informatics", "design"],
+        "no": ["informatikk", "design"]
+      },
+      "summary": {
+        "en": "How organizations adopt and shape information systems. Through practical cases you connect strategy, people, and technology.",
+        "no": "Hvordan organisasjoner tar i bruk og former informasjonssystemer. Gjennom praktiske case kobler du strategi, mennesker og teknologi."
+      }
+    },
+  
+    {
+      "code": "MEVIT2610",
+      "name": { "en": "Introduction to Political Communication", "no": "Introduksjon til politisk kommunikasjon" },
+      "semester": { "en": "Autumn 2023", "no": "Høst 2023" },
+      "ects": 10,
+      "grade": "C",
+      "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT2610/",
+      "tags": {
+        "en": ["media-communication"],
+        "no": ["medier-og-kommunikasjon"]
+      },
+      "summary": {
+        "en": "How communication shapes governance, conflict, and cooperation. Surveys key theories, actors, and channels in political communication.",
+        "no": "Hvordan kommunikasjon former styring, konflikt og samarbeid. Gir en oversikt over sentrale teorier, aktører og kanaler i politisk kommunikasjon."
+      }
+    },
+    {
+      "code": "MEVIT1320",
+      "name": { "en": "The Role of Journalism, Ethics and News Production", "no": "Journalistikkens rolle, etikk og nyhetsproduksjon" },
+      "semester": { "en": "Spring 2025", "no": "Vår 2025" },
+      "ects": 10,
+      "grade": "",
+      "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT1320/",
+      "tags": {
+        "en": ["media-communication"],
+        "no": ["medier-og-kommunikasjon"]
+      },
+      "summary": {
+        "en": "Examines journalism’s social role and ethics—from sourcing and verification to newsroom routines. Connects theory to current media practice.",
+        "no": "Undersøker journalistikkens samfunnsrolle og etikk—fra kildearbeid og verifikasjon til redaksjonelle rutiner. Knytter teori til dagens mediepraksis."
+      }
+    },
+    {
+      "code": "MEVIT2532",
+      "name": { "en": "History of Film", "no": "Filmhistorie" },
+      "semester": { "en": "Spring 2025", "no": "Vår 2025" },
+      "ects": 10,
+      "grade": "A",
+      "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT2532/",
+      "tags": {
+        "en": ["media-communication"],
+        "no": ["medier-og-kommunikasjon"]
+      },
+      "summary": {
+        "en": "A tour of film history from early cinema to contemporary forms. Learn the movements, technologies, and debates that shaped the medium.",
+        "no": "En reise gjennom filmhistorien fra tidlig kino til dagens uttrykk. Lær om bevegelsene, teknologiene og debattene som har formet mediet."
+      }
+    },
+    {
+      "code": "MEVIT3540",
+      "name": { "en": "Imaging – A University of Imaging Media", "no": "Bildedannelse – et universitet av bildemedier" },
+      "semester": { "en": "Spring 2025", "no": "Vår 2025" },
+      "ects": 10,
+      "grade": "B",
+      "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT3540/",
+      "tags": {
+        "en": ["media-communication"],
+        "no": ["medier-og-kommunikasjon"]
+      },
+      "summary": {
+        "en": "Theory and practice around imaging media—how images are produced, read, and used in culture and communication. Useful crossover with your photography.",
+        "no": "Teori og praksis rundt bildemedier—hvordan bilder produseres, tolkes og brukes i kultur og kommunikasjon. Nyttig kobling til fotoarbeidet ditt."
+      }
+    },
+  
+    {
+      "code": "IN2010",
+      "name": { "en": "Algorithms and Data Structures", "no": "Algoritmer og datastrukturer" },
+      "semester": { "en": "Autumn 2024", "no": "Høst 2024" },
+      "ects": 10,
+      "grade": "C",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2010/index-eng.html",
+      "tags": {
+        "en": ["informatics", "algorithms-and-data"],
+        "no": ["informatikk", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "Core algorithms (sorting, searching, graphs) and data structures (lists, trees, hash tables) with complexity analysis. Builds reusable problem-solving habits.",
+        "no": "Kjernealgoritmer (sortering, søk, grafer) og datastrukturer (lister, trær, hashtabeller) med kompleksitetsanalyse. Bygger problemløsningsvaner du kan gjenbruke."
+      }
+    },
+    {
+      "code": "IN2090",
+      "name": { "en": "Databases and Data Modeling", "no": "Databaser og datamodellering" },
+      "semester": { "en": "Autumn 2024", "no": "Høst 2024" },
+      "ects": 10,
+      "grade": "C",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2090/index-eng.html",
+      "tags": {
+        "en": ["informatics", "algorithms-and-data"],
+        "no": ["informatikk", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "From conceptual models to physical database design and queries. You learn to model real-world information reliably and query it effectively.",
+        "no": "Fra konseptuelle modeller til fysisk databasedesign og spørringer. Du lærer å modellere virkelige data pålitelig og spørre effektivt."
+      }
+    },
+    {
+      "code": "IN2140",
+      "name": { "en": "Introduction to Operating Systems and Data Communication", "no": "Introduksjon til operativsystemer og datakommunikasjon" },
+      "semester": { "en": "Spring 2025", "no": "Vår 2025" },
+      "ects": 10,
+      "grade": "C",
+      "link": "https://www.uio.no/studier/emner/matnat/ifi/IN2140/index-eng.html",
+      "tags": {
+        "en": ["informatics", "algorithms-and-data"],
+        "no": ["informatikk", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "OS concepts (processes, memory, filesystems) and the basics of computer networks. Builds the systems intuition behind performance and reliability.",
+        "no": "OS-konsepter (prosesser, minne, filsystemer) og grunnleggende datanettverk. Bygger systemforståelsen bak ytelse og pålitelighet."
+      }
+    },
+  
+    {
+      "code": "19303501/02",
+      "name": {
+        "en": "Advanced Algorithms (Höhere Algorithmik)",
+        "no": "Avanserte algoritmer (Höhere Algorithmik)"
+      },
+      "semester": { "en": "Winter 2024/25", "no": "Vinter 2024/25" },
+      "ects": 6,
+      "grade": "2 (German system)",
+      "link": "https://www.fu-berlin.de/vv/en/lv/904456?m=199267&pc=130146&sm=851413",
+      "tags": {
+        "en": ["exchange", "informatics", "algorithms-and-data"],
+        "no": ["utveksling", "informatikk", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "Design and analysis of algorithms: randomized methods, dynamic programming, graph flows, amortized analysis, NP-completeness, and approximation. Hones your theoretical toolbox for efficient solutions.",
+        "no": "Design og analyse av algoritmer: tilfeldige metoder, dynamisk programmering, grafflyt, ammortisert analyse, NP-fullstendighet og approksimasjon. Spisser den teoretiske verktøykassa for effektive løsninger."
+      }
+    },
+    {
+      "code": "19334212",
+      "name": {
+        "en": "Software Project: Machine Learning with Graphs for Improved (Cancer) Treatment",
+        "no": "Softwareprosjekt: Maskinlæring med grafer for forbedret (kreft)behandling"
+      },
+      "semester": { "en": "Winter 2024/25", "no": "Vinter 2024/25" },
+      "ects": 6,
+      "grade": "",
+      "link": "https://www.fu-berlin.de/vv/en/lv/904495?m=224801&pc=839643&sm=851413",
+      "tags": {
+        "en": ["exchange", "informatics", "programming", "algorithms-and-data"],
+        "no": ["utveksling", "informatikk", "programmering", "algoritmer-og-data"]
+      },
+      "summary": {
+        "en": "Team project building a Python package for graph neural networks on biomedical data (e.g., drug-combination prediction). Involves data prep, model training, baselines, evaluation, and documentation.",
+        "no": "Teamprosjekt som bygger en Python-pakke for graf-nevrale nettverk på biomedisinske data (f.eks. prediksjon av legemiddelkombinasjoner). Innebærer dataprosessering, modelltrening, baseliner, evaluering og dokumentasjon."
+      },
+      "portfolioLink": "/software#ml-project"
+    }
+  ]
+  

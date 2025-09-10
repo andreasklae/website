@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { loadCVData, loadCoursesData, portfolioProjects, formatDateRange, parseMarkdownText } from '../utils/data.jsx'
 import LanguageToggle from '../components/LanguageToggle'
 import ProjectCard from '../components/ProjectCard'
+import Tag from '../components/Tag'
 
 const SoftwarePage = () => {
   const { getText, language } = useLanguage()
@@ -36,23 +37,69 @@ const SoftwarePage = () => {
     loadData()
   }, [])
 
-  // Handle hash scrolling when component mounts
+  // Handle hash scrolling when data is loaded (projects are rendered)
   useEffect(() => {
-    const hash = window.location.hash
-    if (hash) {
-      // Small delay to ensure the page has rendered
-      setTimeout(() => {
-        const element = document.querySelector(hash)
-        if (element) {
-          // Get navbar height and add offset
-          const navbarHeight = 100 // Approximate navbar height
-          const elementPosition = element.offsetTop - navbarHeight
-          window.scrollTo({ 
-            top: elementPosition, 
-            behavior: 'smooth' 
+    if (!loading) {
+      const hash = window.location.hash
+      if (hash) {
+        // Delay to ensure projects are rendered and page transition is complete
+        setTimeout(() => {
+          const element = document.querySelector(hash)
+          if (element) {
+            const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+            const elementPosition = element.offsetTop - navbarHeight
+            window.scrollTo({ 
+              top: elementPosition, 
+              behavior: 'smooth' 
+            })
+          }
+        }, 800) // Wait for page transition to complete (700ms + buffer)
+      }
+    }
+  }, [loading])
+
+  // Handle hash scrolling when component mounts or when hash changes
+  useEffect(() => {
+    const handleHashScroll = () => {
+      const hash = window.location.hash
+      if (hash) {
+        // Wait for the page to be fully rendered
+        const scrollToElement = () => {
+          const element = document.querySelector(hash)
+          if (element) {
+            // Get navbar height and add offset
+            const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+            const elementPosition = element.offsetTop - navbarHeight
+            window.scrollTo({ 
+              top: elementPosition, 
+              behavior: 'smooth' 
+            })
+            return true
+          }
+          return false
+        }
+
+        // Try immediately first
+        if (!scrollToElement()) {
+          // If element not found, try with increasing delays
+          const delays = [100, 300, 600, 900] // Longer delays to account for page transitions
+          delays.forEach(delay => {
+            setTimeout(() => {
+              scrollToElement()
+            }, delay)
           })
         }
-      }, 100)
+      }
+    }
+
+    // Handle initial hash
+    handleHashScroll()
+
+    // Listen for hash changes (in case user navigates with hash)
+    window.addEventListener('hashchange', handleHashScroll)
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashScroll)
     }
   }, [])
 
@@ -82,74 +129,104 @@ const SoftwarePage = () => {
         }
       })
     }
-  }, [coursesData, filters])
+  }, [coursesData, filters, language])
 
-  // Recalculate heights on window resize
+  // Recalculate heights on window resize - continuously during resize
   useEffect(() => {
     let resizeTimeout
-    let lastWidth = window.innerWidth
+    let resizeObserver
+    let resizeInterval
     
-    const handleResize = () => {
-      const currentWidth = window.innerWidth
-      
-      // Only recalculate if the courses per row would actually change
-      const getCoursesPerRow = (width) => {
-        if (width < 768) return 1
-        if (width < 1024) return 2
-        return 3
-      }
-      
-      const oldCoursesPerRow = getCoursesPerRow(lastWidth)
-      const newCoursesPerRow = getCoursesPerRow(currentWidth)
-      
-      // Only proceed if the layout actually changes
-      if (oldCoursesPerRow !== newCoursesPerRow) {
-        setIsResizing(true)
+    const getCoursesPerRow = (width) => {
+      if (width < 768) return 1
+      if (width < 1024) return 2
+      return 3
+    }
+    
+    const recalculateAllHeights = () => {
+      if (coursesData.length > 0) {
+        const categorizedCourses = categorizeCourses(coursesData)
+        const categories = ['informatics', 'mediaCommunication', 'other']
+        const coursesPerRow = getCoursesPerRow(window.innerWidth)
         
-        // Clear any existing timeout
-        if (resizeTimeout) {
-          clearTimeout(resizeTimeout)
-        }
-        
-        // Debounce the resize handling
-        resizeTimeout = setTimeout(() => {
-          if (coursesData.length > 0) {
-            const categorizedCourses = categorizeCourses(coursesData)
-            const categories = ['informatics', 'mediaCommunication', 'other']
-            
-            categories.forEach(categoryKey => {
-              const courses = categorizedCourses[categoryKey]
-              if (courses.length > 0) {
-                // Measure immediately without delay during resize
-                measureCategoryHeight(categoryKey, newCoursesPerRow)
-              }
+        categories.forEach(categoryKey => {
+          const courses = categorizedCourses[categoryKey]
+          if (courses.length > 0) {
+            // Use requestAnimationFrame to ensure DOM is updated
+            requestAnimationFrame(() => {
+              measureCategoryHeight(categoryKey, coursesPerRow)
             })
           }
-          
-          // Re-enable animations after resize is complete
-          setTimeout(() => {
-            setIsResizing(false)
-          }, 50)
-        }, 100) // Longer debounce to reduce jitter
+        })
+      }
+    }
+    
+    const handleResize = () => {
+      // Clear any existing timeout and interval
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout)
+      }
+      if (resizeInterval) {
+        clearInterval(resizeInterval)
       }
       
-      lastWidth = currentWidth
+      setIsResizing(true)
+      
+      // Recalculate immediately during resize
+      recalculateAllHeights()
+      
+      // Continue recalculating during resize for smoother curtain animation
+      resizeInterval = setInterval(() => {
+        recalculateAllHeights()
+      }, 16) // ~60fps
+      
+      // Debounce the end of resize
+      resizeTimeout = setTimeout(() => {
+        setIsResizing(false)
+        if (resizeInterval) {
+          clearInterval(resizeInterval)
+        }
+      }, 150)
+    }
+
+    // Set up ResizeObserver to watch for changes in individual course cards
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver((entries) => {
+        // Only recalculate if we're not already resizing (to avoid conflicts)
+        if (!isResizing) {
+          recalculateAllHeights()
+        }
+      })
+      
+      // Observe all category containers
+      Object.values(categoryRefs.current).forEach(ref => {
+        if (ref) {
+          resizeObserver.observe(ref)
+        }
+      })
     }
 
     window.addEventListener('resize', handleResize)
     
-    // Cleanup listener on unmount
+    // Cleanup listeners on unmount
     return () => {
       window.removeEventListener('resize', handleResize)
       if (resizeTimeout) {
         clearTimeout(resizeTimeout)
       }
+      if (resizeInterval) {
+        clearInterval(resizeInterval)
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
     }
-  }, [coursesData, filters])
+  }, [coursesData, filters, isResizing, language])
 
 
   const applyFilters = (course) => {
     const tags = course.tags[language] || []
+    const tagsLower = tags.map(tag => tag.toLowerCase())
     const courseName = getText(course.name).toLowerCase()
     const courseCode = course.code.toLowerCase()
     
@@ -162,14 +239,14 @@ const SoftwarePage = () => {
     const hasMatchingSubjectArea = filters.subjectAreas.some(selectedArea => {
       switch (selectedArea) {
         case 'programming':
-          return tags.some(tag => 
-            tag === 'programming' || tag === 'programvareutvikling' || tag === 'software-engineering'
+          return tagsLower.some(tag => 
+            tag === 'programming' || tag === 'programmering' || tag === 'programvareutvikling' || tag === 'software engineering'
           )
         case 'design':
-          return tags.some(tag => tag === 'design')
+          return tagsLower.some(tag => tag === 'design')
         case 'algorithms-data':
-          return tags.some(tag => 
-            tag === 'algorithms-and-data' || tag === 'algoritmer-og-data'
+          return tagsLower.some(tag => 
+            tag === 'algorithms/data' || tag === 'algoritmer/data'
           ) && !isComputerSystemsCourse(course)
         case 'computer-systems':
           return isComputerSystemsCourse(course)
@@ -216,16 +293,45 @@ const SoftwarePage = () => {
 
     courses.forEach(course => {
       const tags = course.tags[language] || []
-      if (tags.includes('informatikk') || tags.includes('informatics')) {
+      const tagsLower = tags.map(tag => tag.toLowerCase())
+      
+      if (tagsLower.includes('informatikk') || tagsLower.includes('informatics')) {
         if (applyFilters(course)) {
           categories.informatics.push(course)
         }
-      } else if (tags.includes('medier-og-kommunikasjon') || tags.includes('media-communication')) {
+      } else if (tagsLower.includes('medier og kommunikasjon') || tagsLower.includes('media communication')) {
         categories.mediaCommunication.push(course)
-    } else {
+      } else {
         categories.other.push(course)
       }
     })
+
+    // Sort courses by semester (newest first)
+    const sortCoursesBySemester = (courseList) => {
+      return courseList.sort((a, b) => {
+        // Extract year and semester from semester string (e.g., "Høst 2024" or "Spring 2024")
+        const getSemesterValue = (semester) => {
+          const semesterText = getText(semester).toLowerCase()
+          const yearMatch = semesterText.match(/(\d{4})/)
+          const year = yearMatch ? parseInt(yearMatch[1]) : 0
+          
+          // Assign higher values to more recent semesters
+          if (semesterText.includes('høst') || semesterText.includes('autumn') || semesterText.includes('fall')) {
+            return year * 10 + 2 // Autumn gets higher value
+          } else if (semesterText.includes('vår') || semesterText.includes('spring')) {
+            return year * 10 + 1 // Spring gets lower value
+          }
+          return year * 10
+        }
+        
+        return getSemesterValue(b.semester) - getSemesterValue(a.semester)
+      })
+    }
+
+    // Sort each category
+    categories.informatics = sortCoursesBySemester(categories.informatics)
+    categories.mediaCommunication = sortCoursesBySemester(categories.mediaCommunication)
+    categories.other = sortCoursesBySemester(categories.other)
 
     return categories
   }
@@ -235,42 +341,60 @@ const SoftwarePage = () => {
     if (ref) {
       const grid = ref.querySelector('.grid')
       if (grid) {
-        // Get the actual height of the first row by measuring the grid's scroll height
-        // when we temporarily set it to show only the first row
-        const originalHeight = grid.style.height
-        const originalOverflow = grid.style.overflow
-        
-        // Temporarily set height to auto to get natural height
-        grid.style.height = 'auto'
-        grid.style.overflow = 'visible'
-        
-        // Get the height of just the first row
         const children = Array.from(grid.children)
         if (children.length > 0) {
-          // Create a temporary container to measure just the first row
+          // Create a temporary container to measure the exact first row height
           const tempContainer = document.createElement('div')
           tempContainer.style.position = 'absolute'
           tempContainer.style.visibility = 'hidden'
           tempContainer.style.top = '-9999px'
+          tempContainer.style.left = '-9999px'
           tempContainer.style.width = grid.offsetWidth + 'px'
+          tempContainer.style.height = 'auto'
+          
+          // Copy all grid styles including margins and paddings
+          const gridStyles = window.getComputedStyle(grid)
+          tempContainer.style.display = gridStyles.display
+          tempContainer.style.gridTemplateColumns = gridStyles.gridTemplateColumns
+          tempContainer.style.gap = gridStyles.gap
+          tempContainer.style.padding = gridStyles.padding
+          tempContainer.style.margin = gridStyles.margin
+          tempContainer.style.boxSizing = gridStyles.boxSizing
           tempContainer.className = grid.className
           
           // Clone only the first row elements
-          children.slice(0, coursesPerRow).forEach(child => {
-            tempContainer.appendChild(child.cloneNode(true))
+          const firstRowChildren = children.slice(0, coursesPerRow)
+          firstRowChildren.forEach(child => {
+            const clonedChild = child.cloneNode(true)
+            // Ensure the cloned child has the same styles and dimensions
+            const childStyles = window.getComputedStyle(child)
+            clonedChild.style.margin = childStyles.margin
+            clonedChild.style.padding = childStyles.padding
+            clonedChild.style.width = childStyles.width
+            clonedChild.style.height = 'auto'
+            clonedChild.style.minHeight = childStyles.minHeight
+            clonedChild.style.maxHeight = childStyles.maxHeight
+            clonedChild.style.boxSizing = childStyles.boxSizing
+            clonedChild.style.display = childStyles.display
+            clonedChild.style.flexDirection = childStyles.flexDirection
+            clonedChild.style.justifyContent = childStyles.justifyContent
+            clonedChild.style.alignItems = childStyles.alignItems
+            tempContainer.appendChild(clonedChild)
           })
           
           document.body.appendChild(tempContainer)
-          const firstRowHeight = tempContainer.offsetHeight
-          document.body.removeChild(tempContainer)
           
-          // Restore original styles
-          grid.style.height = originalHeight
-          grid.style.overflow = originalOverflow
+          // Force a reflow to ensure accurate measurements
+          tempContainer.offsetHeight
+          
+          // Get the total height including margins and paddings
+          const totalHeight = Math.max(tempContainer.offsetHeight, 200) // Minimum height of 200px
+          
+          document.body.removeChild(tempContainer)
           
           setCategoryHeights(prev => ({
             ...prev,
-            [categoryKey]: firstRowHeight
+            [categoryKey]: totalHeight
           }))
         }
       }
@@ -290,7 +414,7 @@ const SoftwarePage = () => {
       setTimeout(() => {
         const sectionElement = document.querySelector(`[data-category="${category}"]`)
         if (sectionElement) {
-          const navbarHeight = 100 // Approximate navbar height
+          const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
           const elementPosition = sectionElement.offsetTop - navbarHeight
           window.scrollTo({ 
             top: elementPosition, 
@@ -329,32 +453,190 @@ const SoftwarePage = () => {
   }
 
   return (
-    <div className="min-h-screen text-ide-text animate-page-enter">
-      <div className="max-w-7xl mx-auto px-6 pt-32 lg:pt-40 pb-12">
+    <div className="min-h-screen text-ide-text animate-page-enter container-responsive">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 lg:pt-40 pb-12 w-full">
         {/* About Section */}
-        <section className="mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center gap-3">
-            <span className="code-decoration">{'{'}</span>
-            {getText({ en: 'Software Engineer', no: 'Programvareutvikler' })}
-            <span className="code-decoration">{'}'}</span>
+        <section className="mb-20 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center justify-center gap-3">
+            <span className="code-decoration">{'['}</span>
+            {getText({ en: 'Metadata', no: 'Metadata' })}
+            <span className="code-decoration">{']'}</span>
           </h1>
           
+          {/* Quick Navigation */}
+          <div className="flex flex-wrap gap-4 mb-8 justify-center">
+            <button
+              onClick={() => {
+                const element = document.querySelector('#education')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                borderColor: 'rgba(34, 197, 94, 0.2)',
+                borderRadius: '2rem',
+                color: '#86efac'
+              }}
+            >
+              {getText({ en: 'Education', no: 'Utdanning' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => {
+                const element = document.querySelector('#courses')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                borderColor: 'rgba(251, 146, 60, 0.2)',
+                borderRadius: '2rem',
+                color: '#fb923c'
+              }}
+            >
+              {getText({ en: 'Courses', no: 'Emner' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => {
+                const element = document.querySelector('#projects')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                borderColor: 'rgba(168, 85, 247, 0.2)',
+                borderRadius: '2rem',
+                color: '#c084fc'
+              }}
+            >
+              {getText({ en: 'Projects', no: 'Prosjekter' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          
           {cvData && (
-            <div className="text-ide-text text-lg leading-relaxed max-w-4xl">
+            <div className="text-ide-text text-lg leading-relaxed text-wrap max-w-4xl mx-auto">
                 {parseMarkdownText(getText(cvData.summary), true)}
             </div>
           )}
+
+          {/* Technologies Section */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center justify-center gap-2">
+              <span className="code-decoration">//</span>
+              {getText({ en: "I've worked with:", no: 'Jeg har jobbet med:' })}
+            </h3>
+            
+            <div className="flex flex-wrap gap-8 items-center justify-center max-w-4xl mx-auto">
+              {/* Web Technologies (Most Popular) */}
+              {/* JavaScript */}
+              <img src="/IT logos/programming languages/javascript.svg" alt="JavaScript" className="w-20 h-20 object-contain" />
+              
+              {/* HTML */}
+              <img src="/IT logos/others/html.svg" alt="HTML" className="w-20 h-20 object-contain" />
+              
+              {/* CSS */}
+              <img src="/IT logos/others/css.svg" alt="CSS" className="w-20 h-20 object-contain" />
+              
+              {/* React */}
+              <img src="/IT logos/frameworks/react.svg" alt="React" className="w-20 h-20 object-contain" />
+              
+              {/* Tailwind CSS */}
+              <img src="/IT logos/frameworks/tailwind-svgrepo-com.svg" alt="Tailwind CSS" className="w-20 h-20 object-contain" />
+              
+              {/* Python & ML */}
+              {/* Python */}
+              <img src="/IT logos/programming languages/python.svg" alt="Python" className="w-20 h-20 object-contain" />
+              
+              {/* PyTorch */}
+              <img src="/IT logos/others/pytorch-svgrepo-com.svg" alt="PyTorch" className="w-20 h-20 object-contain" />
+              
+              {/* Java Family */}
+              {/* Java */}
+              <img src="/IT logos/programming languages/java.svg" alt="Java" className="w-20 h-20 object-contain" />
+              
+              {/* Kotlin */}
+              <img src="/IT logos/programming languages/kotlin.svg" alt="Kotlin" className="w-20 h-20 object-contain" />
+              
+              {/* C Family */}
+              {/* C++ */}
+              <img src="/IT logos/programming languages/c++.svg" alt="C++" className="w-20 h-20 object-contain" />
+              
+              {/* C */}
+              <img src="/IT logos/programming languages/c.svg" alt="C" className="w-20 h-20 object-contain" />
+              
+              {/* Version Control */}
+              {/* Git */}
+              <img src="/IT logos/others/git.svg" alt="Git" className="w-20 h-20 object-contain" />
+              
+              {/* Github */}
+              <img src="/IT logos/cloud/github.svg" alt="Github" className="w-20 h-20 object-contain invert" />
+              
+              {/* Database */}
+              {/* SQL (PostgreSQL) */}
+              <img src="/IT logos/databases/postgresql-vertical.svg" alt="SQL" className="w-20 h-20 object-contain" />
+              
+              {/* Cloud & DevOps */}
+              {/* Azure */}
+              <img src="/IT logos/cloud/azure.svg" alt="Azure" className="w-20 h-20 object-contain" />
+              
+              {/* Mobile Development */}
+              {/* Android Studio */}
+              <img src="/IT logos/ides/android-studio.svg" alt="Android Studio" className="w-20 h-20 object-contain" />
+              
+              {/* Jetpack Compose */}
+              <img src="/IT logos/others/jetpackcompose-original.svg" alt="Jetpack Compose" className="w-20 h-20 object-contain" />
+              
+              {/* Hardware */}
+              {/* Arduino */}
+              <img src="/IT logos/others/arduino-official.svg" alt="Arduino" className="w-20 h-20 object-contain" />
+              
+              {/* Raspberry Pi */}
+              <img src="/IT logos/others/raspberry-pi.svg" alt="Raspberry Pi" className="w-20 h-20 object-contain" />
+            </div>
+          </div>
         </section>
 
         {/* Education Section */}
-        <section className="mb-16">
+        <section id="education" className="mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-2">
             <span className="code-decoration">//</span>
             {getText({ en: 'Education', no: 'Utdanning' })}
           </h2>
           
-          <div className="space-y-6">
-            {cvData?.education?.filter(edu => !edu.degree.en.includes('Upper Secondary')).map((edu, index) => {
+          <div className="space-y-8">
+            {cvData?.education?.filter(edu => !edu.degree.en.includes('Upper Secondary'))
+              .sort((a, b) => {
+                // Sort by start date (most recent first)
+                // Convert YYYY-MM format to comparable number
+                const getStartDateValue = (edu) => {
+                  const startDate = edu.start || edu.startDate || ''
+                  if (startDate === 'present') return 999999 // Present studies go first
+                  const [year, month] = startDate.split('-').map(Number)
+                  return year * 12 + (month || 0) // Convert to months since year 0
+                }
+                return getStartDateValue(b) - getStartDateValue(a)
+              })
+              .map((edu, index) => {
               // Define program URLs and button text based on degree and school
               const getProgramUrl = (edu) => {
                 if (edu.degree.en.includes('MSc in Informatics: Programming and Systems Architecture')) {
@@ -381,11 +663,11 @@ const SoftwarePage = () => {
 
               return (
               <div key={index} className="card-dark">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-3">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
                   <h3 className="text-xl font-semibold text-white">
                     {getText(edu.degree)}
                   </h3>
-                  <span className="text-ide-accent-blue font-mono text-sm">
+                  <span className="text-ide-accent-purple font-mono text-sm">
                     {formatDateRange(edu.start, edu.end, language)}
                   </span>
                 </div>
@@ -410,10 +692,10 @@ const SoftwarePage = () => {
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                         style={{
-                          backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                          borderColor: 'rgba(59, 130, 246, 0.2)',
+                          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                          borderColor: 'rgba(34, 197, 94, 0.2)',
                           borderRadius: '2rem',
-                          color: '#60a5fa',
+                          color: '#86efac',
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                         }}
                       >
@@ -431,7 +713,7 @@ const SoftwarePage = () => {
         </section>
 
         {/* Courses Section */}
-        <section className="mb-16">
+        <section id="courses" className="mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-2">
             <span className="code-decoration">[</span>
             {getText({ en: 'Courses', no: 'Emner' })}
@@ -440,7 +722,7 @@ const SoftwarePage = () => {
           
           
           
-          <div className="space-y-8 mt-8">
+          <div className="space-y-8">
             {(() => {
               const categorizedCourses = categorizeCourses(coursesData)
               const categories = [
@@ -510,13 +792,13 @@ const SoftwarePage = () => {
                             <button
                               key={filter.key}
                               onClick={() => toggleSubjectAreaFilter(filter.key)}
-                              className={`px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                              className={`px-6 py-3 text-sm font-medium transition-all duration-300 ${
                                 isActive
                                   ? 'bg-ide-accent-blue text-white shadow-lg'
                                   : 'bg-transparent border border-ide-accent-blue text-ide-accent-blue hover:bg-ide-accent-blue/10'
                               }`}
                               style={{
-                                borderRadius: '50px'
+                                borderRadius: '2rem'
                               }}
                             >
                               {getText(filter.label)}
@@ -528,9 +810,9 @@ const SoftwarePage = () => {
                         {filters.subjectAreas.length > 0 && (
                           <button
                             onClick={() => setFilters(prev => ({ ...prev, subjectAreas: [] }))}
-                            className="px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border border-ide-accent-orange text-ide-accent-orange hover:bg-ide-accent-orange/10"
+                            className="px-6 py-3 text-sm font-medium transition-all duration-300 bg-transparent border border-red-400 text-red-400 hover:bg-red-400/10"
                             style={{
-                              borderRadius: '50px'
+                              borderRadius: '2rem'
                             }}
                           >
                             {getText({ en: 'Clear All', no: 'Tøm alle' })}
@@ -545,10 +827,11 @@ const SoftwarePage = () => {
                       className={`course-container ${isExpanded ? 'expanded' : 'collapsed'}`}
                       style={{
                         maxHeight: isExpanded ? '5000px' : `${categoryHeights[category.key] || 200}px`,
-                        transition: isResizing ? 'none' : 'max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+                        transition: isResizing ? 'none' : 'max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        overflow: 'hidden'
                       }}
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
                         {coursesToShow.map((course, index) => {
                           return (
                             <div 
@@ -574,18 +857,15 @@ const SoftwarePage = () => {
                                   )}
                                 </p>
                                 
-                                <p className="text-ide-text text-sm mb-4">
+                                <p className="text-ide-text text-sm mb-4 text-wrap break-words">
                                   {getText(course.summary)}
                                 </p>
                                 
                                 <div className="flex flex-wrap gap-2 mb-4">
                                   {course.tags[language]?.map((tag, i) => (
-                                    <span 
-                                      key={i}
-                                      className="px-2 py-1 bg-ide-accent-blue/20 text-ide-accent-blue text-xs rounded font-mono"
-                                    >
+                                    <Tag key={i} size="sm" variant="default">
                                       {tag}
-                                    </span>
+                                    </Tag>
                                   ))}
                                 </div>
                               </div>
@@ -597,10 +877,10 @@ const SoftwarePage = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                     style={{
-                      backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                      borderColor: 'rgba(59, 130, 246, 0.2)',
+                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                      borderColor: 'rgba(34, 197, 94, 0.2)',
                       borderRadius: '2rem',
-                      color: '#60a5fa',
+                      color: '#86efac',
                       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                     }}
                   >
@@ -609,23 +889,53 @@ const SoftwarePage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
-                  {course.portfolioLink && (
+                  {course.pdfExam && (
                     <a
-                      href={course.portfolioLink}
+                      href={course.pdfExam}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
+                      style={{
+                        backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                        borderColor: 'rgba(251, 146, 60, 0.2)',
+                        borderRadius: '2rem',
+                        color: '#fb923c',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                      }}
+                    >
+                      <span>{getText({ en: 'Exam', no: 'Eksamen' })}</span>
+                      <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </a>
+                  )}
+                  {course.portfolioLink && (
+                    <button
+                      onClick={() => {
+                        const element = document.querySelector(course.portfolioLink.replace('/software', ''))
+                        if (element) {
+                          const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                          const elementPosition = element.offsetTop - navbarHeight
+                          window.scrollTo({ 
+                            top: elementPosition, 
+                            behavior: 'smooth' 
+                          })
+                        }
+                      }}
                       className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium ml-auto"
                       style={{
                         backgroundColor: 'rgba(34, 197, 94, 0.15)',
                         borderColor: 'rgba(34, 197, 94, 0.2)',
                         borderRadius: '2rem',
-                        color: '#4ade80',
+                        color: '#86efac',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                       }}
                     >
-                      <span>{getText({ en: 'Portfolio', no: 'Portefølje' })}</span>
+                      <span>{getText({ en: 'Project', no: 'Prosjekt' })}</span>
                       <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
-                    </a>
+                    </button>
                   )}
                 </div>
               </div>
@@ -638,7 +948,7 @@ const SoftwarePage = () => {
                       <div className="flex justify-center">
                         <button
                           onClick={() => toggleCategory(category.key)}
-                          className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-500 hover:scale-105 hover:shadow-xl text-sm font-medium group"
+                          className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium group"
                           style={{
                             backgroundColor: 'rgba(59, 130, 246, 0.15)',
                             borderColor: 'rgba(59, 130, 246, 0.2)',
@@ -653,7 +963,7 @@ const SoftwarePage = () => {
                             }
                           </span>
                           <svg 
-                            className={`ml-2 w-4 h-4 transition-all duration-500 transform ${
+                            className={`ml-2 w-4 h-4 transition-all duration-300 transform ${
                               isExpanded ? 'rotate-180' : 'rotate-0'
                             } group-hover:scale-110`} 
                             fill="none" 

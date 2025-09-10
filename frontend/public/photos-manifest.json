@@ -1,19 +1,18 @@
 {
   "fjordquest": [
-    "portfolio/Software engineering/Fjordquest adventure/Photos/activitiespage.jpg",
+    "portfolio/Software engineering/Fjordquest adventure/Photos/white_logo_transparent_background.png",
     "portfolio/Software engineering/Fjordquest adventure/Photos/landingpage.jpg",
     "portfolio/Software engineering/Fjordquest adventure/Photos/landingpage2.jpg",
-    "portfolio/Software engineering/Fjordquest adventure/Photos/logoBlackTransparent.png",
-    "portfolio/Software engineering/Fjordquest adventure/Photos/white_logo_transparent_background.png"
+    "portfolio/Software engineering/Fjordquest adventure/Photos/activitiespage.jpg"
   ],
   "in1060": [
-    "portfolio/Software engineering/IN1060/photos/Teknisk rapport_page3_img1.png",
-    "portfolio/Software engineering/IN1060/photos/Teknisk rapport_page3_img2.png",
+    "portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_1.png",
+    "portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_2.png",
     "portfolio/Software engineering/IN1060/photos/UI_sketch1.png",
     "portfolio/Software engineering/IN1060/photos/UI_sketch2.png",
     "portfolio/Software engineering/IN1060/photos/UI_sketch_3d.png",
-    "portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_1.png",
-    "portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_2.png",
+    "portfolio/Software engineering/IN1060/photos/Teknisk rapport_page3_img1.png",
+    "portfolio/Software engineering/IN1060/photos/Teknisk rapport_page3_img2.png",
     "portfolio/Software engineering/IN1060/photos/prototype_finished.png",
     "portfolio/Software engineering/IN1060/photos/prototype_finished_front.png",
     "portfolio/Software engineering/IN1060/photos/prototype_with_cover_front.png",
@@ -22,14 +21,14 @@
   ],
   "in2000": [
     "portfolio/Software engineering/IN2000/Photos/App_logo.png",
-    "portfolio/Software engineering/IN2000/Photos/Frontpage_scrolled.png",
-    "portfolio/Software engineering/IN2000/Photos/Settings_screen.png",
-    "portfolio/Software engineering/IN2000/Photos/farevarsel_overview.png",
-    "portfolio/Software engineering/IN2000/Photos/farevarsel_screen_map.png",
     "portfolio/Software engineering/IN2000/Photos/front_page.png",
+    "portfolio/Software engineering/IN2000/Photos/Frontpage_scrolled.png",
     "portfolio/Software engineering/IN2000/Photos/frontpage_scrolled_2.png",
     "portfolio/Software engineering/IN2000/Photos/location_search.png",
-    "portfolio/Software engineering/IN2000/Photos/settingsscreen_scrolled.png"
+    "portfolio/Software engineering/IN2000/Photos/Settings_screen.png",
+    "portfolio/Software engineering/IN2000/Photos/settingsscreen_scrolled.png",
+    "portfolio/Software engineering/IN2000/Photos/farevarsel_overview.png",
+    "portfolio/Software engineering/IN2000/Photos/farevarsel_screen_map.png"
   ],
   "ml-project": [
     "portfolio/Software engineering/ML project/photos/p04_dataset_drug_occurrence_analysis.png",

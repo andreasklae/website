@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/', label: { en: 'Home', no: 'Hjem' } },
-    { path: '/software', label: { en: 'Informatics', no: 'Informatikk' } },
+    { path: '/software', label: { en: 'Studies + Projects', no: 'Studier + Prosjekter' } },
     { path: '/photography', label: { en: 'Photography', no: 'Foto' } }
   ]
 
@@ -36,6 +36,8 @@ const Navbar = () => {
   // Determine if we're on software page for dark theme
   const isDarkMode = location.pathname.startsWith('/software')
   const isPhotographyPage = location.pathname.startsWith('/photography')
+  const isSoftwarePage = location.pathname.startsWith('/software')
+  const isHomePage = location.pathname === '/'
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -56,7 +58,13 @@ const Navbar = () => {
                   }}
                 >
                   <div 
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300 group-hover:scale-110 absolute top-1/2 transform -translate-y-1/2"
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 absolute top-1/2 transform -translate-y-1/2 ${
+                      isSoftwarePage 
+                        ? 'bg-gradient-to-r from-purple-500 to-violet-500'
+                        : isPhotographyPage 
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+                          : 'bg-gradient-to-r from-blue-500 to-cyan-500'
+                    }`}
                     style={{
                       left: '0.75rem'
                     }}
@@ -90,9 +98,11 @@ const Navbar = () => {
                       ${isActive(item.path)
                         ? item.path === '/photography'
                           ? 'bg-gradient-to-r from-orange-500 to-amber-500 border-orange-400/60 text-white shadow-xl scale-105'
-                          : isDarkMode
-                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
-                            : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
+                          : item.path === '/software'
+                            ? 'bg-gradient-to-r from-purple-600 to-violet-500 border-purple-400/60 text-white shadow-xl scale-105'
+                            : isDarkMode
+                              ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
+                              : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
                         : isDarkMode
                           ? 'bg-black/50 border-white/20 hover:bg-white/10'
                           : 'bg-white/50 border-white/30 hover:bg-white/60'
@@ -140,9 +150,11 @@ const Navbar = () => {
                       ${isActive(item.path)
                         ? item.path === '/photography'
                           ? 'bg-gradient-to-r from-orange-500 to-amber-500 border-orange-400/60 text-white shadow-xl scale-105'
-                          : isDarkMode
-                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
-                            : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
+                          : item.path === '/software'
+                            ? 'bg-gradient-to-r from-purple-600 to-violet-500 border-purple-400/60 text-white shadow-xl scale-105'
+                            : isDarkMode
+                              ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
+                              : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
                         : isDarkMode
                           ? 'bg-black/50 border-white/20 text-gray-300 hover:text-white hover:bg-white/10'
                           : 'bg-white/50 border-white/30 text-gray-700 hover:text-gray-900 hover:bg-white/60'

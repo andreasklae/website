@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
+import { generateImageDescription } from '../utils/data.jsx'
 
-const ImageCarousel = ({ images, title, onClose }) => {
+const ImageCarousel = ({ images, title, projectId, onClose }) => {
   const { getText } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -91,12 +92,19 @@ const ImageCarousel = ({ images, title, onClose }) => {
         </div>
 
         {/* Main Image */}
-        <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+        <div className="relative bg-black rounded-lg overflow-hidden mx-4 my-8">
           <img
             src={images[currentIndex]}
             alt={`${title} - ${currentIndex + 1}`}
-            className="w-full h-full object-contain"
+            className="max-w-full max-h-[80vh] object-contain mx-auto block"
           />
+        </div>
+        
+        {/* Image Description */}
+        <div className="text-center px-4 mb-4">
+          <p className="text-white text-sm font-medium">
+            {generateImageDescription(images[currentIndex], projectId)}
+          </p>
         </div>
 
         {/* Navigation Arrows */}

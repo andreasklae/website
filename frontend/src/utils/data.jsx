@@ -39,6 +39,87 @@ export const getProjectPhotos = async (projectId) => {
   }
 }
 
+// Function to generate image descriptions based on file names
+export const generateImageDescription = (imagePath, projectId) => {
+  // Add safety check for undefined or null imagePath
+  if (!imagePath || typeof imagePath !== 'string') {
+    return 'Image'
+  }
+  
+  const fileName = imagePath.split('/').pop().split('.')[0] // Get filename without extension
+  
+  // Project-specific descriptions
+  if (projectId === 'fjordquest') {
+    if (fileName.includes('logo')) return 'FjordQuest app logo'
+    if (fileName.includes('landingpage')) return 'App landing page design'
+    if (fileName.includes('activitiespage')) return 'Activities page interface'
+  }
+  
+  if (projectId === 'in1060') {
+    if (fileName.includes('design_inspiration')) return 'Design inspiration from Antarctic research base'
+    if (fileName.includes('UI_sketch')) return 'User interface design sketch'
+    if (fileName.includes('prototype_finished')) return 'Completed temperature logger prototype'
+    if (fileName.includes('prototype_with_cover')) return 'Prototype with protective cover'
+    if (fileName.includes('prototype_without_cover')) return 'Prototype without cover showing internals'
+    if (fileName.includes('Teknisk_rapport')) return 'Technical report diagram'
+  }
+  
+  if (projectId === 'in2000') {
+    if (fileName.includes('App_logo')) return 'VærSmart app logo'
+    if (fileName.includes('front_page')) return 'App main screen'
+    if (fileName.includes('location_search')) return 'Location search interface'
+    if (fileName.includes('Settings_screen')) return 'App settings screen'
+    if (fileName.includes('farevarsel')) return 'Weather warning interface'
+  }
+  
+  if (projectId === 'ml-project') {
+    if (fileName.includes('dataset_drug_occurrence')) return 'Drug occurrence analysis in dataset'
+    if (fileName.includes('synergy_scores_distribution')) return 'Synergy scores distribution analysis'
+    if (fileName.includes('tissue_heatmap')) return 'Tissue-specific heatmap analysis'
+    if (fileName.includes('outlier_detection')) return 'Outlier detection methodology'
+    if (fileName.includes('iqr_outlier_removal')) return 'IQR-based outlier removal results'
+    if (fileName.includes('iqr_multiplier_performance')) return 'IQR multiplier performance evaluation'
+    if (fileName.includes('model_performance_comparison')) return 'Model performance comparison'
+    if (fileName.includes('cross_validation_results')) return 'Cross-validation results'
+    if (fileName.includes('prediction_accuracy_analysis')) return 'Prediction accuracy analysis'
+    if (fileName.includes('analysis_visualization')) return 'Data analysis visualization'
+    if (fileName.includes('cross_validation_methodology')) return 'Cross-validation methodology setup'
+    if (fileName.includes('model_performance_metrics')) return 'Model performance metrics'
+    if (fileName.includes('prediction_distribution_analysis')) return 'Prediction distribution analysis'
+    if (fileName.includes('detailed_performance_evaluation')) return 'Detailed performance evaluation'
+    if (fileName.includes('protein_network_topology')) return 'Protein network topology analysis'
+    if (fileName.includes('graph_connectivity_structure')) return 'Graph connectivity structure analysis'
+    if (fileName.includes('network_clustering_analysis')) return 'Network clustering analysis'
+    if (fileName.includes('graph_topology_metrics')) return 'Graph topology metrics'
+    if (fileName.includes('network_degree_distribution')) return 'Network degree distribution'
+    if (fileName.includes('graph_component_analysis')) return 'Graph component analysis'
+    if (fileName.includes('network_visualization')) return 'Network visualization'
+    if (fileName.includes('topology_comprehensive_analysis')) return 'Comprehensive topology analysis'
+    if (fileName.includes('hyperparameter_bayesian_optimization')) return 'Hyperparameter Bayesian optimization'
+    if (fileName.includes('edge_shuffling_experiment')) return 'Edge shuffling experiment results'
+    if (fileName.includes('graph_modification_performance')) return 'Graph modification performance'
+    if (fileName.includes('model_comparison_overview')) return 'Model comparison overview'
+    if (fileName.includes('detailed_model_performance')) return 'Detailed model performance'
+    if (fileName.includes('model_accuracy_comparison')) return 'Model accuracy comparison'
+    if (fileName.includes('comprehensive_performance_analysis')) return 'Comprehensive performance analysis'
+    if (fileName.includes('graphsynergy_vs_baseline')) return 'GraphSynergy vs baseline comparison'
+    if (fileName.includes('final_model_evaluation')) return 'Final model evaluation'
+    if (fileName.includes('cross_validation_detailed_results')) return 'Cross-validation detailed results'
+    if (fileName.includes('performance_validation_analysis')) return 'Performance validation analysis'
+    if (fileName.includes('model_robustness_evaluation')) return 'Model robustness evaluation'
+    if (fileName.includes('hyperparameter_sensitivity_analysis')) return 'Hyperparameter sensitivity analysis'
+    if (fileName.includes('final_performance_summary')) return 'Final performance summary'
+    if (fileName.includes('random_forest_architecture')) return 'Random Forest architecture'
+    if (fileName.includes('random_forest_vs_gnn_comparison')) return 'Random Forest vs GNN comparison'
+    if (fileName.includes('traditional_ml_comparison')) return 'Traditional ML comparison'
+    if (fileName.includes('final_comparative_results')) return 'Final comparative results'
+    if (fileName.includes('conclusion_performance_summary')) return 'Conclusion performance summary'
+  }
+  
+  // Fallback: generate description from filename
+  return fileName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+}
+
 // Portfolio project data structure (chronologically ordered - newest to oldest)
 export const portfolioProjects = [
   {
@@ -66,7 +147,7 @@ export const portfolioProjects = [
       en: 'Award-winning AI weather app with "Mr. Praktisk" mascot for personalized advice to young users.',
       no: 'Prisbelønt AI vær-app med "Mr. Praktisk" maskot for personlige råd til unge brukere.'
     },
-    tags: ['Android', 'Kotlin', 'MVVM', 'AI', 'UX Research', 'MET.no API', 'LocationIQ', 'Room Database', 'Retrofit', 'Student Prize'],
+    tags: ['Java', 'Kotlin', 'Jetpack Compose', 'Design', 'Informatics', 'Programming', 'Software engineering', 'API', 'Azure', 'Full stack', 'Functional programming', 'OOP', 'UI', 'UX'],
     type: 'mobile',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf',
@@ -76,18 +157,19 @@ export const portfolioProjects = [
   {
     id: 'ml-project',
     title: {
-      en: 'Graph Neural Networks for Cancer Treatment',
-      no: 'Graf-nevrale nettverk for kreftbehandling'
+      en: 'GraphSynergy: Drug Discovery AI',
+      no: 'GraphSynergy: AI for legemiddeloppdagelse'
     },
     description: {
-      en: 'Graph neural networks for drug synergy prediction in cancer treatment using protein interaction networks.',
-      no: 'Graf-nevrale nettverk for legemiddelsynergi-prediksjon i kreftbehandling ved bruk av protein-interaksjonsnettverk.'
+      en: 'Implementation and evaluation of GraphSynergy, a deep learning framework for anticancer drug combination prediction based on protein interaction networks.\n\nBuilt upon the original research by Yang et al.',
+      no: 'Implementering og evaluering av GraphSynergy, et dyplæringsrammeverk for prediksjon av antikreft-legemiddelkombinasjoner basert på protein-interaksjonsnettverk.\n\nBygget på original forskning av Yang et al.'
     },
-    tags: ['Python', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
+    tags: ['Python', 'Informatics', 'Algorithms/data', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
     type: 'research',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf',
-    githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp'
+    githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp',
+    researchPaperLink: 'https://pubmed.ncbi.nlm.nih.gov/34472609/'
   },
   {
     id: 'in1060',
@@ -99,7 +181,7 @@ export const portfolioProjects = [
       en: 'Smart temperature logger with ESP32 and custom sensors for restaurant food safety monitoring.',
       no: 'Smart temperaturlogger med ESP32 og egendefinerte sensorer for mattrygghetsovervåkning i restauranter.'
     },
-    tags: ['Arduino', 'ESP32', 'IoT', 'Hardware', 'C++'],
+    tags: ['Arduino', 'C++', 'Design', 'Informatics', 'Research', 'HCI', 'IoT', 'UCD', 'UD', 'UX'],
     type: 'hardware',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'
