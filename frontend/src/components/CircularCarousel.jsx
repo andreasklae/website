@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useLanguage } from '../contexts/LanguageContext'
+import { generateImageDescription } from '../utils/data.jsx'
 import ImageCarousel from './ImageCarousel'
 
-const CircularCarousel = ({ images, title, className = '' }) => {
+const CircularCarousel = ({ images, title, projectId, className = '' }) => {
   const { getText } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -135,8 +136,15 @@ const CircularCarousel = ({ images, title, className = '' }) => {
           })}
         </div>
         
-        {/* Click instruction for mobile */}
+        {/* Image description for mobile */}
         <div className="text-center mt-4 mb-2">
+          <p className="text-ide-text/90 text-sm font-medium">
+            {generateImageDescription(images[currentIndex], projectId)}
+          </p>
+        </div>
+        
+        {/* Click instruction for mobile */}
+        <div className="text-center mb-2">
           <p className="text-ide-text/70 text-sm">
             {getText({ en: 'Tap image to expand', no: 'Trykk på bilde for å utvide' })}
           </p>
@@ -220,8 +228,15 @@ const CircularCarousel = ({ images, title, className = '' }) => {
           </div>
         </div>
 
-        {/* Click instruction for desktop */}
+        {/* Image description for desktop */}
         <div className="text-center mt-4">
+          <p className="text-ide-text/90 text-sm font-medium">
+            {generateImageDescription(images[currentIndex], projectId)}
+          </p>
+        </div>
+        
+        {/* Click instruction for desktop */}
+        <div className="text-center mt-2">
           <p className="text-ide-text/70 text-sm">
             {getText({ en: 'Click image to expand', no: 'Klikk på bilde for å utvide' })}
           </p>
@@ -303,6 +318,13 @@ const CircularCarousel = ({ images, title, className = '' }) => {
                 alt={`${title} - ${currentIndex + 1}`}
                 className="max-w-full max-h-full object-contain"
               />
+            </div>
+            
+            {/* Image Description */}
+            <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-center px-4">
+              <p className="text-white text-sm font-medium">
+                {generateImageDescription(images[currentIndex], projectId)}
+              </p>
             </div>
 
             {/* Image counter */}

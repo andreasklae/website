@@ -274,7 +274,7 @@ const ProjectCard = ({ project }) => {
 
               {/* Video for IN1060 project */}
               {project.id === 'in1060' && (
-                <div className="mb-6">
+                <div className="mb-6 mx-6">
                   <h4 className="text-lg font-semibold text-white mb-2">
                     {getText({ en: 'Project Demonstration', no: 'Prosjektdemonstrasjon' })}
                   </h4>
@@ -347,6 +347,7 @@ const ProjectCard = ({ project }) => {
               <CircularCarousel
                 images={projectPhotos}
                 title={getText(project.title)}
+                projectId={project.id}
                 className="mb-4"
               />
             </div>
@@ -407,6 +408,7 @@ const ProjectCard = ({ project }) => {
         <ImageCarousel
           images={projectPhotos}
           title={getText(project.title)}
+          projectId={project.id}
           onClose={() => setShowCarousel(false)}
         />
       )}

@@ -82,7 +82,7 @@ const SoftwarePage = () => {
         }
       })
     }
-  }, [coursesData, filters])
+  }, [coursesData, filters, language])
 
   // Recalculate heights on window resize - continuously during resize
   useEffect(() => {
@@ -174,11 +174,12 @@ const SoftwarePage = () => {
         resizeObserver.disconnect()
       }
     }
-  }, [coursesData, filters, isResizing])
+  }, [coursesData, filters, isResizing, language])
 
 
   const applyFilters = (course) => {
     const tags = course.tags[language] || []
+    const tagsLower = tags.map(tag => tag.toLowerCase())
     const courseName = getText(course.name).toLowerCase()
     const courseCode = course.code.toLowerCase()
     
@@ -191,14 +192,14 @@ const SoftwarePage = () => {
     const hasMatchingSubjectArea = filters.subjectAreas.some(selectedArea => {
       switch (selectedArea) {
         case 'programming':
-          return tags.some(tag => 
-            tag === 'programming' || tag === 'programvareutvikling' || tag === 'software-engineering'
+          return tagsLower.some(tag => 
+            tag === 'programming' || tag === 'programmering' || tag === 'programvareutvikling' || tag === 'software engineering'
           )
         case 'design':
-          return tags.some(tag => tag === 'design')
+          return tagsLower.some(tag => tag === 'design')
         case 'algorithms-data':
-          return tags.some(tag => 
-            tag === 'algorithms-and-data' || tag === 'algoritmer-og-data'
+          return tagsLower.some(tag => 
+            tag === 'algorithms/data' || tag === 'algoritmer/data'
           ) && !isComputerSystemsCourse(course)
         case 'computer-systems':
           return isComputerSystemsCourse(course)
@@ -245,13 +246,15 @@ const SoftwarePage = () => {
 
     courses.forEach(course => {
       const tags = course.tags[language] || []
-      if (tags.includes('informatikk') || tags.includes('informatics')) {
+      const tagsLower = tags.map(tag => tag.toLowerCase())
+      
+      if (tagsLower.includes('informatikk') || tagsLower.includes('informatics')) {
         if (applyFilters(course)) {
           categories.informatics.push(course)
         }
-      } else if (tags.includes('medier-og-kommunikasjon') || tags.includes('media-communication')) {
+      } else if (tagsLower.includes('medier og kommunikasjon') || tagsLower.includes('media communication')) {
         categories.mediaCommunication.push(course)
-    } else {
+      } else {
         categories.other.push(course)
       }
     })
@@ -771,9 +774,39 @@ const SoftwarePage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
-                  {course.portfolioLink && (
+                  {course.pdfExam && (
                     <a
-                      href={course.portfolioLink}
+                      href={course.pdfExam}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
+                      style={{
+                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                        borderColor: 'rgba(239, 68, 68, 0.2)',
+                        borderRadius: '2rem',
+                        color: '#f87171',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                      }}
+                    >
+                      <span>{getText({ en: 'Exam', no: 'Eksamen' })}</span>
+                      <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </a>
+                  )}
+                  {course.portfolioLink && (
+                    <button
+                      onClick={() => {
+                        const element = document.querySelector(course.portfolioLink.replace('/software', ''))
+                        if (element) {
+                          const navbarHeight = 100
+                          const elementPosition = element.offsetTop - navbarHeight
+                          window.scrollTo({ 
+                            top: elementPosition, 
+                            behavior: 'smooth' 
+                          })
+                        }
+                      }}
                       className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium ml-auto"
                       style={{
                         backgroundColor: 'rgba(34, 197, 94, 0.15)',
@@ -783,11 +816,11 @@ const SoftwarePage = () => {
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                       }}
                     >
-                      <span>{getText({ en: 'Portfolio', no: 'Portefølje' })}</span>
+                      <span>{getText({ en: 'Project', no: 'Prosjekt' })}</span>
                       <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </a>
+                    </button>
                   )}
                 </div>
               </div>
