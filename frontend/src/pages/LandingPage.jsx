@@ -52,15 +52,15 @@ const LandingPage = () => {
                 </div>
                 
                 <p className="text-xl lg:text-2xl text-gray-600 mb-6 text-center lg:text-left">
-                  {cvData ? getText(cvData.role) : getText({
-                    en: 'MSc student in Informatics: Programming and Systems Architecture • Photographer',
-                    no: 'Masterstudent i informatikk: programmering og systemarkitektur • Fotograf'
+                  {getText({
+                    en: 'MSc student, BSc graduate, Photographer',
+                    no: 'Masterstudent, Bachelorutdannet, Fotograf'
                   })}
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed text-center lg:text-left">
-                  {cvData ? parseMarkdownText(getText(cvData.summary)) : getText({
-                    en: 'Welcome to my digital space where code meets creativity. Explore my journey through software engineering and visual storytelling.',
-                    no: 'Velkommen til mitt digitale rom hvor kode møter kreativitet. Utforsk min reise gjennom programvareutvikling og visuell historiefortelling.'
+                  {getText({
+                    en: 'Currently pursuing MSc in Informatics: Programming and Systems Architecture at the University of Oslo. Completed BSc in Informatics: Design, Use, Interaction with an exchange semester at Freie Universität Berlin focusing on algorithms and machine learning. I also enjoy photography as a hobby and like to comine it with my love for travel. Welcome to my website where I present my work!',
+                      no: 'Tar for tiden master i informatikk: programmering og systemarkitektur ved Universitetet i Oslo. Fullført bachelor i informatikk: design, bruk, interaksjon med utvekslingsopphold ved Freie Universität Berlin med fokus på algoritmer og maskinlæring. Jeg liker også fotografering som hobby og liker å kombinere det med min kjærlighet for reising. Velkommen til min nettside hvor jeg presenterer mitt arbeid!'
                   })}
                 </p>
               </div>
@@ -73,7 +73,7 @@ const LandingPage = () => {
                 >
                   <span className="flex items-center gap-2">
                     <span className="whitespace-nowrap">
-                      {getText({ en: 'View Software Work', no: 'Se programvarearbeid' })}
+                      {getText({ en: 'View Informatics Work', no: 'Se informatikkarbeid' })}
                     </span>
                     <span className="font-mono text-orange-300 group-hover:text-orange-100 transition-colors whitespace-nowrap">
                       {' { }'}
@@ -95,6 +95,35 @@ const LandingPage = () => {
                 </Link>
               </div>
 
+              {/* CV Download Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
+                <a
+                  href="/CV_Andreas_Klaeboe_EN.pdf"
+                  download="CV_Andreas_Klaeboe_EN.pdf"
+                  className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-green-100 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {getText({ en: 'Download CV (EN)', no: 'Last ned CV (EN)' })}
+                  </span>
+                </a>
+                
+                <a
+                  href="/CV_Andreas_Klaeboe_NO.pdf"
+                  download="CV_Andreas_Klaeboe_NO.pdf"
+                  className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-green-100 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {getText({ en: 'Download CV (NO)', no: 'Last ned CV (NO)' })}
+                  </span>
+                </a>
+              </div>
+
               {/* Quick Stats */}
               <div className="flex flex-wrap gap-6 pt-4 justify-center lg:justify-start">
                 <div className="text-center">
@@ -110,7 +139,7 @@ const LandingPage = () => {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-amber-600">100+</div>
+                  <div className="text-2xl font-bold text-amber-600">1000+</div>
                   <div className="text-sm text-gray-600">
                     {getText({ en: 'Photos', no: 'Bilder' })}
                   </div>
@@ -138,29 +167,103 @@ const LandingPage = () => {
       </section>
 
       {/* Featured Projects Section */}
-      <section className="py-20 relative">
+      <section className="py-20 relative overflow-visible">
         {/* Background with prominent gradient for glassmorphism to blur */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-sky-200 to-orange-200"></div>
+        
+        {/* Header - Centered */}
         <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              {getText({ en: 'Featured Work', no: 'Utvalgt arbeid' })}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {getText({
-                en: 'A selection of my recent projects spanning software development, UX design, and technical innovation.',
-                no: 'Et utvalg av mine nyeste prosjekter innen programvareutvikling, UX-design og teknisk innovasjon.'
-              })}
-            </p>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                {getText({ en: 'Featured Work', no: 'Utvalgt arbeid' })}
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                {getText({
+                  en: 'A selection of my recent projects spanning software development, UX design, and technical innovation.',
+                  no: 'Et utvalg av mine nyeste prosjekter innen programvareutvikling, UX-design og teknisk innovasjon.'
+                })}
+              </p>
+            </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Mobile: Horizontal scroll - Direct under gradient */}
+        <div className="md:hidden relative z-10 py-2">
+          <div className="flex gap-6 overflow-x-auto py-2 scrollbar-hide snap-x snap-mandatory px-6">
+              {featuredProjects.map((project, index) => (
+                <div
+                  key={project.id}
+                  className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6 flex-shrink-0 w-80 snap-center"
+                  style={{ 
+                    borderRadius: '2rem',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                >
+                  {/* Project Image */}
+                  <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
+                    {project.photos && project.photos[0] && (
+                      <img
+                        src={project.photos[0]}
+                        alt={getText(project.title)}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+
+                  {/* Project Info */}
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    {getText(project.title)}
+                  </h3>
+                  <p className="text-gray-700 mb-4 line-clamp-3">
+                    {getText(project.description)}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tags.slice(0, 3).map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="px-3 py-1 backdrop-blur-sm bg-blue-500/20 text-blue-700 text-xs rounded-full border border-blue-300/40"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* View Project Button */}
+                  <Link
+                    to={`/software#${project.id}`}
+                    className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                      borderColor: 'rgba(255, 255, 255, 0.2)',
+                      borderRadius: '2rem',
+                      color: '#374151'
+                    }}
+                  >
+                    <span>{getText({ en: 'View Project', no: 'Se prosjekt' })}</span>
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Desktop: Grid layout - Centered container */}
+        <div className="hidden md:block relative z-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredProjects.map((project, index) => (
-              <Link
+              <div
                 key={project.id}
-                to={`/software#${project.id}`}
-                className="group card-glass-dark rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 cursor-pointer block"
+                className="backdrop-blur-2xl bg-white/25 border border-white/40 p-6"
+                style={{ 
+                  borderRadius: '2rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                }}
               >
                 {/* Project Image */}
                 <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
@@ -168,13 +271,13 @@ const LandingPage = () => {
                     <img
                       src={project.photos[0]}
                       alt={getText(project.title)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
                   )}
                 </div>
 
                 {/* Project Info */}
-                <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   {getText(project.title)}
                 </h3>
                 <p className="text-gray-700 mb-4 line-clamp-3">
@@ -193,21 +296,32 @@ const LandingPage = () => {
                   ))}
                 </div>
 
-                {/* View Project Indicator */}
-                <div className="flex items-center text-blue-600 group-hover:text-blue-700 font-medium text-sm transition-colors">
+                {/* View Project Button */}
+                <Link
+                  to={`/software#${project.id}`}
+                  className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '2rem',
+                    color: '#374151'
+                  }}
+                >
                   <span>{getText({ en: 'View Project', no: 'Se prosjekt' })}</span>
-                  <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
+            </div>
           </div>
+        </div>
 
-          {/* View All Projects Button */}
-          <div className="text-center mt-12">
+        {/* View All Projects Button */}
+        <div className="text-center mt-12 relative z-10">
             <Link
-              to="/software"
+              to="/software#projects"
               className="btn-primary inline-flex items-center"
             >
               {getText({ en: 'View All Projects', no: 'Se alle prosjekter' })}
@@ -215,8 +329,6 @@ const LandingPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
-          </div>
-        </div>
         </div>
       </section>
 

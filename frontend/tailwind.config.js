@@ -40,6 +40,10 @@ export default {
         '3xl': '64px',
       },
       transitionDuration: {
+        '200': '200ms',
+        '250': '250ms',
+        '400': '400ms',
+        '500': '500ms',
         '800': '800ms',
         '1200': '1200ms',
       },
@@ -50,6 +54,10 @@ export default {
         'page-enter': 'pageEnter 0.8s ease-out',
         'glass-float': 'glassFloat 3s ease-in-out infinite',
         'glass-pulse': 'glassPulse 2s ease-in-out infinite',
+        'fab-bounce': 'fabBounce 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'fab-scale': 'fabScale 0.2s ease-out',
+        'fab-up': 'fabUp 0.2s ease-out',
+        'fab-down': 'fabDown 0.2s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -75,9 +83,42 @@ export default {
         glassPulse: {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(255, 255, 255, 0.4)' },
           '50%': { boxShadow: '0 0 0 10px rgba(255, 255, 255, 0)' },
+        },
+        fabBounce: {
+          '0%': { transform: 'scale(0) rotate(0deg)', opacity: '0' },
+          '50%': { transform: 'scale(1.1) rotate(180deg)', opacity: '0.8' },
+          '100%': { transform: 'scale(1) rotate(360deg)', opacity: '1' },
+        },
+        fabScale: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(0.95)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        fabUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fabDown: {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(20px)', opacity: '0' },
         }
       }
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }
+      })
+    }
+  ],
 }

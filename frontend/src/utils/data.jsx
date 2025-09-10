@@ -16,46 +16,45 @@ export const loadCoursesData = async () => {
   return response.json()
 }
 
-// Portfolio project data structure
+// Function to load all photos from the photos manifest
+export const loadPhotosManifest = async () => {
+  try {
+    const response = await fetch(getAssetPath('photos-manifest.json'))
+    return response.json()
+  } catch (error) {
+    console.error('Error loading photos manifest:', error)
+    return {}
+  }
+}
+
+// Function to get photos for a specific project
+export const getProjectPhotos = async (projectId) => {
+  try {
+    const manifest = await loadPhotosManifest()
+    const photos = manifest[projectId] || []
+    return photos.map(path => getAssetPath(path))
+  } catch (error) {
+    console.error('Error loading project photos:', error)
+    return []
+  }
+}
+
+// Portfolio project data structure (chronologically ordered - newest to oldest)
 export const portfolioProjects = [
   {
     id: 'fjordquest',
     title: {
-      en: 'Fjord Quest Adventure Website',
-      no: 'Fjord Quest Adventure Nettside'
+      en: 'Fjord Quest Adventure',
+      no: 'Fjord Quest Adventure'
     },
     description: {
-      en: 'A high-end travel website for a Norwegian luxury travel company. Built with React, Tailwind, and shadcn/ui.',
-      no: 'En eksklusiv reiseside for et norsk luksusreiseselskap. Bygget med React, Tailwind og shadcn/ui.'
+      en: 'Luxury travel website with glassmorphism design, bilingual support, and dynamic content management.',
+      no: 'Luksusreiseside med glassmorfisme-design, tospråklig støtte og dynamisk innholdsadministrasjon.'
     },
-    tags: ['React', 'Tailwind', 'JavaScript', 'Web Design'],
+    tags: ['React', 'Tailwind', 'shadcn/ui', 'JSON/Markdown', 'Glassmorphism', 'Bilingual', 'Visual Identity'],
     type: 'website',
     link: 'https://www.fjordquestadventure.no/',
-    photos: [
-      'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage.jpg',
-      'portfolio/Software engineering/Fjordquest adventure/Photos/landingpage2.jpg',
-      'portfolio/Software engineering/Fjordquest adventure/Photos/activitiespage.jpg'
-    ].map(path => getAssetPath(path))
-  },
-  {
-    id: 'in1060',
-    title: {
-      en: 'Smart Temperature Logger',
-      no: 'Smart Temperaturlogger'
-    },
-    description: {
-      en: 'An Arduino-based temperature monitoring device for restaurants, featuring ESP32 microcontroller and custom-calibrated sensors.',
-      no: 'En Arduino-basert temperaturovervåkingsenhet for restauranter, med ESP32 mikrokontroller og egenkalibrerte sensorer.'
-    },
-    tags: ['Arduino', 'ESP32', 'IoT', 'Hardware', 'C++'],
-    type: 'hardware',
-    photos: [
-      'portfolio/Software engineering/IN1060/photos/prototype_finished_front.png',
-      'portfolio/Software engineering/IN1060/photos/prototype_finished.png',
-      'portfolio/Software engineering/IN1060/photos/UI_sketch_3d.png',
-      'portfolio/Software engineering/IN1060/photos/design_inspiration_antarticaBase_1.png'
-    ].map(path => getAssetPath(path)),
-    pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'
+    photos: [] // Will be loaded dynamically from photos-manifest.json
   },
   {
     id: 'in2000',
@@ -64,18 +63,15 @@ export const portfolioProjects = [
       no: 'VærSmart Vær-app'
     },
     description: {
-      en: 'An AI-powered weather app for younger users, featuring personalized advice from "Mr. Praktisk" mascot. Winner of student prize.',
-      no: 'En AI-drevet vær-app for yngre brukere, med personlige råd fra maskoten "Mr. Praktisk". Vinner av studentpris.'
+      en: 'Award-winning AI weather app with "Mr. Praktisk" mascot for personalized advice to young users.',
+      no: 'Prisbelønt AI vær-app med "Mr. Praktisk" maskot for personlige råd til unge brukere.'
     },
-    tags: ['Android', 'Kotlin', 'MVVM', 'AI', 'UX Design'],
+    tags: ['Android', 'Kotlin', 'MVVM', 'AI', 'UX Research', 'MET.no API', 'LocationIQ', 'Room Database', 'Retrofit', 'Student Prize'],
     type: 'mobile',
-    photos: [
-      'portfolio/Software engineering/IN2000/Photos/front_page.png',
-      'portfolio/Software engineering/IN2000/Photos/farevarsel_screen_map.png',
-      'portfolio/Software engineering/IN2000/Photos/location_search.png',
-      'portfolio/Software engineering/IN2000/Photos/Settings_screen.png'
-    ].map(path => getAssetPath(path)),
-    pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf'
+    photos: [], // Will be loaded dynamically from photos-manifest.json
+    pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf',
+    pdfAward: './portfolio/Software engineering/IN2000/Pris for app IN2000 -v24 (1).pdf',
+    githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {
     id: 'ml-project',
@@ -84,15 +80,29 @@ export const portfolioProjects = [
       no: 'Graf-nevrale nettverk for kreftbehandling'
     },
     description: {
-      en: 'Python package for graph neural networks on biomedical data, focusing on drug-combination prediction for cancer treatment.',
-      no: 'Python-pakke for graf-nevrale nettverk på biomedisinske data, med fokus på prediksjon av legemiddelkombinasjoner for kreftbehandling.'
+      en: 'Graph neural networks for drug synergy prediction in cancer treatment using protein interaction networks.',
+      no: 'Graf-nevrale nettverk for legemiddelsynergi-prediksjon i kreftbehandling ved bruk av protein-interaksjonsnettverk.'
     },
     tags: ['Python', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
     type: 'research',
-    photos: [
-      // ML project has many photos, we'll load them dynamically
-    ],
-    pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf'
+    photos: [], // Will be loaded dynamically from photos-manifest.json
+    pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf',
+    githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp'
+  },
+  {
+    id: 'in1060',
+    title: {
+      en: 'Smart Temperature Logger',
+      no: 'Smart Temperaturlogger'
+    },
+    description: {
+      en: 'Smart temperature logger with ESP32 and custom sensors for restaurant food safety monitoring.',
+      no: 'Smart temperaturlogger med ESP32 og egendefinerte sensorer for mattrygghetsovervåkning i restauranter.'
+    },
+    tags: ['Arduino', 'ESP32', 'IoT', 'Hardware', 'C++'],
+    type: 'hardware',
+    photos: [], // Will be loaded dynamically from photos-manifest.json
+    pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'
   }
 ]
 

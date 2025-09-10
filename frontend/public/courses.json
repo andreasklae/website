@@ -184,7 +184,7 @@
       "name": { "en": "The Role of Journalism, Ethics and News Production", "no": "Journalistikkens rolle, etikk og nyhetsproduksjon" },
       "semester": { "en": "Spring 2025", "no": "Vår 2025" },
       "ects": 10,
-      "grade": "",
+      "grade": "C",
       "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT1320/",
       "tags": {
         "en": ["media-communication"],
@@ -284,7 +284,7 @@
         "no": "Avanserte algoritmer (Höhere Algorithmik)"
       },
       "semester": { "en": "Winter 2024/25", "no": "Vinter 2024/25" },
-      "ects": 6,
+      "ects": 10,
       "grade": "2 (German system)",
       "link": "https://www.fu-berlin.de/vv/en/lv/904456?m=199267&pc=130146&sm=851413",
       "tags": {
@@ -303,8 +303,8 @@
         "no": "Softwareprosjekt: Maskinlæring med grafer for forbedret (kreft)behandling"
       },
       "semester": { "en": "Winter 2024/25", "no": "Vinter 2024/25" },
-      "ects": 6,
-      "grade": "",
+      "ects": 10,
+      "grade": "1 (German system)",
       "link": "https://www.fu-berlin.de/vv/en/lv/904495?m=224801&pc=839643&sm=851413",
       "tags": {
         "en": ["exchange", "informatics", "programming", "algorithms-and-data"],
