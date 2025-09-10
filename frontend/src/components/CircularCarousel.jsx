@@ -3,24 +3,27 @@ import { createPortal } from 'react-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { generateImageDescription } from '../utils/data.jsx'
 import ImageCarousel from './ImageCarousel'
+import Carousel from './Carousel'
 
 const CircularCarousel = ({ images, title, projectId, className = '' }) => {
   const { getText } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [centerIndex, setCenterIndex] = useState(0)
   const scrollContainerRef = useRef(null)
+  const carouselRef = useRef(null)
 
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
-  }
+  // Visual heights (consistent across images)
+  const MOBILE_IMAGE_HEIGHT_REM = 28   // ~448px
+  const DESKTOP_IMAGE_HEIGHT_REM = 35  // ~560px
 
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
-
-  const goToImage = (index) => {
-    setCurrentIndex(index)
+  // Helper to keep index in [0, images.length - 1]
+  const getRealIndex = (index) => {
+    if (!images || images.length === 0) return 0
+    if (index < 0) return images.length - 1
+    if (index >= images.length) return 0
+    return index
   }
 
   const openFullscreen = (index) => {
@@ -32,244 +35,248 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
     setIsFullscreen(false)
   }
 
-  // Create looped images for mobile carousel - many duplicates for true infinite scroll
-  const loopedImages = images.length > 1 ? [
-    ...images, // Original images
-    ...images, // Duplicate set 1
-    ...images, // Duplicate set 2
-    ...images, // Duplicate set 3
-    ...images, // Duplicate set 4
-    ...images, // Duplicate set 5
-  ] : images
+  // Create looped images for mobile scroll
+  const loopedImages = images && images.length > 1
+    ? [...images, ...images, ...images, ...images, ...images, ...images]
+    : images || []
 
-  // Handle scroll position tracking for mobile (no auto-jumping)
+  // Track current index on mobile by center proximity
   useEffect(() => {
     const container = scrollContainerRef.current
-    if (!container || images.length <= 1) return
+    if (!container || !images || images.length <= 1) return
 
     let scrollTimeout
+    let isScrolling = false
 
     const handleScroll = () => {
-      clearTimeout(scrollTimeout)
-      
-      // Wait for scroll to settle
+      if (!isScrolling) {
+        isScrolling = true
+        clearTimeout(scrollTimeout)
+      }
       scrollTimeout = setTimeout(() => {
-        const scrollLeft = container.scrollLeft
-        const containerWidth = container.offsetWidth
-        const itemWidth = container.children[0]?.offsetWidth || 0
-        const gap = 24 // gap-6 = 1.5rem = 24px
-        const itemTotalWidth = itemWidth + gap
-        
-        // Calculate which item is in the center
-        const centerX = scrollLeft + containerWidth / 2
-        const currentItemIndex = Math.floor(centerX / itemTotalWidth)
-        
-        // Calculate real index (modulo to handle duplicates)
-        const realIndex = currentItemIndex % images.length
-        setCurrentIndex(realIndex)
-      }, 100)
+        const containerRect = container.getBoundingClientRect()
+        const containerCenterX = containerRect.left + containerRect.width / 2
+        let closestIndex = 0
+        let closestDistance = Infinity
+
+        for (let i = 0; i < container.children.length; i++) {
+          const child = container.children[i]
+          if (!child) continue
+          const r = child.getBoundingClientRect()
+          const childCenterX = r.left + r.width / 2
+          const d = Math.abs(childCenterX - containerCenterX)
+          if (d < closestDistance) {
+            closestDistance = d
+            closestIndex = i
+          }
+        }
+        const real = images.length ? (closestIndex % images.length) : 0
+        setCurrentIndex(real)
+        isScrolling = false
+      }, 150)
     }
 
-    // Add scroll event listener
     container.addEventListener('scroll', handleScroll, { passive: true })
-    
     return () => {
       container.removeEventListener('scroll', handleScroll)
       clearTimeout(scrollTimeout)
     }
-  }, [images.length])
+  }, [images])
 
-  // Set initial scroll position to middle of the carousel
+  // Track center image for desktop carousel based on carousel navigation
+  useEffect(() => {
+    if (!images || images.length <= 1) return
+
+    // Start with image 1 in center (index 1 of the 3 visible items)
+    setCenterIndex(1)
+
+    // Listen for carousel navigation button clicks
+    const carousel = carouselRef.current
+    if (!carousel) return
+
+    const handleNextClick = () => {
+      setCenterIndex(prev => {
+        const next = prev + 1
+        return next >= images.length ? 0 : next
+      })
+    }
+
+    const handlePrevClick = () => {
+      setCenterIndex(prev => {
+        const next = prev - 1
+        return next < 0 ? images.length - 1 : next
+      })
+    }
+
+    // Find the navigation buttons
+    const nextButton = carousel.querySelector('.right-arrow-button')
+    const prevButton = carousel.querySelector('.left-arrow-button')
+
+    if (nextButton) {
+      nextButton.addEventListener('click', handleNextClick)
+    }
+    if (prevButton) {
+      prevButton.addEventListener('click', handlePrevClick)
+    }
+
+    return () => {
+      if (nextButton) {
+        nextButton.removeEventListener('click', handleNextClick)
+      }
+      if (prevButton) {
+        prevButton.removeEventListener('click', handlePrevClick)
+      }
+    }
+  }, [images])
+
+  // Start mobile scroller centered on a middle set
   useEffect(() => {
     const container = scrollContainerRef.current
-    if (container && images.length > 1) {
-      // Small delay to ensure DOM is fully rendered
-      setTimeout(() => {
-        const itemWidth = container.children[0]?.offsetWidth || 0
-        const gap = 24
-        const itemTotalWidth = itemWidth + gap
-        const middleSetStart = images.length * 2 // Start of third set (middle)
-        
-        container.scrollTo({
-          left: middleSetStart * itemTotalWidth,
-          behavior: 'auto'
-        })
-      }, 100)
-    }
-  }, [images.length])
+    if (!container || !images || images.length <= 1) return
+
+    const id = setTimeout(() => {
+      const middleSetStart = images.length * 2
+      let scrollPosition = 0
+      for (let i = 0; i < middleSetStart; i++) {
+        const child = container.children[i]
+        if (child) scrollPosition += child.offsetWidth
+      }
+      container.scrollTo({ left: scrollPosition, behavior: 'auto' })
+    }, 300)
+
+    return () => clearTimeout(id)
+  }, [images])
 
   if (!images || images.length === 0) return null
 
   return (
     <div className={`relative ${className}`}>
-      {/* Mobile: Horizontal scroll with snap */}
+      {/* Mobile: horizontal scroll & snap */}
       <div className="md:hidden">
-        <div 
+        <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto py-2 scrollbar-hide snap-x snap-mandatory"
+          className="flex overflow-x-auto py-2 scrollbar-hide snap-x snap-mandatory"
           style={{
             WebkitOverflowScrolling: 'touch',
-            scrollBehavior: 'smooth'
+            scrollBehavior: 'smooth',
+            scrollSnapType: 'x mandatory',
+            overscrollBehavior: 'contain',
+            touchAction: 'pan-x',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
           }}
         >
           {loopedImages.map((image, index) => {
-            // Convert looped index to real index for click handler
-            const realIndex = index % images.length
-            
+            const realIndex = images.length ? (index % images.length) : 0
             return (
               <div
                 key={`${index}-${image}`}
-                className="flex-shrink-0 snap-center"
+                className="snap-center flex-none px-2" // flex-none so width doesn't shrink, px-2 for horizontal spacing
                 onClick={() => openFullscreen(realIndex)}
+                style={{ 
+                  maxWidth: 'min(80vw, 400px)' // maximum width for mobile, capped at 400px
+                }}
               >
-                 <div 
-                   className="h-96 max-w-64 rounded-xl overflow-hidden shadow-lg flex items-center justify-center cursor-pointer"
-                 >
+                {/* Fixed-height container, width adjusts to image aspect */}
+                <div
+                  className="flex items-center justify-center cursor-pointer overflow-hidden"
+                  style={{ 
+                    height: `${MOBILE_IMAGE_HEIGHT_REM}rem`,
+                    width: 'fit-content', // width adjusts to content
+                    maxWidth: '100%', // but don't exceed parent
+                    borderRadius: '1rem' // 16px border radius on container
+                  }}
+                >
                   <img
                     src={image}
                     alt={`${title} - ${realIndex + 1}`}
-                    className="max-h-full max-w-full object-contain"
+                    className="block"
+                    style={{
+                      maxHeight: '100%',                      
+                      width: 'auto', // let width adjust naturally
+                      maxWidth: '100%',
+                      objectFit: 'contain',
+                      borderRadius: '1rem' // 16px border radius on image
+                    }}
                   />
                 </div>
               </div>
             )
           })}
         </div>
-        
-        {/* Image description for mobile */}
+
+        {/* Image description (mobile) */}
         <div className="text-center mt-4 mb-2">
-          <p className="text-ide-text/90 text-sm font-medium">
-            {generateImageDescription(images[currentIndex], projectId)}
+          <p className="text-ide-text/90 text-sm font-medium transition-all duration-500 ease-in-out">
+            {images && images[getRealIndex(currentIndex)]
+              ? generateImageDescription(images[getRealIndex(currentIndex)], projectId)
+              : 'Image'}
           </p>
         </div>
-        
-        {/* Click instruction for mobile */}
+
+        {/* Hint (mobile) */}
         <div className="text-center mb-2">
           <p className="text-ide-text/70 text-sm">
-            {getText({ en: 'Tap image to expand', no: 'Trykk på bilde for å utvide' })}
+            {getText({ en: 'Swipe to browse • Tap to expand', no: 'Sveip for å bla • Trykk for å utvide' })}
           </p>
         </div>
-        
-        {/* Photo counter for mobile */}
+
+        {/* Counter (mobile) */}
         {images.length > 1 && (
           <div className="flex justify-center mt-3">
             <span className="text-xs text-ide-text/70 bg-ide-surface/50 px-3 py-1 rounded-full backdrop-blur-sm">
-              {currentIndex + 1} / {images.length}
+              {getRealIndex(currentIndex) + 1} / {images.length}
             </span>
           </div>
         )}
       </div>
 
-      {/* Desktop: Circular carousel with buttons */}
-      <div className="hidden md:block relative flex items-center justify-center">
-        {/* Previous button - positioned absolutely */}
-        {images.length > 1 && (
-          <button
-            onClick={prevImage}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 z-10 p-4 rounded-full backdrop-blur-2xl bg-white/25 border border-white/40 hover:bg-white/35 hover:border-white/60 transition-all duration-300 hover:scale-110 shadow-lg"
-            style={{
-              borderRadius: '2rem',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-            }}
-            aria-label="Previous image"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-
-        {/* Images container */}
-        <div className="grid grid-cols-3 gap-3 items-center">
-          {/* Previous image (small) */}
-          <div className="flex justify-end">
-            {images.length > 1 && (
-              <div 
-                className="h-64 max-h-48 max-w-[20rem] cursor-pointer hover:opacity-80 transition-opacity duration-200"
-                onClick={() => openFullscreen((currentIndex - 1 + images.length) % images.length)}
-              >
-                <img
-                  src={images[(currentIndex - 1 + images.length) % images.length]}
-                  alt={`${title} - Previous`}
-                  className="h-full w-auto object-contain"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Current image (large, highlighted) - Always centered */}
-          <div className="flex justify-center">
-            <div 
-              className="h-[640px] max-h-[480px] max-w-[80rem] cursor-pointer hover:scale-105 transition-transform duration-200"
-              onClick={() => openFullscreen(currentIndex)}
+      {/* Desktop: Carousel (kept same API) */}
+      <div className="hidden md:block py-6" ref={carouselRef}>
+        <Carousel
+          visibleItemsCount={3}
+          withIndicator
+          isInfinite
+          imageHeight={DESKTOP_IMAGE_HEIGHT_REM * 16} // 560px
+        >
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="w-full flex items-center justify-center cursor-pointer px-4 py-1"
+              style={{ maxHeight: `${DESKTOP_IMAGE_HEIGHT_REM}rem` }}
             >
-              <img
-                src={images[currentIndex]}
-                alt={`${title} - ${currentIndex + 1}`}
-                className="h-full w-auto object-contain"
-              />
+               <img
+                 src={image}
+                 alt={`${title} - ${index + 1}`}
+                 className="block transition-all duration-300 ease-in-out"
+                 style={{
+                   maxWidth: '100%',
+                   maxHeight: centerIndex === index ? '100%' : '40%',
+                   width: 'auto',
+                   height: 'auto',
+                   objectFit: 'contain',
+                   borderRadius: centerIndex === index ? '2rem' : '1.4rem', // Scale border radius with image scale (2rem * 0.7 = 1.4rem)
+                   transform: centerIndex === index ? 'scale(1)' : 'scale(0.7)',
+                   opacity: centerIndex === index ? 1 : 0.6
+                 }}
+                 onClick={() => openFullscreen(index)}
+               />
             </div>
-          </div>
+          ))}
+        </Carousel>
 
-          {/* Next image (small) */}
-          <div className="flex justify-start">
-            {images.length > 1 && (
-              <div 
-                className="h-64 max-h-48 max-w-[20rem] cursor-pointer hover:opacity-80 transition-opacity duration-200"
-                onClick={() => openFullscreen((currentIndex + 1) % images.length)}
-              >
-                <img
-                  src={images[(currentIndex + 1) % images.length]}
-                  alt={`${title} - Next`}
-                  className="h-full w-auto object-contain"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Image description for desktop */}
+        {/* Desktop hint */}
         <div className="text-center mt-4">
           <p className="text-ide-text/90 text-sm font-medium">
-            {generateImageDescription(images[currentIndex], projectId)}
-          </p>
-        </div>
-        
-        {/* Click instruction for desktop */}
-        <div className="text-center mt-2">
-          <p className="text-ide-text/70 text-sm">
             {getText({ en: 'Click image to expand', no: 'Klikk på bilde for å utvide' })}
           </p>
+          <p className="text-ide-text/70 text-xs mt-1">
+            Center index: {centerIndex}
+          </p>
         </div>
-
-        {/* Next button - positioned absolutely */}
-        {images.length > 1 && (
-          <button
-            onClick={nextImage}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 z-10 p-4 rounded-full backdrop-blur-2xl bg-white/25 border border-white/40 hover:bg-white/35 hover:border-white/60 transition-all duration-300 hover:scale-110 shadow-lg"
-            style={{
-              borderRadius: '2rem',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-            }}
-            aria-label="Next image"
-          >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
       </div>
 
-      {/* Image counter - only show on desktop */}
-      {images.length > 1 && (
-        <div className="hidden md:block text-center mt-2">
-          <span className="text-xs text-ide-text/70">
-            {currentIndex + 1} / {images.length}
-          </span>
-        </div>
-      )}
-
-      {/* Fullscreen Image Carousel - Rendered to document body */}
+      {/* Fullscreen overlay */}
       {isFullscreen && createPortal(
         <div
           className="fixed inset-0 z-50 bg-black flex items-center justify-center"
@@ -279,7 +286,7 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
             className="relative w-full h-full"
             onClick={e => e.stopPropagation()}
           >
-            {/* Close button */}
+            {/* Close */}
             <button
               onClick={closeFullscreen}
               className="absolute top-4 right-4 z-10 p-3 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors duration-200"
@@ -289,7 +296,7 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
               </svg>
             </button>
 
-            {/* Navigation buttons */}
+            {/* Nav */}
             {images.length > 1 && (
               <>
                 <button
@@ -311,27 +318,34 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
               </>
             )}
 
-            {/* Image - fits within screen with padding */}
+            {/* Image */}
             <div className="p-8 flex items-center justify-center h-full">
               <img
                 src={images[currentIndex]}
                 alt={`${title} - ${currentIndex + 1}`}
-                className="max-w-full max-h-full object-contain"
+                className="rounded-xl block"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain'
+                }}
               />
             </div>
-            
-            {/* Image Description */}
+
+            {/* Description */}
             <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-center px-4">
               <p className="text-white text-sm font-medium">
-                {generateImageDescription(images[currentIndex], projectId)}
+                {images && images[getRealIndex(currentIndex)]
+                  ? generateImageDescription(images[getRealIndex(currentIndex)], projectId)
+                  : 'Image'}
               </p>
             </div>
 
-            {/* Image counter */}
+            {/* Counter */}
             {images.length > 1 && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full">
                 <span className="text-white text-sm">
-                  {currentIndex + 1} / {images.length}
+                  {getRealIndex(currentIndex) + 1} / {images.length}
                 </span>
               </div>
             )}

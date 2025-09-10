@@ -26,10 +26,12 @@ const PageTransition = ({ children }) => {
 
     // Step 2: After overlay is fully opaque, scroll and change content
     const scrollTimer = setTimeout(() => {
-      // Scroll to top when overlay is fully covering the content
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-      document.body.scrollTop = 0
-      document.documentElement.scrollTop = 0
+      // Only scroll to top if there's no hash in the URL (to allow hash scrolling to work)
+      if (!location.hash) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+        document.body.scrollTop = 0
+        document.documentElement.scrollTop = 0
+      }
     }, 250) // Wait for overlay to be fully opaque
 
     // Step 3: Change the page content slightly after scroll

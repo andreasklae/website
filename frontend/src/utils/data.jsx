@@ -41,6 +41,11 @@ export const getProjectPhotos = async (projectId) => {
 
 // Function to generate image descriptions based on file names
 export const generateImageDescription = (imagePath, projectId) => {
+  // Add safety check for undefined or null imagePath
+  if (!imagePath || typeof imagePath !== 'string') {
+    return 'Image'
+  }
+  
   const fileName = imagePath.split('/').pop().split('.')[0] // Get filename without extension
   
   // Project-specific descriptions
@@ -142,7 +147,7 @@ export const portfolioProjects = [
       en: 'Award-winning AI weather app with "Mr. Praktisk" mascot for personalized advice to young users.',
       no: 'Prisbelønt AI vær-app med "Mr. Praktisk" maskot for personlige råd til unge brukere.'
     },
-    tags: ['Android', 'Kotlin', 'MVVM', 'AI', 'UX Research', 'MET.no API', 'LocationIQ', 'Room Database', 'Retrofit', 'Student Prize'],
+    tags: ['Java', 'Kotlin', 'Jetpack Compose', 'Design', 'Informatics', 'Programming', 'Software engineering', 'API', 'Azure', 'Full stack', 'Functional programming', 'OOP', 'UI', 'UX'],
     type: 'mobile',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf',
@@ -159,7 +164,7 @@ export const portfolioProjects = [
       en: 'Implementation and evaluation of GraphSynergy, a deep learning framework for anticancer drug combination prediction based on protein interaction networks.\n\nBuilt upon the original research by Yang et al.',
       no: 'Implementering og evaluering av GraphSynergy, et dyplæringsrammeverk for prediksjon av antikreft-legemiddelkombinasjoner basert på protein-interaksjonsnettverk.\n\nBygget på original forskning av Yang et al.'
     },
-    tags: ['Python', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
+    tags: ['Python', 'Informatics', 'Algorithms/data', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
     type: 'research',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf',
@@ -176,7 +181,7 @@ export const portfolioProjects = [
       en: 'Smart temperature logger with ESP32 and custom sensors for restaurant food safety monitoring.',
       no: 'Smart temperaturlogger med ESP32 og egendefinerte sensorer for mattrygghetsovervåkning i restauranter.'
     },
-    tags: ['Arduino', 'ESP32', 'IoT', 'Hardware', 'C++'],
+    tags: ['Arduino', 'C++', 'Design', 'Informatics', 'Research', 'HCI', 'IoT', 'UCD', 'UD', 'UX'],
     type: 'hardware',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'

@@ -3,6 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { getProjectPhotos } from '../utils/data.jsx'
 import ImageCarousel from './ImageCarousel'
 import CircularCarousel from './CircularCarousel'
+import Tag from './Tag'
 
 const ProjectCard = ({ project }) => {
   const { getText } = useLanguage()
@@ -65,12 +66,9 @@ const ProjectCard = ({ project }) => {
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-6 mx-6">
           {project.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="px-3 py-1 bg-ide-accent-purple/20 text-ide-accent-purple text-sm rounded font-mono"
-            >
+            <Tag key={index} size="sm" variant="default">
               {tag}
-            </span>
+            </Tag>
           ))}
         </div>
 
@@ -154,10 +152,10 @@ const ProjectCard = ({ project }) => {
                   onClick={() => window.open(project.researchPaperLink, '_blank')}
                   className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                   style={{
-                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                    borderColor: 'rgba(59, 130, 246, 0.2)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                    borderColor: 'rgba(34, 197, 94, 0.2)',
                     borderRadius: '2rem',
-                    color: '#93c5fd',
+                    color: '#86efac',
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
                 >
@@ -249,7 +247,7 @@ const ProjectCard = ({ project }) => {
                       })}
                       <button
                         onClick={() => window.open(project.researchPaperLink, '_blank')}
-                        className="inline-flex items-center text-blue-400 hover:text-blue-300 underline transition-colors duration-200"
+                        className="inline-flex items-center text-green-400 hover:text-green-300 underline transition-colors duration-200"
                       >
                         Yang et al. (2021)
                       </button>

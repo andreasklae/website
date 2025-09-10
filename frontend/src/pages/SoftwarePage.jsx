@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { loadCVData, loadCoursesData, portfolioProjects, formatDateRange, parseMarkdownText } from '../utils/data.jsx'
 import LanguageToggle from '../components/LanguageToggle'
 import ProjectCard from '../components/ProjectCard'
+import Tag from '../components/Tag'
 
 const SoftwarePage = () => {
   const { getText, language } = useLanguage()
@@ -36,23 +37,69 @@ const SoftwarePage = () => {
     loadData()
   }, [])
 
-  // Handle hash scrolling when component mounts
+  // Handle hash scrolling when data is loaded (projects are rendered)
   useEffect(() => {
-    const hash = window.location.hash
-    if (hash) {
-      // Small delay to ensure the page has rendered
-      setTimeout(() => {
-        const element = document.querySelector(hash)
-        if (element) {
-          // Get navbar height and add offset
-          const navbarHeight = 100 // Approximate navbar height
-          const elementPosition = element.offsetTop - navbarHeight
-          window.scrollTo({ 
-            top: elementPosition, 
-            behavior: 'smooth' 
+    if (!loading) {
+      const hash = window.location.hash
+      if (hash) {
+        // Delay to ensure projects are rendered and page transition is complete
+        setTimeout(() => {
+          const element = document.querySelector(hash)
+          if (element) {
+            const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+            const elementPosition = element.offsetTop - navbarHeight
+            window.scrollTo({ 
+              top: elementPosition, 
+              behavior: 'smooth' 
+            })
+          }
+        }, 800) // Wait for page transition to complete (700ms + buffer)
+      }
+    }
+  }, [loading])
+
+  // Handle hash scrolling when component mounts or when hash changes
+  useEffect(() => {
+    const handleHashScroll = () => {
+      const hash = window.location.hash
+      if (hash) {
+        // Wait for the page to be fully rendered
+        const scrollToElement = () => {
+          const element = document.querySelector(hash)
+          if (element) {
+            // Get navbar height and add offset
+            const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+            const elementPosition = element.offsetTop - navbarHeight
+            window.scrollTo({ 
+              top: elementPosition, 
+              behavior: 'smooth' 
+            })
+            return true
+          }
+          return false
+        }
+
+        // Try immediately first
+        if (!scrollToElement()) {
+          // If element not found, try with increasing delays
+          const delays = [100, 300, 600, 900] // Longer delays to account for page transitions
+          delays.forEach(delay => {
+            setTimeout(() => {
+              scrollToElement()
+            }, delay)
           })
         }
-      }, 100)
+      }
+    }
+
+    // Handle initial hash
+    handleHashScroll()
+
+    // Listen for hash changes (in case user navigates with hash)
+    window.addEventListener('hashchange', handleHashScroll)
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashScroll)
     }
   }, [])
 
@@ -367,7 +414,7 @@ const SoftwarePage = () => {
       setTimeout(() => {
         const sectionElement = document.querySelector(`[data-category="${category}"]`)
         if (sectionElement) {
-          const navbarHeight = 100 // Approximate navbar height
+          const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
           const elementPosition = sectionElement.offsetTop - navbarHeight
           window.scrollTo({ 
             top: elementPosition, 
@@ -409,94 +456,165 @@ const SoftwarePage = () => {
     <div className="min-h-screen text-ide-text animate-page-enter container-responsive">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 lg:pt-40 pb-12 w-full">
         {/* About Section */}
-        <section className="mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center gap-3">
-            <span className="code-decoration">{'{'}</span>
-            {getText({ en: 'Software Engineer', no: 'Programvareutvikler' })}
-            <span className="code-decoration">{'}'}</span>
+        <section className="mb-20 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center justify-center gap-3">
+            <span className="code-decoration">{'['}</span>
+            {getText({ en: 'Metadata', no: 'Metadata' })}
+            <span className="code-decoration">{']'}</span>
           </h1>
           
+          {/* Quick Navigation */}
+          <div className="flex flex-wrap gap-4 mb-8 justify-center">
+            <button
+              onClick={() => {
+                const element = document.querySelector('#education')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                borderColor: 'rgba(34, 197, 94, 0.2)',
+                borderRadius: '2rem',
+                color: '#86efac'
+              }}
+            >
+              {getText({ en: 'Education', no: 'Utdanning' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => {
+                const element = document.querySelector('#courses')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                borderColor: 'rgba(251, 146, 60, 0.2)',
+                borderRadius: '2rem',
+                color: '#fb923c'
+              }}
+            >
+              {getText({ en: 'Courses', no: 'Emner' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => {
+                const element = document.querySelector('#projects')
+                if (element) {
+                  const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
+                  const elementPosition = element.offsetTop - navbarHeight
+                  window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+                }
+              }}
+              className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+              style={{
+                backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                borderColor: 'rgba(168, 85, 247, 0.2)',
+                borderRadius: '2rem',
+                color: '#c084fc'
+              }}
+            >
+              {getText({ en: 'Projects', no: 'Prosjekter' })}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          
           {cvData && (
-            <div className="text-ide-text text-lg leading-relaxed max-w-4xl text-wrap">
+            <div className="text-ide-text text-lg leading-relaxed text-wrap max-w-4xl mx-auto">
                 {parseMarkdownText(getText(cvData.summary), true)}
             </div>
           )}
-        </section>
 
-        {/* Quick Navigation */}
-        <div className="flex flex-wrap gap-3 mb-16">
-          <button
-            onClick={() => {
-              const element = document.querySelector('#education')
-              if (element) {
-                const navbarHeight = 100
-                const elementPosition = element.offsetTop - navbarHeight
-                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
-              }
-            }}
-            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-            style={{
-              backgroundColor: 'rgba(59, 130, 246, 0.15)',
-              borderColor: 'rgba(59, 130, 246, 0.2)',
-              borderRadius: '1rem',
-              color: '#93c5fd'
-            }}
-          >
-            <span className="code-decoration">//</span>
-            {getText({ en: 'Education', no: 'Utdanning' })}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => {
-              const element = document.querySelector('#courses')
-              if (element) {
-                const navbarHeight = 100
-                const elementPosition = element.offsetTop - navbarHeight
-                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
-              }
-            }}
-            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-            style={{
-              backgroundColor: 'rgba(168, 85, 247, 0.15)',
-              borderColor: 'rgba(168, 85, 247, 0.2)',
-              borderRadius: '1rem',
-              color: '#c084fc'
-            }}
-          >
-            <span className="code-decoration">[</span>
-            {getText({ en: 'Courses', no: 'Emner' })}
-            <span className="code-decoration">]</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => {
-              const element = document.querySelector('#projects')
-              if (element) {
-                const navbarHeight = 100
-                const elementPosition = element.offsetTop - navbarHeight
-                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
-              }
-            }}
-            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-            style={{
-              backgroundColor: 'rgba(34, 197, 94, 0.15)',
-              borderColor: 'rgba(34, 197, 94, 0.2)',
-              borderRadius: '1rem',
-              color: '#86efac'
-            }}
-          >
-            <span className="code-decoration">{'<'}</span>
-            {getText({ en: 'Projects', no: 'Prosjekter' })}
-            <span className="code-decoration">{' />'}</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+          {/* Technologies Section */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center justify-center gap-2">
+              <span className="code-decoration">//</span>
+              {getText({ en: "I've worked with:", no: 'Jeg har jobbet med:' })}
+            </h3>
+            
+            <div className="flex flex-wrap gap-8 items-center justify-center max-w-4xl mx-auto">
+              {/* Web Technologies (Most Popular) */}
+              {/* JavaScript */}
+              <img src="/IT logos/programming languages/javascript.svg" alt="JavaScript" className="w-20 h-20 object-contain" />
+              
+              {/* HTML */}
+              <img src="/IT logos/others/html.svg" alt="HTML" className="w-20 h-20 object-contain" />
+              
+              {/* CSS */}
+              <img src="/IT logos/others/css.svg" alt="CSS" className="w-20 h-20 object-contain" />
+              
+              {/* React */}
+              <img src="/IT logos/frameworks/react.svg" alt="React" className="w-20 h-20 object-contain" />
+              
+              {/* Tailwind CSS */}
+              <img src="/IT logos/frameworks/tailwind-svgrepo-com.svg" alt="Tailwind CSS" className="w-20 h-20 object-contain" />
+              
+              {/* Python & ML */}
+              {/* Python */}
+              <img src="/IT logos/programming languages/python.svg" alt="Python" className="w-20 h-20 object-contain" />
+              
+              {/* PyTorch */}
+              <img src="/IT logos/others/pytorch-svgrepo-com.svg" alt="PyTorch" className="w-20 h-20 object-contain" />
+              
+              {/* Java Family */}
+              {/* Java */}
+              <img src="/IT logos/programming languages/java.svg" alt="Java" className="w-20 h-20 object-contain" />
+              
+              {/* Kotlin */}
+              <img src="/IT logos/programming languages/kotlin.svg" alt="Kotlin" className="w-20 h-20 object-contain" />
+              
+              {/* C Family */}
+              {/* C++ */}
+              <img src="/IT logos/programming languages/c++.svg" alt="C++" className="w-20 h-20 object-contain" />
+              
+              {/* C */}
+              <img src="/IT logos/programming languages/c.svg" alt="C" className="w-20 h-20 object-contain" />
+              
+              {/* Version Control */}
+              {/* Git */}
+              <img src="/IT logos/others/git.svg" alt="Git" className="w-20 h-20 object-contain" />
+              
+              {/* Github */}
+              <img src="/IT logos/cloud/github.svg" alt="Github" className="w-20 h-20 object-contain invert" />
+              
+              {/* Database */}
+              {/* SQL (PostgreSQL) */}
+              <img src="/IT logos/databases/postgresql-vertical.svg" alt="SQL" className="w-20 h-20 object-contain" />
+              
+              {/* Cloud & DevOps */}
+              {/* Azure */}
+              <img src="/IT logos/cloud/azure.svg" alt="Azure" className="w-20 h-20 object-contain" />
+              
+              {/* Mobile Development */}
+              {/* Android Studio */}
+              <img src="/IT logos/ides/android-studio.svg" alt="Android Studio" className="w-20 h-20 object-contain" />
+              
+              {/* Jetpack Compose */}
+              <img src="/IT logos/others/jetpackcompose-original.svg" alt="Jetpack Compose" className="w-20 h-20 object-contain" />
+              
+              {/* Hardware */}
+              {/* Arduino */}
+              <img src="/IT logos/others/arduino-official.svg" alt="Arduino" className="w-20 h-20 object-contain" />
+              
+              {/* Raspberry Pi */}
+              <img src="/IT logos/others/raspberry-pi.svg" alt="Raspberry Pi" className="w-20 h-20 object-contain" />
+            </div>
+          </div>
+        </section>
 
         {/* Education Section */}
         <section id="education" className="mb-16">
@@ -505,7 +623,7 @@ const SoftwarePage = () => {
             {getText({ en: 'Education', no: 'Utdanning' })}
           </h2>
           
-          <div className="space-y-6">
+          <div className="space-y-8">
             {cvData?.education?.filter(edu => !edu.degree.en.includes('Upper Secondary'))
               .sort((a, b) => {
                 // Sort by start date (most recent first)
@@ -574,10 +692,10 @@ const SoftwarePage = () => {
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                         style={{
-                          backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                          borderColor: 'rgba(59, 130, 246, 0.2)',
+                          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                          borderColor: 'rgba(34, 197, 94, 0.2)',
                           borderRadius: '2rem',
-                          color: '#60a5fa',
+                          color: '#86efac',
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                         }}
                       >
@@ -604,7 +722,7 @@ const SoftwarePage = () => {
           
           
           
-          <div className="space-y-8 mt-8">
+          <div className="space-y-8">
             {(() => {
               const categorizedCourses = categorizeCourses(coursesData)
               const categories = [
@@ -674,13 +792,13 @@ const SoftwarePage = () => {
                             <button
                               key={filter.key}
                               onClick={() => toggleSubjectAreaFilter(filter.key)}
-                              className={`px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                              className={`px-6 py-3 text-sm font-medium transition-all duration-300 ${
                                 isActive
                                   ? 'bg-ide-accent-blue text-white shadow-lg'
                                   : 'bg-transparent border border-ide-accent-blue text-ide-accent-blue hover:bg-ide-accent-blue/10'
                               }`}
                               style={{
-                                borderRadius: '50px'
+                                borderRadius: '2rem'
                               }}
                             >
                               {getText(filter.label)}
@@ -692,9 +810,9 @@ const SoftwarePage = () => {
                         {filters.subjectAreas.length > 0 && (
                           <button
                             onClick={() => setFilters(prev => ({ ...prev, subjectAreas: [] }))}
-                            className="px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border border-ide-accent-orange text-ide-accent-orange hover:bg-ide-accent-orange/10"
+                            className="px-6 py-3 text-sm font-medium transition-all duration-300 bg-transparent border border-red-400 text-red-400 hover:bg-red-400/10"
                             style={{
-                              borderRadius: '50px'
+                              borderRadius: '2rem'
                             }}
                           >
                             {getText({ en: 'Clear All', no: 'Tøm alle' })}
@@ -745,12 +863,9 @@ const SoftwarePage = () => {
                                 
                                 <div className="flex flex-wrap gap-2 mb-4">
                                   {course.tags[language]?.map((tag, i) => (
-                                    <span 
-                                      key={i}
-                                      className="px-2 py-1 bg-ide-accent-blue/20 text-ide-accent-blue text-xs rounded font-mono"
-                                    >
+                                    <Tag key={i} size="sm" variant="default">
                                       {tag}
-                                    </span>
+                                    </Tag>
                                   ))}
                                 </div>
                               </div>
@@ -762,10 +877,10 @@ const SoftwarePage = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                     style={{
-                      backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                      borderColor: 'rgba(59, 130, 246, 0.2)',
+                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                      borderColor: 'rgba(34, 197, 94, 0.2)',
                       borderRadius: '2rem',
-                      color: '#60a5fa',
+                      color: '#86efac',
                       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                     }}
                   >
@@ -781,10 +896,10 @@ const SoftwarePage = () => {
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
                       style={{
-                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                        borderColor: 'rgba(239, 68, 68, 0.2)',
+                        backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                        borderColor: 'rgba(251, 146, 60, 0.2)',
                         borderRadius: '2rem',
-                        color: '#f87171',
+                        color: '#fb923c',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                       }}
                     >
@@ -799,7 +914,7 @@ const SoftwarePage = () => {
                       onClick={() => {
                         const element = document.querySelector(course.portfolioLink.replace('/software', ''))
                         if (element) {
-                          const navbarHeight = 100
+                          const navbarHeight = 92 // Navbar height (h-20 + mt-3 = 80px + 12px)
                           const elementPosition = element.offsetTop - navbarHeight
                           window.scrollTo({ 
                             top: elementPosition, 
@@ -812,13 +927,13 @@ const SoftwarePage = () => {
                         backgroundColor: 'rgba(34, 197, 94, 0.15)',
                         borderColor: 'rgba(34, 197, 94, 0.2)',
                         borderRadius: '2rem',
-                        color: '#4ade80',
+                        color: '#86efac',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                       }}
                     >
                       <span>{getText({ en: 'Project', no: 'Prosjekt' })}</span>
                       <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                     </button>
                   )}
@@ -833,7 +948,7 @@ const SoftwarePage = () => {
                       <div className="flex justify-center">
                         <button
                           onClick={() => toggleCategory(category.key)}
-                          className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-500 hover:scale-105 hover:shadow-xl text-sm font-medium group"
+                          className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium group"
                           style={{
                             backgroundColor: 'rgba(59, 130, 246, 0.15)',
                             borderColor: 'rgba(59, 130, 246, 0.2)',
@@ -848,7 +963,7 @@ const SoftwarePage = () => {
                             }
                           </span>
                           <svg 
-                            className={`ml-2 w-4 h-4 transition-all duration-500 transform ${
+                            className={`ml-2 w-4 h-4 transition-all duration-300 transform ${
                               isExpanded ? 'rotate-180' : 'rotate-0'
                             } group-hover:scale-110`} 
                             fill="none" 
