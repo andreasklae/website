@@ -49,21 +49,21 @@ const ProjectCard = ({ project }) => {
 
   return (
     <>
-      <div id={project.id} className="card-dark group w-full">
+      <div id={project.id} className="group w-full max-w-full overflow-hidden glass-bubble bg-ide-surface/80 border border-ide-border/50" style={{ borderRadius: '2rem' }}>
         {/* Project Header */}
-        <div className="mb-4">
+        <div className="mb-4 mx-6 mt-6">
           <h3 className="text-2xl font-semibold text-white">
             {getText(project.title)}
           </h3>
         </div>
 
         {/* Project Description */}
-        <p className="text-ide-text mb-6 text-xl leading-relaxed">
+        <p className="text-ide-text mb-6 text-xl leading-relaxed text-wrap break-words mx-6">
           {getText(project.description)}
         </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6 mx-6">
           {project.tags.map((tag, index) => (
             <span
               key={index}
@@ -75,7 +75,7 @@ const ProjectCard = ({ project }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6 mx-6">
           {project.type === 'website' ? (
             <button
               onClick={handleVisitWebsite}
@@ -107,7 +107,7 @@ const ProjectCard = ({ project }) => {
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                   }}
                 >
-                  <span>{getText({ en: 'Download PDF', no: 'Last ned PDF' })}</span>
+                  <span>{getText({ en: 'Project Paper', no: 'Prosjektrapport' })}</span>
                   <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -149,6 +149,24 @@ const ProjectCard = ({ project }) => {
                   </svg>
               </button>
               )}
+              {project.researchPaperLink && (
+                <button
+                  onClick={() => window.open(project.researchPaperLink, '_blank')}
+                  className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"
+                  style={{
+                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                    borderColor: 'rgba(59, 130, 246, 0.2)',
+                    borderRadius: '2rem',
+                    color: '#93c5fd',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  <span>Yang et al. (2021)</span>
+                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </button>
+              )}
             </>
           )}
             </div>
@@ -158,17 +176,17 @@ const ProjectCard = ({ project }) => {
           <div 
             className="overflow-hidden transition-all duration-500 ease-in-out"
             style={{
-              maxHeight: isExpanded ? '1000px' : '0px',
+              maxHeight: isExpanded ? '5000px' : '0px',
               opacity: isExpanded ? 1 : 0
             }}
           >
             <div className="border-t border-ide-border pt-6">
               {/* Project Details Section */}
-              <div className="mb-6">
+              <div className="mb-6 mx-6">
                 <h4 className="text-lg font-semibold text-white mb-3">
                   {getText({ en: 'Project Details', no: 'Prosjektdetaljer' })}
                 </h4>
-                <div className="text-gray-300 text-base leading-relaxed">
+                <div className="text-gray-300 text-base leading-relaxed text-wrap break-words">
                   {project.id === 'fjordquest' && (
                     <div>
                       {getText({
@@ -226,8 +244,18 @@ const ProjectCard = ({ project }) => {
                   {project.id === 'ml-project' && (
                     <div>
                       {getText({
-                        en: "This research project, conducted during an exchange semester at Freie Universität Berlin, focused on applying graph neural networks to predict drug synergy in cancer treatment. The project addressed a critical challenge in modern medicine: identifying effective drug combinations that work better together than individually.",
-                        no: "Dette forskningsprosjektet, utført under et utvekslingssemester ved Freie Universität Berlin, fokuserte på å anvende graf-nevrale nettverk for å forutsi legemiddelsynergi i kreftbehandling. Prosjektet adresserte en kritisk utfordring i moderne medisin: å identifisere effektive legemiddelkombinasjoner som fungerer bedre sammen enn individuelt."
+                        en: "This research project, conducted during an exchange semester at Freie Universität Berlin, focused on implementing and evaluating GraphSynergy, a deep learning framework for anticancer drug combination prediction. The project was based on the original research by ",
+                        no: "Dette forskningsprosjektet, utført under et utvekslingssemester ved Freie Universität Berlin, fokuserte på å implementere og evaluere GraphSynergy, et dyplæringsrammeverk for prediksjon av antikreft-legemiddelkombinasjoner. Prosjektet var basert på original forskning av "
+                      })}
+                      <button
+                        onClick={() => window.open(project.researchPaperLink, '_blank')}
+                        className="inline-flex items-center text-blue-400 hover:text-blue-300 underline transition-colors duration-200"
+                      >
+                        Yang et al. (2021)
+                      </button>
+                      {getText({
+                        en: " and addressed a critical challenge in modern medicine: identifying effective drug combinations that work better together than individually.",
+                        no: " og adresserte en kritisk utfordring i moderne medisin: å identifisere effektive legemiddelkombinasjoner som fungerer bedre sammen enn individuelt."
                       })}
                       <br /><br />
                       {getText({
@@ -257,11 +285,10 @@ const ProjectCard = ({ project }) => {
                     })}
                   </p>
                   <div className="flex justify-center">
-                    <div className="relative w-3/4 max-w-md rounded-xl overflow-hidden shadow-lg">
+                    <div className="relative w-full sm:w-3/4 max-w-md rounded-xl overflow-hidden shadow-lg">
                       <video
                         controls
-                        className="w-full h-auto"
-                        style={{ maxHeight: '300px' }}
+                        className="w-full h-auto max-h-[200px] sm:max-h-[300px]"
                       >
                         <source src="/portfolio/Software engineering/IN1060/explaination_video.mp4" type="video/mp4" />
                         {getText({ en: 'Your browser does not support the video tag.', no: 'Nettleseren din støtter ikke video-elementet.' })}
@@ -273,7 +300,7 @@ const ProjectCard = ({ project }) => {
 
               {/* Credits Section */}
               {(project.id === 'in1060' || project.id === 'in2000' || project.id === 'ml-project') && (
-                <div className="mb-6">
+                <div className="mb-6 mx-6">
                   <h4 className="text-lg font-semibold text-white mb-3">
                     {getText({ en: 'Credits', no: 'Bidragsytere' })}
                   </h4>
@@ -310,7 +337,7 @@ const ProjectCard = ({ project }) => {
               )}
 
               {/* Project Gallery Section */}
-              <div className="mb-4">
+              <div className="mb-4 mx-6">
                 <h4 className="text-lg font-semibold text-white mb-2">
                   {getText({ en: 'Project Gallery', no: 'Prosjektgalleri' })}
                 </h4>
@@ -337,7 +364,7 @@ const ProjectCard = ({ project }) => {
             
         {/* Expand/Collapse Button - Centered at bottom */}
         {!photosLoading && projectPhotos && projectPhotos.length > 0 && (
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-6 mx-6 mb-6">
               <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-500 hover:scale-105 hover:shadow-xl text-sm font-medium group"

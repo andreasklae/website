@@ -84,68 +84,97 @@ const SoftwarePage = () => {
     }
   }, [coursesData, filters])
 
-  // Recalculate heights on window resize
+  // Recalculate heights on window resize - continuously during resize
   useEffect(() => {
     let resizeTimeout
-    let lastWidth = window.innerWidth
+    let resizeObserver
+    let resizeInterval
     
-    const handleResize = () => {
-      const currentWidth = window.innerWidth
-      
-      // Only recalculate if the courses per row would actually change
-      const getCoursesPerRow = (width) => {
-        if (width < 768) return 1
-        if (width < 1024) return 2
-        return 3
-      }
-      
-      const oldCoursesPerRow = getCoursesPerRow(lastWidth)
-      const newCoursesPerRow = getCoursesPerRow(currentWidth)
-      
-      // Only proceed if the layout actually changes
-      if (oldCoursesPerRow !== newCoursesPerRow) {
-        setIsResizing(true)
+    const getCoursesPerRow = (width) => {
+      if (width < 768) return 1
+      if (width < 1024) return 2
+      return 3
+    }
+    
+    const recalculateAllHeights = () => {
+      if (coursesData.length > 0) {
+        const categorizedCourses = categorizeCourses(coursesData)
+        const categories = ['informatics', 'mediaCommunication', 'other']
+        const coursesPerRow = getCoursesPerRow(window.innerWidth)
         
-        // Clear any existing timeout
-        if (resizeTimeout) {
-          clearTimeout(resizeTimeout)
-        }
-        
-        // Debounce the resize handling
-        resizeTimeout = setTimeout(() => {
-          if (coursesData.length > 0) {
-            const categorizedCourses = categorizeCourses(coursesData)
-            const categories = ['informatics', 'mediaCommunication', 'other']
-            
-            categories.forEach(categoryKey => {
-              const courses = categorizedCourses[categoryKey]
-              if (courses.length > 0) {
-                // Measure immediately without delay during resize
-                measureCategoryHeight(categoryKey, newCoursesPerRow)
-              }
+        categories.forEach(categoryKey => {
+          const courses = categorizedCourses[categoryKey]
+          if (courses.length > 0) {
+            // Use requestAnimationFrame to ensure DOM is updated
+            requestAnimationFrame(() => {
+              measureCategoryHeight(categoryKey, coursesPerRow)
             })
           }
-          
-          // Re-enable animations after resize is complete
-          setTimeout(() => {
-            setIsResizing(false)
-          }, 50)
-        }, 100) // Longer debounce to reduce jitter
+        })
+      }
+    }
+    
+    const handleResize = () => {
+      // Clear any existing timeout and interval
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout)
+      }
+      if (resizeInterval) {
+        clearInterval(resizeInterval)
       }
       
-      lastWidth = currentWidth
+      setIsResizing(true)
+      
+      // Recalculate immediately during resize
+      recalculateAllHeights()
+      
+      // Continue recalculating during resize for smoother curtain animation
+      resizeInterval = setInterval(() => {
+        recalculateAllHeights()
+      }, 16) // ~60fps
+      
+      // Debounce the end of resize
+      resizeTimeout = setTimeout(() => {
+        setIsResizing(false)
+        if (resizeInterval) {
+          clearInterval(resizeInterval)
+        }
+      }, 150)
+    }
+
+    // Set up ResizeObserver to watch for changes in individual course cards
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver((entries) => {
+        // Only recalculate if we're not already resizing (to avoid conflicts)
+        if (!isResizing) {
+          recalculateAllHeights()
+        }
+      })
+      
+      // Observe all category containers
+      Object.values(categoryRefs.current).forEach(ref => {
+        if (ref) {
+          resizeObserver.observe(ref)
+        }
+      })
     }
 
     window.addEventListener('resize', handleResize)
     
-    // Cleanup listener on unmount
+    // Cleanup listeners on unmount
     return () => {
       window.removeEventListener('resize', handleResize)
       if (resizeTimeout) {
         clearTimeout(resizeTimeout)
       }
+      if (resizeInterval) {
+        clearInterval(resizeInterval)
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
     }
-  }, [coursesData, filters])
+  }, [coursesData, filters, isResizing])
 
 
   const applyFilters = (course) => {
@@ -227,6 +256,33 @@ const SoftwarePage = () => {
       }
     })
 
+    // Sort courses by semester (newest first)
+    const sortCoursesBySemester = (courseList) => {
+      return courseList.sort((a, b) => {
+        // Extract year and semester from semester string (e.g., "Høst 2024" or "Spring 2024")
+        const getSemesterValue = (semester) => {
+          const semesterText = getText(semester).toLowerCase()
+          const yearMatch = semesterText.match(/(\d{4})/)
+          const year = yearMatch ? parseInt(yearMatch[1]) : 0
+          
+          // Assign higher values to more recent semesters
+          if (semesterText.includes('høst') || semesterText.includes('autumn') || semesterText.includes('fall')) {
+            return year * 10 + 2 // Autumn gets higher value
+          } else if (semesterText.includes('vår') || semesterText.includes('spring')) {
+            return year * 10 + 1 // Spring gets lower value
+          }
+          return year * 10
+        }
+        
+        return getSemesterValue(b.semester) - getSemesterValue(a.semester)
+      })
+    }
+
+    // Sort each category
+    categories.informatics = sortCoursesBySemester(categories.informatics)
+    categories.mediaCommunication = sortCoursesBySemester(categories.mediaCommunication)
+    categories.other = sortCoursesBySemester(categories.other)
+
     return categories
   }
 
@@ -235,42 +291,60 @@ const SoftwarePage = () => {
     if (ref) {
       const grid = ref.querySelector('.grid')
       if (grid) {
-        // Get the actual height of the first row by measuring the grid's scroll height
-        // when we temporarily set it to show only the first row
-        const originalHeight = grid.style.height
-        const originalOverflow = grid.style.overflow
-        
-        // Temporarily set height to auto to get natural height
-        grid.style.height = 'auto'
-        grid.style.overflow = 'visible'
-        
-        // Get the height of just the first row
         const children = Array.from(grid.children)
         if (children.length > 0) {
-          // Create a temporary container to measure just the first row
+          // Create a temporary container to measure the exact first row height
           const tempContainer = document.createElement('div')
           tempContainer.style.position = 'absolute'
           tempContainer.style.visibility = 'hidden'
           tempContainer.style.top = '-9999px'
+          tempContainer.style.left = '-9999px'
           tempContainer.style.width = grid.offsetWidth + 'px'
+          tempContainer.style.height = 'auto'
+          
+          // Copy all grid styles including margins and paddings
+          const gridStyles = window.getComputedStyle(grid)
+          tempContainer.style.display = gridStyles.display
+          tempContainer.style.gridTemplateColumns = gridStyles.gridTemplateColumns
+          tempContainer.style.gap = gridStyles.gap
+          tempContainer.style.padding = gridStyles.padding
+          tempContainer.style.margin = gridStyles.margin
+          tempContainer.style.boxSizing = gridStyles.boxSizing
           tempContainer.className = grid.className
           
           // Clone only the first row elements
-          children.slice(0, coursesPerRow).forEach(child => {
-            tempContainer.appendChild(child.cloneNode(true))
+          const firstRowChildren = children.slice(0, coursesPerRow)
+          firstRowChildren.forEach(child => {
+            const clonedChild = child.cloneNode(true)
+            // Ensure the cloned child has the same styles and dimensions
+            const childStyles = window.getComputedStyle(child)
+            clonedChild.style.margin = childStyles.margin
+            clonedChild.style.padding = childStyles.padding
+            clonedChild.style.width = childStyles.width
+            clonedChild.style.height = 'auto'
+            clonedChild.style.minHeight = childStyles.minHeight
+            clonedChild.style.maxHeight = childStyles.maxHeight
+            clonedChild.style.boxSizing = childStyles.boxSizing
+            clonedChild.style.display = childStyles.display
+            clonedChild.style.flexDirection = childStyles.flexDirection
+            clonedChild.style.justifyContent = childStyles.justifyContent
+            clonedChild.style.alignItems = childStyles.alignItems
+            tempContainer.appendChild(clonedChild)
           })
           
           document.body.appendChild(tempContainer)
-          const firstRowHeight = tempContainer.offsetHeight
-          document.body.removeChild(tempContainer)
           
-          // Restore original styles
-          grid.style.height = originalHeight
-          grid.style.overflow = originalOverflow
+          // Force a reflow to ensure accurate measurements
+          tempContainer.offsetHeight
+          
+          // Get the total height including margins and paddings
+          const totalHeight = Math.max(tempContainer.offsetHeight, 200) // Minimum height of 200px
+          
+          document.body.removeChild(tempContainer)
           
           setCategoryHeights(prev => ({
             ...prev,
-            [categoryKey]: firstRowHeight
+            [categoryKey]: totalHeight
           }))
         }
       }
@@ -329,8 +403,8 @@ const SoftwarePage = () => {
   }
 
   return (
-    <div className="min-h-screen text-ide-text animate-page-enter">
-      <div className="max-w-7xl mx-auto px-6 pt-32 lg:pt-40 pb-12">
+    <div className="min-h-screen text-ide-text animate-page-enter container-responsive">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 lg:pt-40 pb-12 w-full">
         {/* About Section */}
         <section className="mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center gap-3">
@@ -340,21 +414,108 @@ const SoftwarePage = () => {
           </h1>
           
           {cvData && (
-            <div className="text-ide-text text-lg leading-relaxed max-w-4xl">
+            <div className="text-ide-text text-lg leading-relaxed max-w-4xl text-wrap">
                 {parseMarkdownText(getText(cvData.summary), true)}
             </div>
           )}
         </section>
 
+        {/* Quick Navigation */}
+        <div className="flex flex-wrap gap-3 mb-16">
+          <button
+            onClick={() => {
+              const element = document.querySelector('#education')
+              if (element) {
+                const navbarHeight = 100
+                const elementPosition = element.offsetTop - navbarHeight
+                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+              }
+            }}
+            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+            style={{
+              backgroundColor: 'rgba(59, 130, 246, 0.15)',
+              borderColor: 'rgba(59, 130, 246, 0.2)',
+              borderRadius: '1rem',
+              color: '#93c5fd'
+            }}
+          >
+            <span className="code-decoration">//</span>
+            {getText({ en: 'Education', no: 'Utdanning' })}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => {
+              const element = document.querySelector('#courses')
+              if (element) {
+                const navbarHeight = 100
+                const elementPosition = element.offsetTop - navbarHeight
+                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+              }
+            }}
+            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+            style={{
+              backgroundColor: 'rgba(168, 85, 247, 0.15)',
+              borderColor: 'rgba(168, 85, 247, 0.2)',
+              borderRadius: '1rem',
+              color: '#c084fc'
+            }}
+          >
+            <span className="code-decoration">[</span>
+            {getText({ en: 'Courses', no: 'Emner' })}
+            <span className="code-decoration">]</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => {
+              const element = document.querySelector('#projects')
+              if (element) {
+                const navbarHeight = 100
+                const elementPosition = element.offsetTop - navbarHeight
+                window.scrollTo({ top: elementPosition, behavior: 'smooth' })
+              }
+            }}
+            className="glass-bubble px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
+            style={{
+              backgroundColor: 'rgba(34, 197, 94, 0.15)',
+              borderColor: 'rgba(34, 197, 94, 0.2)',
+              borderRadius: '1rem',
+              color: '#86efac'
+            }}
+          >
+            <span className="code-decoration">{'<'}</span>
+            {getText({ en: 'Projects', no: 'Prosjekter' })}
+            <span className="code-decoration">{' />'}</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
         {/* Education Section */}
-        <section className="mb-16">
+        <section id="education" className="mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-2">
             <span className="code-decoration">//</span>
             {getText({ en: 'Education', no: 'Utdanning' })}
           </h2>
           
           <div className="space-y-6">
-            {cvData?.education?.filter(edu => !edu.degree.en.includes('Upper Secondary')).map((edu, index) => {
+            {cvData?.education?.filter(edu => !edu.degree.en.includes('Upper Secondary'))
+              .sort((a, b) => {
+                // Sort by start date (most recent first)
+                // Convert YYYY-MM format to comparable number
+                const getStartDateValue = (edu) => {
+                  const startDate = edu.start || edu.startDate || ''
+                  if (startDate === 'present') return 999999 // Present studies go first
+                  const [year, month] = startDate.split('-').map(Number)
+                  return year * 12 + (month || 0) // Convert to months since year 0
+                }
+                return getStartDateValue(b) - getStartDateValue(a)
+              })
+              .map((edu, index) => {
               // Define program URLs and button text based on degree and school
               const getProgramUrl = (edu) => {
                 if (edu.degree.en.includes('MSc in Informatics: Programming and Systems Architecture')) {
@@ -381,11 +542,11 @@ const SoftwarePage = () => {
 
               return (
               <div key={index} className="card-dark">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-3">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
                   <h3 className="text-xl font-semibold text-white">
                     {getText(edu.degree)}
                   </h3>
-                  <span className="text-ide-accent-blue font-mono text-sm">
+                  <span className="text-ide-accent-purple font-mono text-sm">
                     {formatDateRange(edu.start, edu.end, language)}
                   </span>
                 </div>
@@ -431,7 +592,7 @@ const SoftwarePage = () => {
         </section>
 
         {/* Courses Section */}
-        <section className="mb-16">
+        <section id="courses" className="mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-2">
             <span className="code-decoration">[</span>
             {getText({ en: 'Courses', no: 'Emner' })}
@@ -545,10 +706,11 @@ const SoftwarePage = () => {
                       className={`course-container ${isExpanded ? 'expanded' : 'collapsed'}`}
                       style={{
                         maxHeight: isExpanded ? '5000px' : `${categoryHeights[category.key] || 200}px`,
-                        transition: isResizing ? 'none' : 'max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
+                        transition: isResizing ? 'none' : 'max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        overflow: 'hidden'
                       }}
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
                         {coursesToShow.map((course, index) => {
                           return (
                             <div 
@@ -574,7 +736,7 @@ const SoftwarePage = () => {
                                   )}
                                 </p>
                                 
-                                <p className="text-ide-text text-sm mb-4">
+                                <p className="text-ide-text text-sm mb-4 text-wrap break-words">
                                   {getText(course.summary)}
                                 </p>
                                 

@@ -76,18 +76,19 @@ export const portfolioProjects = [
   {
     id: 'ml-project',
     title: {
-      en: 'Graph Neural Networks for Cancer Treatment',
-      no: 'Graf-nevrale nettverk for kreftbehandling'
+      en: 'GraphSynergy: Drug Discovery AI',
+      no: 'GraphSynergy: AI for legemiddeloppdagelse'
     },
     description: {
-      en: 'Graph neural networks for drug synergy prediction in cancer treatment using protein interaction networks.',
-      no: 'Graf-nevrale nettverk for legemiddelsynergi-prediksjon i kreftbehandling ved bruk av protein-interaksjonsnettverk.'
+      en: 'Implementation and evaluation of GraphSynergy, a deep learning framework for anticancer drug combination prediction based on protein interaction networks.\n\nBuilt upon the original research by Yang et al.',
+      no: 'Implementering og evaluering av GraphSynergy, et dyplæringsrammeverk for prediksjon av antikreft-legemiddelkombinasjoner basert på protein-interaksjonsnettverk.\n\nBygget på original forskning av Yang et al.'
     },
     tags: ['Python', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
     type: 'research',
     photos: [], // Will be loaded dynamically from photos-manifest.json
     pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf',
-    githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp'
+    githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp',
+    researchPaperLink: 'https://pubmed.ncbi.nlm.nih.gov/34472609/'
   },
   {
     id: 'in1060',
