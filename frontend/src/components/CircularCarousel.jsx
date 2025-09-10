@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { useLanguage } from '../contexts/LanguageContext'
 import ImageCarousel from './ImageCarousel'
 
 const CircularCarousel = ({ images, title, className = '' }) => {
+  const { getText } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -29,102 +31,68 @@ const CircularCarousel = ({ images, title, className = '' }) => {
     setIsFullscreen(false)
   }
 
-  // Create looped images for mobile carousel
+  // Create looped images for mobile carousel - many duplicates for true infinite scroll
   const loopedImages = images.length > 1 ? [
-    images[images.length - 1], // Last image at the beginning
-    ...images, // All original images
-    images[0] // First image at the end
+    ...images, // Original images
+    ...images, // Duplicate set 1
+    ...images, // Duplicate set 2
+    ...images, // Duplicate set 3
+    ...images, // Duplicate set 4
+    ...images, // Duplicate set 5
   ] : images
 
-  // Handle infinite scroll loop for mobile
+  // Handle scroll position tracking for mobile (no auto-jumping)
   useEffect(() => {
     const container = scrollContainerRef.current
     if (!container || images.length <= 1) return
 
     let scrollTimeout
-    let isScrolling = false
 
     const handleScroll = () => {
-      if (isTransitioning) return
-      
-      isScrolling = true
-      // Clear existing timeout
       clearTimeout(scrollTimeout)
-      
-      // Update current index based on scroll position
-      const scrollLeft = container.scrollLeft
-      const containerWidth = container.offsetWidth
-      const centerX = scrollLeft + containerWidth / 2
-      
-      // Find which image is closest to center
-      let closestIndex = 0
-      let minDistance = Infinity
-      
-      Array.from(container.children).forEach((child, index) => {
-        const childCenter = child.offsetLeft + child.offsetWidth / 2
-        const distance = Math.abs(centerX - childCenter)
-        if (distance < minDistance) {
-          minDistance = distance
-          closestIndex = index
-        }
-      })
-      
-      // Convert looped index to real index
-      let realIndex = closestIndex
-      if (closestIndex === 0) realIndex = images.length - 1 // First duplicate = last real
-      else if (closestIndex === container.children.length - 1) realIndex = 0 // Last duplicate = first real
-      else realIndex = closestIndex - 1 // Middle images are real images
-      
-      setCurrentIndex(realIndex)
       
       // Wait for scroll to settle
       scrollTimeout = setTimeout(() => {
-        isScrolling = false
-        const firstRealImage = container.children[1]
-        const lastRealImage = container.children[container.children.length - 2]
-        const duplicateFirstImage = container.children[0]
-        const duplicateLastImage = container.children[container.children.length - 1]
+        const scrollLeft = container.scrollLeft
+        const containerWidth = container.offsetWidth
+        const itemWidth = container.children[0]?.offsetWidth || 0
+        const gap = 24 // gap-6 = 1.5rem = 24px
+        const itemTotalWidth = itemWidth + gap
         
-        // Check if we're at the duplicate last image (should jump to real first)
-        if (Math.abs(scrollLeft - (duplicateLastImage?.offsetLeft || 0)) < 10) {
-          setIsTransitioning(true)
-          container.scrollLeft = firstRealImage?.offsetLeft || 0
-          setCurrentIndex(0)
-          setTimeout(() => setIsTransitioning(false), 100)
-        }
-        // Check if we're at the duplicate first image (should jump to real last)
-        else if (Math.abs(scrollLeft - (duplicateFirstImage?.offsetLeft || 0)) < 10) {
-          setIsTransitioning(true)
-          container.scrollLeft = lastRealImage?.offsetLeft || 0
-          setCurrentIndex(images.length - 1)
-          setTimeout(() => setIsTransitioning(false), 100)
-        }
-      }, 200) // Increased timeout for better touch handling
+        // Calculate which item is in the center
+        const centerX = scrollLeft + containerWidth / 2
+        const currentItemIndex = Math.floor(centerX / itemTotalWidth)
+        
+        // Calculate real index (modulo to handle duplicates)
+        const realIndex = currentItemIndex % images.length
+        setCurrentIndex(realIndex)
+      }, 100)
     }
 
-    // Add both scroll and touch events for better mobile support
+    // Add scroll event listener
     container.addEventListener('scroll', handleScroll, { passive: true })
-    container.addEventListener('touchmove', handleScroll, { passive: true })
-    container.addEventListener('touchend', handleScroll, { passive: true })
     
     return () => {
       container.removeEventListener('scroll', handleScroll)
-      container.removeEventListener('touchmove', handleScroll)
-      container.removeEventListener('touchend', handleScroll)
       clearTimeout(scrollTimeout)
     }
-  }, [images.length, isTransitioning])
+  }, [images.length])
 
-  // Set initial scroll position
+  // Set initial scroll position to middle of the carousel
   useEffect(() => {
     const container = scrollContainerRef.current
     if (container && images.length > 1) {
       // Small delay to ensure DOM is fully rendered
       setTimeout(() => {
-        const firstRealImage = container.children[1]
-        if (firstRealImage) {
-          container.scrollLeft = firstRealImage.offsetLeft
-        }
+        const itemWidth = container.children[0]?.offsetWidth || 0
+        const gap = 24
+        const itemTotalWidth = itemWidth + gap
+        const middleSetStart = images.length * 2 // Start of third set (middle)
+        
+        container.scrollTo({
+          left: middleSetStart * itemTotalWidth,
+          behavior: 'auto'
+        })
       }, 100)
     }
   }, [images.length])
@@ -145,15 +113,12 @@ const CircularCarousel = ({ images, title, className = '' }) => {
         >
           {loopedImages.map((image, index) => {
             // Convert looped index to real index for click handler
-            let realIndex = index
-            if (index === 0) realIndex = images.length - 1
-            else if (index === loopedImages.length - 1) realIndex = 0
-            else realIndex = index - 1
+            const realIndex = index % images.length
             
             return (
               <div
                 key={`${index}-${image}`}
-                className={`flex-shrink-0 snap-center ${index === 0 ? 'ml-6' : ''} ${index === loopedImages.length - 1 ? 'mr-6' : ''}`}
+                className="flex-shrink-0 snap-center"
                 onClick={() => openFullscreen(realIndex)}
               >
                  <div 
@@ -161,13 +126,20 @@ const CircularCarousel = ({ images, title, className = '' }) => {
                  >
                   <img
                     src={image}
-                    alt={`${title} - ${index + 1}`}
+                    alt={`${title} - ${realIndex + 1}`}
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>
               </div>
             )
           })}
+        </div>
+        
+        {/* Click instruction for mobile */}
+        <div className="text-center mt-4 mb-2">
+          <p className="text-ide-text/70 text-sm">
+            {getText({ en: 'Tap image to expand', no: 'Trykk på bilde for å utvide' })}
+          </p>
         </div>
         
         {/* Photo counter for mobile */}
@@ -248,6 +220,13 @@ const CircularCarousel = ({ images, title, className = '' }) => {
           </div>
         </div>
 
+        {/* Click instruction for desktop */}
+        <div className="text-center mt-4">
+          <p className="text-ide-text/70 text-sm">
+            {getText({ en: 'Click image to expand', no: 'Klikk på bilde for å utvide' })}
+          </p>
+        </div>
+
         {/* Next button - positioned absolutely */}
         {images.length > 1 && (
           <button
@@ -317,12 +296,14 @@ const CircularCarousel = ({ images, title, className = '' }) => {
               </>
             )}
 
-            {/* Image - fits within screen */}
-            <img
-              src={images[currentIndex]}
-              alt={`${title} - ${currentIndex + 1}`}
-              className="w-full h-full object-contain"
-            />
+            {/* Image - fits within screen with padding */}
+            <div className="p-8 flex items-center justify-center h-full">
+              <img
+                src={images[currentIndex]}
+                alt={`${title} - ${currentIndex + 1}`}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
 
             {/* Image counter */}
             {images.length > 1 && (

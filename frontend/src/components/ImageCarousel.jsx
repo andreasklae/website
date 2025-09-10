@@ -91,11 +91,11 @@ const ImageCarousel = ({ images, title, onClose }) => {
         </div>
 
         {/* Main Image */}
-        <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+        <div className="relative bg-black rounded-lg overflow-hidden mx-4 my-8">
           <img
             src={images[currentIndex]}
             alt={`${title} - ${currentIndex + 1}`}
-            className="w-full h-full object-contain"
+            className="max-w-full max-h-[80vh] object-contain mx-auto block"
           />
         </div>
 
