@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/', label: { en: 'Home', no: 'Hjem' } },
-    { path: '/software', label: { en: 'Software', no: 'Programvare' } },
+    { path: '/software', label: { en: 'Informatics', no: 'Informatikk' } },
     { path: '/photography', label: { en: 'Photography', no: 'Foto' } }
   ]
 
@@ -46,9 +46,10 @@ const Navbar = () => {
               <div className="hidden md:flex items-center">
                 <Link 
                   to="/" 
+                  onClick={(e) => handleNavClick('/', e)}
                   className="glass-bubble flex h-16 items-center leading-none space-x-4 group px-4 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl"
                   style={{
-                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                     borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)',
                     borderRadius: '2rem',
                     width: 'fit-content'
@@ -93,8 +94,8 @@ const Navbar = () => {
                             ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
                             : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
                         : isDarkMode
-                          ? 'bg-black/70 border-white/20 hover:bg-white/10'
-                          : 'bg-white/70 border-white/30 hover:bg-white/80'
+                          ? 'bg-black/50 border-white/20 hover:bg-white/10'
+                          : 'bg-white/50 border-white/30 hover:bg-white/60'
                       }
                     `}
                     style={{
@@ -143,13 +144,13 @@ const Navbar = () => {
                             ? 'bg-gradient-to-r from-blue-600 to-cyan-500 border-blue-400/60 text-white shadow-xl scale-105'
                             : 'bg-gradient-to-r from-blue-500 to-sky-400 border-blue-400/60 text-white shadow-xl scale-105'
                         : isDarkMode
-                          ? 'bg-black/70 border-white/20 text-gray-300 hover:text-white hover:bg-white/10'
-                          : 'bg-white/70 border-white/30 text-gray-700 hover:text-gray-900 hover:bg-white/80'
+                          ? 'bg-black/50 border-white/20 text-gray-300 hover:text-white hover:bg-white/10'
+                          : 'bg-white/50 border-white/30 text-gray-700 hover:text-gray-900 hover:bg-white/60'
                       }
                     `}
                     style={{
                       borderRadius: '2rem',
-                      backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+                      backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                       borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)',
                       transitionDelay: `${index * 50}ms`,
                       opacity: fabOpen ? 1 : 0,
@@ -200,7 +201,7 @@ const Navbar = () => {
                   }
                 `}
                 style={{
-                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                   borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)',
                   borderRadius: '2rem'
                 }}
