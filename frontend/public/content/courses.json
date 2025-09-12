@@ -6,7 +6,7 @@
     "ects": 10,
     "grade": "A",
     "link": "https://www.uio.no/studier/emner/hf/ifikk/EXPHIL03/",
-    "pdfExam": "./philosophy exam.pdf",
+    "pdfExam": "docs/philosophy exam.pdf",
     "tags": {
       "en": ["Philosophy", "Ethics", "Epistemology", "Ontology", "Metaphysics"],
       "no": ["Filosofi", "Etikk", "Erkjennelsesteori", "Ontologi", "Metafysikk"]
@@ -203,7 +203,7 @@
     "ects": 10,
     "grade": "A",
     "link": "https://www.uio.no/studier/emner/hf/imk/MEVIT2532/",
-    "pdfExam": "./Exam film.pdf",
+    "pdfExam": "docs/Exam film.pdf",
     "tags": {
       "en": ["Media communication", "Film", "Journalism", "Reviewing"],
       "no": ["Medier og kommunikasjon", "Film", "Journalistikk", "Anmeldelse"]

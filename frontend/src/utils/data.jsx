@@ -2,24 +2,24 @@ import { getAssetPath } from './paths'
 
 // Data loading utilities
 export const loadPersonalData = async () => {
-  const response = await fetch(getAssetPath('personal.json'))
+  const response = await fetch(getAssetPath('content/personal.json'))
   return response.json()
 }
 
 export const loadCVData = async () => {
-  const response = await fetch(getAssetPath('cv.json'))
+  const response = await fetch(getAssetPath('content/cv.json'))
   return response.json()
 }
 
 export const loadCoursesData = async () => {
-  const response = await fetch(getAssetPath('courses.json'))
+  const response = await fetch(getAssetPath('content/courses.json'))
   return response.json()
 }
 
 // Function to load all photos from the photos manifest
 export const loadPhotosManifest = async () => {
   try {
-    const response = await fetch(getAssetPath('photos-manifest.json'))
+    const response = await fetch(getAssetPath('content/photos-manifest.json'))
     return response.json()
   } catch (error) {
     console.error('Error loading photos manifest:', error)
