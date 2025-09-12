@@ -62,7 +62,7 @@ const Navbar = () => {
                       isSoftwarePage 
                         ? 'bg-gradient-to-r from-purple-500 to-violet-500'
                         : isPhotographyPage 
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+                          ? 'bg-gradient-to-r from-black to-gray-700'
                           : 'bg-gradient-to-r from-blue-500 to-cyan-500'
                     }`}
                     style={{
@@ -97,7 +97,7 @@ const Navbar = () => {
                       glass-bubble px-6 h-16 flex items-center leading-none text-base font-medium transition-all duration-300 backdrop-blur-sm border hover:scale-105 hover:shadow-xl
                       ${isActive(item.path)
                         ? item.path === '/photography'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 border-orange-400/60 text-white shadow-xl scale-105'
+                          ? 'bg-gradient-to-r from-black to-gray-800 border-gray-600/60 text-white shadow-xl scale-105'
                           : item.path === '/software'
                             ? 'bg-gradient-to-r from-purple-600 to-violet-500 border-purple-400/60 text-white shadow-xl scale-105'
                             : isDarkMode
@@ -149,7 +149,7 @@ const Navbar = () => {
                       glass-bubble px-6 py-4 backdrop-blur-sm border transition-all duration-300 ease-out hover:scale-105 hover:shadow-xl
                       ${isActive(item.path)
                         ? item.path === '/photography'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 border-orange-400/60 text-white shadow-xl scale-105'
+                          ? 'bg-gradient-to-r from-black to-gray-800 border-gray-600/60 text-white shadow-xl scale-105'
                           : item.path === '/software'
                             ? 'bg-gradient-to-r from-purple-600 to-violet-500 border-purple-400/60 text-white shadow-xl scale-105'
                             : isDarkMode

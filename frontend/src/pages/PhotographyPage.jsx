@@ -1,150 +1,123 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
-import { photographyStories, photographyHighlights } from '../utils/data.jsx'
-import LanguageToggle from '../components/LanguageToggle'
-import ImageCarousel from '../components/ImageCarousel'
 
 const PhotographyPage = () => {
   const { getText } = useLanguage()
-  const [highlights, setHighlights] = useState([])
-  const [showLightbox, setShowLightbox] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState(0)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Load actual highlights from the portfolio
-    const loadHighlights = async () => {
-      try {
-        setHighlights(photographyHighlights)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error loading highlights:', error)
-        setLoading(false)
-      }
-    }
-    loadHighlights()
-  }, [])
-
-  const openLightbox = (index) => {
-    setLightboxIndex(index)
-    setShowLightbox(true)
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 animate-page-enter">
-      <div className="max-w-7xl mx-auto px-6 pt-32 lg:pt-40 pb-12">
-        {/* Photography Header */}
-        <section className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 flex items-center justify-center gap-3">
-            {getText({ en: 'Photography', no: 'Foto' })}
-            <span className="text-amber-500">⟡</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {getText({
-              en: 'Capturing moments, telling stories through light and composition. A collection of my visual narratives.',
-              no: 'Fanger øyeblikk, forteller historier gjennom lys og komposisjon. En samling av mine visuelle fortellinger.'
-            })}
-          </p>
-        </section>
-
-        {/* Highlights Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            {getText({ en: 'Highlights', no: 'Høydepunkter' })}
-          </h2>
-          
-          {highlights.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {highlights.map((image, index) => (
-                <div
-                  key={index}
-                  className="aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer group"
-                  onClick={() => openLightbox(index)}
-                >
-                  <img
-                    src={image}
-                    alt={`Highlight ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">
-                {getText({ 
-                  en: 'Highlights will be loaded dynamically from the portfolio directory.',
-                  no: 'Høydepunkter vil bli lastet dynamisk fra porteføljemappen.'
-                })}
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Stories Section */}
-        <section>
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            {getText({ en: 'Stories', no: 'Historier' })}
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {photographyStories.map((story) => (
-              <Link
-                key={story.id}
-                to={`/photography/${story.id}`}
-                className="group card hover:shadow-xl transition-all duration-300"
-              >
-                {/* Story Cover Image */}
-                <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden mb-4">
-                  <img
-                    src={story.coverImage}
-                    alt={getText(story.title)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-                
-                {/* Story Info */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                  {getText(story.title)}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  {getText(story.description)}
-                </p>
-                
-                {/* Story Stats */}
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>
-                    {story.parts.length} {getText({ en: 'parts', no: 'deler' })}
-                  </span>
-                  <span className="text-blue-600 group-hover:text-blue-700 transition-colors">
-                    {getText({ en: 'View Story', no: 'Se historie' })} →
-                  </span>
-                </div>
-              </Link>
-            ))}
+    <div className="min-h-screen bg-white animate-page-enter">
+      <div className="max-w-4xl mx-auto px-6 pt-32 lg:pt-40 pb-12">
+        {/* Old School Newspaper Style Header */}
+        <div className="text-center mb-12">
+          <div className="border-t-4 border-b-4 border-black py-4 mb-8">
+            <h1 className="text-6xl md:text-8xl font-black text-black tracking-wider" style={{ fontFamily: 'serif' }}>
+              {getText({ en: 'PHOTOGRAPHY', no: 'FOTO' })}
+            </h1>
           </div>
-        </section>
-      </div>
+          
+          <div className="text-2xl md:text-3xl font-bold text-black mb-4" style={{ fontFamily: 'serif' }}>
+            {getText({ en: 'UNDER CONSTRUCTION', no: 'UNDER OPPBYGGING' })}
+          </div>
+          
+          <div className="text-lg text-black" style={{ fontFamily: 'serif' }}>
+            {getText({ 
+              en: 'Est. Completion: TBD', 
+              no: 'Est. Ferdigstillelse: TBD' 
+            })}
+          </div>
+        </div>
 
-      {/* Lightbox for Highlights */}
-      {showLightbox && highlights.length > 0 && (
-        <ImageCarousel
-          images={highlights}
-          title={getText({ en: 'Photography Highlights', no: 'Foto høydepunkter' })}
-          onClose={() => setShowLightbox(false)}
-        />
-      )}
+        {/* Newspaper Style Content */}
+        <div className="border-t-2 border-b-2 border-black py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Left Column */}
+            <div className="space-y-6">
+              <div className="border-l-4 border-black pl-4">
+                <h3 className="text-xl font-bold text-black mb-2" style={{ fontFamily: 'serif' }}>
+                  {getText({ en: 'BREAKING NEWS', no: 'DAGENS NYHETER' })}
+                </h3>
+                <p className="text-sm text-black leading-relaxed" style={{ fontFamily: 'serif' }}>
+                  {getText({ 
+                    en: 'Photography portfolio undergoing complete reconstruction. New features and galleries coming soon.',
+                    no: 'Fotoportefølje gjennomgår fullstendig rekonstruksjon. Nye funksjoner og gallerier kommer snart.'
+                  })}
+                </p>
+              </div>
+              
+              <div className="border-l-4 border-black pl-4">
+                <h3 className="text-xl font-bold text-black mb-2" style={{ fontFamily: 'serif' }}>
+                  {getText({ en: 'COMING SOON', no: 'KOMMER SNART' })}
+                </h3>
+                <ul className="text-sm text-black space-y-1" style={{ fontFamily: 'serif' }}>
+                  <li>• {getText({ en: 'Interactive galleries', no: 'Interaktive gallerier' })}</li>
+                  <li>• {getText({ en: 'Photo stories', no: 'Fotohistorier' })}</li>
+                  <li>• {getText({ en: 'Behind the scenes', no: 'Bak kulissene' })}</li>
+                  <li>• {getText({ en: 'Equipment showcase', no: 'Utstyrsshowcase' })}</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Center Column */}
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="w-32 h-32 mx-auto bg-black flex items-center justify-center mb-4">
+                  <span className="text-white text-4xl font-bold" style={{ fontFamily: 'serif' }}>
+                    📷
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold text-black mb-2" style={{ fontFamily: 'serif' }}>
+                  {getText({ en: 'WORK IN PROGRESS', no: 'ARBEID PÅGÅR' })}
+                </h3>
+                <p className="text-sm text-black" style={{ fontFamily: 'serif' }}>
+                  {getText({ 
+                    en: 'Please check back later for updates.',
+                    no: 'Vennligst sjekk tilbake senere for oppdateringer.'
+                  })}
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-6">
+              <div className="border-r-4 border-black pr-4 text-right">
+                <h3 className="text-xl font-bold text-black mb-2" style={{ fontFamily: 'serif' }}>
+                  {getText({ en: 'STATUS REPORT', no: 'STATUSRAPPORT' })}
+                </h3>
+                <p className="text-sm text-black leading-relaxed" style={{ fontFamily: 'serif' }}>
+                  {getText({ 
+                    en: 'Current phase: Design and development. Expected completion: To be announced.',
+                    no: 'Nåværende fase: Design og utvikling. Forventet ferdigstillelse: TBA.'
+                  })}
+                </p>
+              </div>
+              
+              <div className="border-r-4 border-black pr-4 text-right">
+                <h3 className="text-xl font-bold text-black mb-2" style={{ fontFamily: 'serif' }}>
+                  {getText({ en: 'CONTACT', no: 'KONTAKT' })}
+                </h3>
+                <p className="text-sm text-black" style={{ fontFamily: 'serif' }}>
+                  {getText({ 
+                    en: 'For inquiries about photography services, please use the main contact form.',
+                    no: 'For henvendelser om fototjenester, vennligst bruk hovedkontaktskjemaet.'
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-12">
+          <div className="text-4xl font-bold text-black mb-4" style={{ fontFamily: 'serif' }}>
+            {getText({ en: 'THANK YOU FOR YOUR PATIENCE', no: 'TAKK FOR TÅLMODIGHETEN' })}
+          </div>
+          <div className="text-sm text-black" style={{ fontFamily: 'serif' }}>
+            {getText({ 
+              en: 'This section will be back online soon with exciting new content.',
+              no: 'Denne seksjonen vil være tilbake på nettet snart med spennende nytt innhold.'
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
