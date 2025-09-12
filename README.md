@@ -18,7 +18,7 @@ npm run dev
 
 The website will be available at `http://localhost:3000`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 website/
@@ -44,7 +44,7 @@ website/
 └── README.md
 ```
 
-## 🎨 Features
+## Features
 
 ### Landing Page (`/`)
 - Clean hero section with name and role
@@ -66,7 +66,7 @@ website/
 - Photo stories with consistent layout
 - Individual story navigation with parts/chapters
 
-## 🌐 Bilingual Support
+## Bilingual Support
 
 The website supports both English and Norwegian:
 - Automatic browser language detection
@@ -74,7 +74,7 @@ The website supports both English and Norwegian:
 - All content properly localized
 - Fallback to English if translation missing
 
-## 🎯 Design System
+## Design System
 
 - **Light theme** by default with clean aesthetics
 - **Dark IDE theme** for software section
@@ -83,7 +83,7 @@ The website supports both English and Norwegian:
 - **Responsive** grid layouts
 - **Accessible** with keyboard navigation and ARIA labels
 
-## 🛠 Available Scripts
+## Available Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -101,7 +101,7 @@ The website is fully responsive and works across:
 - Tablet (768px - 1199px)
 - Mobile (320px - 767px)
 
-## ♿ Accessibility
+## Accessibility
 
 - WCAG AA contrast compliance
 - Keyboard navigation support
@@ -147,14 +147,14 @@ npm run deploy
 3. The workflow will automatically deploy on push to main branch
 4. Your site will be available at `https://yourusername.github.io/website/`
 
-## 📄 Data & Assets
+## Data & Assets
 
 - **JSON files** (single source of truth): `frontend/public/content/{cv.json,courses.json,personal.json,photos-manifest.json}`
 - **PDFs**: `frontend/public/docs/` (CVs and course exam PDFs)
 - **Portfolio images**: `frontend/public/portfolio/`
 - **Markdown** in stories provides context only; not parsed as primary data
 
-## 🔧 Customization
+## Customization
 
 ### Colors
 Edit `frontend/tailwind.config.js` to modify the color scheme:
@@ -169,4 +169,4 @@ Edit `frontend/tailwind.config.js` to modify the color scheme:
 
 ---
 
-Built with ❤️ using React, Tailwind CSS, and Vite.
+Built with React, Tailwind CSS, and Vite.
