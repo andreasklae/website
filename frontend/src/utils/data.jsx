@@ -150,8 +150,8 @@ export const portfolioProjects = [
     tags: ['Java', 'Kotlin', 'Jetpack Compose', 'Design', 'Informatics', 'Programming', 'Software engineering', 'API', 'Azure', 'Full stack', 'Functional programming', 'OOP', 'UI', 'UX'],
     type: 'mobile',
     photos: [], // Will be loaded dynamically from photos-manifest.json
-    pdfReport: './portfolio/Software engineering/IN2000/Rapport.pdf',
-    pdfAward: './portfolio/Software engineering/IN2000/Pris for app IN2000 -v24 (1).pdf',
+    pdfReport: getAssetPath('portfolio/Software engineering/IN2000/Rapport.pdf'),
+    pdfAward: getAssetPath('portfolio/Software engineering/IN2000/Pris for app IN2000 -v24 (1).pdf'),
     githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {
@@ -167,7 +167,7 @@ export const portfolioProjects = [
     tags: ['Python', 'Informatics', 'Algorithms/data', 'Machine Learning', 'Graph Neural Networks', 'PyTorch', 'Biomedical'],
     type: 'research',
     photos: [], // Will be loaded dynamically from photos-manifest.json
-    pdfReport: './portfolio/Software engineering/ML project/Rapport.pdf',
+    pdfReport: getAssetPath('portfolio/Software engineering/ML project/Rapport.pdf'),
     githubLink: 'https://github.com/julianhesse/GraphSynergy_Swp',
     researchPaperLink: 'https://pubmed.ncbi.nlm.nih.gov/34472609/'
   },
@@ -184,7 +184,7 @@ export const portfolioProjects = [
     tags: ['Arduino', 'C++', 'Design', 'Informatics', 'Research', 'HCI', 'IoT', 'UCD', 'UD', 'UX'],
     type: 'hardware',
     photos: [], // Will be loaded dynamically from photos-manifest.json
-    pdfReport: './portfolio/Software engineering/IN1060/Teknisk rapport.pdf'
+    pdfReport: getAssetPath('portfolio/Software engineering/IN1060/Teknisk rapport.pdf')
   }
 ]
 

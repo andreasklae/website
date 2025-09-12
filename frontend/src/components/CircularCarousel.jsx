@@ -87,8 +87,8 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
   useEffect(() => {
     if (!images || images.length <= 1) return
 
-    // Start with image 1 in center (index 1 of the 3 visible items)
-    setCenterIndex(1)
+    // Start with image 1 in center (second image in the [n, 1, 2] layout)
+    setCenterIndex(0)
 
     // Listen for carousel navigation button clicks
     const carousel = carouselRef.current
@@ -237,6 +237,7 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
           visibleItemsCount={3}
           withIndicator
           isInfinite
+          initialIndex={2}
           imageHeight={DESKTOP_IMAGE_HEIGHT_REM * 16} // 560px
         >
           {images.map((image, index) => (
@@ -271,7 +272,7 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
             {getText({ en: 'Click image to expand', no: 'Klikk på bilde for å utvide' })}
           </p>
           <p className="text-ide-text/70 text-xs mt-1">
-            Center index: {centerIndex}
+            {centerIndex + 1} / {images.length}
           </p>
         </div>
       </div>
