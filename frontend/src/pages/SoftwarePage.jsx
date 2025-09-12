@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { loadCVData, loadCoursesData, portfolioProjects, formatDateRange, parseMarkdownText } from '../utils/data.jsx'
+import { getAssetPath } from '../utils/paths'
 import LanguageToggle from '../components/LanguageToggle'
 import ProjectCard from '../components/ProjectCard'
 import Tag from '../components/Tag'
@@ -891,7 +892,7 @@ const SoftwarePage = () => {
                   </a>
                   {course.pdfExam && (
                     <a
-                      href={course.pdfExam}
+                      href={getAssetPath(course.pdfExam)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 text-sm font-medium"

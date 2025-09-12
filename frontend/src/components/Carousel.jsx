@@ -253,7 +253,7 @@ const Carousel = ({
   ]);
 
   return (
-    <StyledCarousel visibleItemsCount={visibleItemsCount}>
+    <StyledCarousel $visibleItemsCount={visibleItemsCount}>
       <div className={`carousel-wrapper`}>
         {isPrevButtonVisible ? (
           <button
@@ -352,7 +352,7 @@ const StyledCarousel = styled.div`
   .carousel-content > * {
     flex-shrink: 0;
     flex-grow: 1;
-    width: ${({ visibleItemsCount }) => `calc((100% - ${(visibleItemsCount - 1) * 0.5}rem) / ${visibleItemsCount})`};
+    width: ${({ $visibleItemsCount }) => `calc((100% - ${($visibleItemsCount - 1) * 0.5}rem) / ${$visibleItemsCount})`};
     display: flex;
     align-items: center;
     justify-content: center;
