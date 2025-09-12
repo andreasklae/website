@@ -5,7 +5,8 @@ const Carousel = ({
   children,
   visibleItemsCount = 1, // how many items to show
   isInfinite, // is it an infinite loop?
-  withIndicator // show dots?
+  withIndicator, // show dots?
+  initialIndex // initial starting position
 }) => {
   const indicatorContainerRef = React.useRef(null);
   const [timeoutInProgress, setTimeoutInProgress] = React.useState(false); // a boolean for if timeout is im progress, used to stop user from spam clicking next or back in certain conditions
@@ -29,7 +30,7 @@ const Carousel = ({
    * Current Index Item of the Carousel
    */
   const [currentIndex, setCurrentIndex] = React.useState(
-    isRepeating ? visibleItemsCount : 0
+    initialIndex !== undefined ? initialIndex : (isRepeating ? visibleItemsCount : 0)
   );
 
   /**
@@ -196,10 +197,18 @@ const Carousel = ({
     const localLength = isRepeating
       ? originalItemsLength
       : Math.ceil(originalItemsLength / visibleItemsCount);
-    const calculatedActiveIndex =
-      currentIndex - localShow < 0
-        ? originalItemsLength + (currentIndex - localShow)
-        : currentIndex - localShow;
+    const calculatedActiveIndex = (() => {
+      if (isRepeating) {
+        // For infinite carousels with initialIndex offset, adjust the calculation
+        // When we start at initialIndex=2, we need to shift by 1 to get the correct center
+        const baseIndex = currentIndex - localShow < 0
+          ? originalItemsLength + (currentIndex - localShow)
+          : currentIndex - localShow;
+        return (baseIndex + 1) % originalItemsLength;
+      } else {
+        return currentIndex;
+      }
+    })();
 
     for (let index = 0; index < localLength; index++) {
       let className = "";
