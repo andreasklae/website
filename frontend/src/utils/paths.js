@@ -1,17 +1,14 @@
 // Utility function to resolve asset paths correctly for GitHub Pages
+// Uses Vite's BASE_URL so links work both locally and on project pages
 export const getAssetPath = (path) => {
-  // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  
-  // With custom domain, always use root path
-  return `/${cleanPath}`
+  const base = (import.meta?.env?.BASE_URL) || '/'
+  const cleanPath = String(path || '').replace(/^\.?\//, '')
+  return `${base}${cleanPath}`
 }
 
-// Helper for images in the portfolio directory
+// Helper for images in the portfolio directory (same behavior)
 export const getPortfolioImagePath = (path) => {
-  // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  
-  // With custom domain, always use root path
-  return `/${cleanPath}`
+  const base = (import.meta?.env?.BASE_URL) || '/'
+  const cleanPath = String(path || '').replace(/^\.?\//, '')
+  return `${base}${cleanPath}`
 }

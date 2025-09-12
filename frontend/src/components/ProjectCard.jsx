@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { getProjectPhotos } from '../utils/data.jsx'
+import { getAssetPath } from '../utils/paths'
 import ImageCarousel from './ImageCarousel'
 import CircularCarousel from './CircularCarousel'
 import Tag from './Tag'
@@ -32,13 +33,13 @@ const ProjectCard = ({ project }) => {
 
   const handleDownloadPDF = () => {
     if (project.pdfReport) {
-      window.open(project.pdfReport, '_blank')
+      window.open(getAssetPath(project.pdfReport), '_blank')
     }
   }
 
   const handleDownloadAward = () => {
     if (project.pdfAward) {
-      window.open(project.pdfAward, '_blank')
+      window.open(getAssetPath(project.pdfAward), '_blank')
     }
   }
 

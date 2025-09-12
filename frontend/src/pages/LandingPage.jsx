@@ -128,7 +128,7 @@ const LandingPage = () => {
               {/* CV Download Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
                 <a
-                  href="./CV_Andreas_Klaeboe_EN.pdf"
+                  href={getAssetPath('CV_Andreas_Klaeboe_EN.pdf')}
                   download="CV_Andreas_Klaeboe_EN.pdf"
                   className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 >
@@ -141,7 +141,7 @@ const LandingPage = () => {
                 </a>
                 
                 <a
-                  href="./CV_Andreas_Klaeboe_NO.pdf"
+                  href={getAssetPath('CV_Andreas_Klaeboe_NO.pdf')}
                   download="CV_Andreas_Klaeboe_NO.pdf"
                   className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 >
