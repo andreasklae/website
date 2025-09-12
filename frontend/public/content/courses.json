@@ -6,10 +6,7 @@
     "ects": 10,
     "grade": "A",
     "link": "https://www.uio.no/studier/emner/hf/ifikk/EXPHIL03/",
-<<<<<<< HEAD:frontend/public/content/courses.json
     "pdfExam": "docs/philosophy exam.pdf",
-    "pdfExam": "docs/philosophy exam.pdf",
->>>>>>> origin/main:frontend/public/courses.json
     "tags": {
       "en": ["Philosophy", "Ethics", "Epistemology", "Ontology", "Metaphysics"],
       "no": ["Filosofi", "Etikk", "Erkjennelsesteori", "Ontologi", "Metafysikk"]
