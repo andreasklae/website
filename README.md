@@ -117,7 +117,8 @@ The website is configured for automatic deployment to GitHub Pages via GitHub Ac
 
 1. **Push to main/master branch** - Automatically triggers deployment
 2. **GitHub Actions workflow** - Builds and deploys the site
-3. **Live URL** - Available at `https://andreasklae.github.io/website/`
+3. **Live URL** - Available at `https://www.andreasklaeboe.com` (custom domain)
+   - Alternate (project pages): build with `VITE_BASE_URL=/website/` and host at `https://andreasklae.github.io/website/`
 
 ### Manual Deployment
 
@@ -135,7 +136,7 @@ npm run deploy
 
 ### Configuration
 
-- **Base path**: Dynamic — dev `/`, production `/website/`
+- **Base path**: `/` by default (custom domain). Override via `VITE_BASE_URL` for subpath hosting
 - **GitHub Actions**: Automatic deployment on push to main
 - **Build output**: `frontend/dist/` directory
 - **Static hosting**: Compatible with any static hosting service
@@ -144,8 +145,9 @@ npm run deploy
 
 1. Go to your repository Settings → Pages
 2. Set Source to "GitHub Actions"
-3. The workflow will automatically deploy on push to main branch
-4. Your site will be available at `https://yourusername.github.io/website/`
+3. (Custom domain) Set Custom domain to `www.andreasklaeboe.com` and verify DNS
+4. The workflow will automatically deploy on push to main branch
+5. Your site will be available at `https://www.andreasklaeboe.com`
 
 ## Data & Assets
 
