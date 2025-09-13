@@ -25,6 +25,7 @@ function MainContent({ location }) {
 function App() {
   const location = useLocation()
   const isDarkMode = location.pathname.startsWith('/software')
+  const isStoryPage = /^\/photography\/.+/.test(location.pathname)
 
   // Apply dark theme immediately to prevent white flash
   React.useEffect(() => {
@@ -33,7 +34,7 @@ function App() {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-800 ${isDarkMode ? 'bg-ide-bg' : 'bg-transparent'}`}>
-      <Navbar />
+      {!isStoryPage && <Navbar />}
       <main className="flex-1">
         <PageTransition>
           <MainContent />

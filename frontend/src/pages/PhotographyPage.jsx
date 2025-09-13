@@ -95,32 +95,20 @@ const PhotographyPage = () => {
         <section className="mt-12">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif' }}>{picksTitle}</h2>
-            <div className="flex items-center gap-4 basis-full sm:basis-auto">
+            <div className="flex items-center gap-6 basis-full sm:basis-auto">
               {images.length > 0 && (
-                <span className="text-sm" aria-live="polite">{index + 1} / {images.length}</span>
+                <span className="text-base md:text-lg font-semibold" aria-live="polite">{index + 1} / {images.length}</span>
               )}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={autoPlay}
-                  onClick={() => setAutoPlay(!autoPlay)}
-                  onMouseDown={(e) => e.preventDefault()}
-                  className="relative inline-flex w-16 h-6 border border-black outline-none focus:outline-none focus:ring-0 active:outline-none select-none"
-                  style={{ background: autoPlay ? '#000' : '#fff', WebkitTapHighlightColor: 'transparent' }}
-                >
-                  <span className="sr-only">{getText({ en: 'Toggle autoplay', no: 'Slå på/av automatisk avspilling' })}</span>
-                  {/* Inside labels: OFF/AV (left) and ON/PÅ (right) */}
-                  <div className="absolute inset-0 flex items-center justify-between px-1 text-[10px] font-semibold pointer-events-none z-20" style={{ color: autoPlay ? '#fff' : '#000' }}>
-                    <span className={`${autoPlay ? 'opacity-0' : 'opacity-100'}`}>{getText({ en: 'OFF', no: 'AV' })}</span>
-                    <span className={`${autoPlay ? 'opacity-100' : 'opacity-0'}`}>{getText({ en: 'ON', no: 'PÅ' })}</span>
-                  </div>
-                  <span
-                    className={`absolute top-1/2 -translate-y-1/2 left-0.5 h-5 w-5 border border-black bg-white transition-transform duration-200 z-10 ${autoPlay ? 'translate-x-9' : ''}`}
-                    aria-hidden="true"
-                  />
-                </button>
-                <span className="text-sm">{getText({ en: 'Auto skip', no: 'Auto-hopp' })}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-base md:text-lg font-medium select-none">{getText({ en: 'Auto skip', no: 'Auto-hopp' })}</span>
+                <input
+                  id="auto-skip"
+                  type="checkbox"
+                  className="h-5 w-5 sm:h-6 sm:w-6 border border-black accent-black cursor-pointer"
+                  checked={autoPlay}
+                  onChange={(e) => setAutoPlay(e.target.checked)}
+                  aria-label={getText({ en: 'Toggle autoplay', no: 'Slå på/av automatisk avspilling' })}
+                />
               </div>
             </div>
           </div>
