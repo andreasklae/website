@@ -67,8 +67,9 @@ function HighlightsManifestBuildPlugin() {
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
   plugins: [react(), HighlightsManifestPlugin(), HighlightsManifestBuildPlugin()],
-  // Use root in dev, project subpath in production (GitHub Pages)
-  base: command === 'serve' ? '/' : '/website/',
+  // Serve from root both locally and in production (custom domain)
+  // If you later host under a subpath, override via VITE_BASE_URL env.
+  base: process.env.VITE_BASE_URL || '/',
   server: {
     host: '0.0.0.0',
     port: 3000,
