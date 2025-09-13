@@ -7,7 +7,9 @@
       // This script takes the current url and converts the path and query
       // string into just a query string, and then redirects the browser
       // to the new url with only a query string and hash fragment
-      var pathSegmentsToKeep = 1; // Change to 0 if you want to redirect to root
+      // For custom domain at root, keep 0 segments.
+      // If hosting under a project subpath (e.g. /website), set to 1.
+      var pathSegmentsToKeep = 0;
 
       var l = window.location;
       l.replace(
