@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageToggle from './LanguageToggle'
 import { getAssetPath } from '../utils/paths'
@@ -10,6 +10,9 @@ const Navbar = () => {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [overrideExpanded, setOverrideExpanded] = useState(false)
+  const lastScrollY = useRef(0)
 
   const navItems = [
     { path: '/', label: { en: 'Home', no: 'Hjem' } },
@@ -39,40 +42,58 @@ const Navbar = () => {
   const isSoftwarePage = location.pathname.startsWith('/software')
   const isHomePage = location.pathname === '/'
 
+  // Scroll direction handling for collapse/expand
+  useEffect(() => {
+    const onScroll = () => {
+      const cur = window.scrollY || document.documentElement.scrollTop || 0
+      const delta = cur - (lastScrollY.current || 0)
+      const threshold = 8
+      if (Math.abs(delta) > threshold) {
+        setIsCollapsed(delta > 0) // collapse when scrolling down
+        setOverrideExpanded(false) // scrolling clears hover expansion
+        lastScrollY.current = cur
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const collapsedActive = isCollapsed && !overrideExpanded
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="mx-6 mt-3">
+    <nav
+      className="fixed top-0 left-0 right-0 z-50"
+      onMouseEnter={() => setOverrideExpanded(true)}
+    >
+      <div className="mx-6 mt-3 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
+          <div className={`flex items-center justify-between transition-all duration-300 ${collapsedActive ? 'h-4' : 'h-20'}`}>
               {/* Logo/Name - Hidden on mobile */}
               <div className="hidden md:flex items-center">
                 <Link 
                   to="/" 
                   onClick={(e) => handleNavClick('/', e)}
-                  className="glass-bubble flex h-16 items-center leading-none space-x-4 group px-4 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  className={`glass-bubble flex items-center leading-none space-x-4 group backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-full ${collapsedActive ? 'h-4 px-4' : 'h-16 px-4'}`}
                   style={{
                     backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                     borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.3)',
-                    borderRadius: '2rem',
                     width: 'fit-content'
                   }}
                 >
                   <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 absolute top-1/2 transform -translate-y-1/2 ${
+                    className={`rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 absolute top-1/2 transform -translate-y-1/2 ${collapsedActive ? 'w-4 h-4' : 'w-10 h-10'} ${
                       isSoftwarePage 
                         ? 'bg-gradient-to-r from-purple-500 to-violet-500'
                         : isPhotographyPage 
                           ? 'bg-gradient-to-r from-black to-gray-700'
                           : 'bg-gradient-to-r from-blue-500 to-cyan-500'
                     }`}
-                    style={{
-                      left: '0.75rem'
-                    }}
+                    style={{ left: collapsedActive ? '0.5rem' : '0.75rem' }}
                   >
-                    <span className="text-white font-bold text-sm">AK</span>
+                    {!collapsedActive && <span className="text-white font-bold text-sm">AK</span>}
                   </div>
                   <span 
-                    className="font-semibold text-lg transition-colors duration-200"
+                    className={`font-semibold text-lg transition-colors duration-200 transition-opacity ${collapsedActive ? 'opacity-0' : 'opacity-100'}`}
                     style={{
                       color: isDarkMode ? '#ffffff' : '#000000',
                       textShadow: isDarkMode 
@@ -94,7 +115,7 @@ const Navbar = () => {
                     to={item.path}
                     onClick={(e) => handleNavClick(item.path, e)}
                     className={`
-                      glass-bubble px-6 h-16 flex items-center leading-none text-base font-medium transition-all duration-300 backdrop-blur-sm border hover:scale-105 hover:shadow-xl
+                      glass-bubble px-6 ${collapsedActive ? 'h-4' : 'h-16'} rounded-full flex items-center leading-none text-base font-medium transition-all duration-300 backdrop-blur-sm border hover:scale-105 hover:shadow-xl
                       ${isActive(item.path)
                         ? item.path === '/photography'
                           ? 'bg-gradient-to-r from-black to-gray-800 border-gray-600/60 text-white shadow-xl scale-105'
@@ -109,7 +130,7 @@ const Navbar = () => {
                       }
                     `}
                     style={{
-                      borderRadius: '2rem',
+                      borderRadius: 9999,
                       color: isActive(item.path) 
                         ? '#ffffff' 
                         : isDarkMode 
@@ -122,19 +143,21 @@ const Navbar = () => {
                           : 'none'
                     }}
                   >
-                    {getText(item.label)}
+                    <span className={`transition-opacity duration-300 ${collapsedActive ? 'opacity-0' : 'opacity-100'}`}>
+                      {getText(item.label)}
+                    </span>
                   </Link>
                 ))}
               </div>
 
-              {/* Language Toggle - Desktop Only */}
-              <div className="hidden md:flex items-center">
+              {/* Language Toggle - Desktop Only; fade like nav (no extra wrapper) */}
+              <div className={`hidden md:flex items-center transition-opacity duration-300 ${collapsedActive ? 'opacity-0' : 'opacity-100'}`}>
                 <LanguageToggle isDark={isDarkMode} />
               </div>
             </div>
 
-            {/* Mobile Language Toggle - Top Right */}
-            <div className="md:hidden fixed top-3 right-6 z-[60] px-6 py-3">
+            {/* Mobile Language Toggle - Top Right, hides on scroll down */}
+            <div className={`md:hidden fixed right-6 z-[60] px-6 py-3 transition-transform duration-300 ${isCollapsed ? '-translate-y-full' : 'translate-y-0'} `} style={{ top: '0.75rem' }}>
               <LanguageToggle isDark={isDarkMode} />
             </div>
 
