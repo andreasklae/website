@@ -287,9 +287,11 @@ const ProjectCard = ({ project }) => {
                     <div className="relative w-full sm:w-3/4 max-w-md rounded-xl overflow-hidden shadow-lg">
                       <video
                         controls
+                        preload="metadata"
+                        playsInline
                         className="w-full h-auto max-h-[200px] sm:max-h-[300px]"
                       >
-                        <source src="/portfolio/Software engineering/IN1060/explaination_video.mp4" type="video/mp4" />
+                        <source src={getAssetPath('portfolio/Software engineering/IN1060/explaination_video.mp4')} type="video/mp4" />
                         {getText({ en: 'Your browser does not support the video tag.', no: 'Nettleseren din støtter ikke video-elementet.' })}
                       </video>
                     </div>
