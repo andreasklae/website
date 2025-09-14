@@ -217,7 +217,7 @@ export const photographyStories = [
       en: 'Stavern Summer 2025',
       no: 'Stavern sommer 2025'
     },
-    coverImage: getAssetPath('portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'),
+    coverImage: getAssetPath('portfolio/photography/Stavern sommer 2025/Thumbnail.jpeg'),
     description: {
       en: 'Long Norwegian summer days with late sunsets, coastal walks, festival celebrations, and quiet moments in nature.',
       no: 'Lange norske sommerdager med sene solnedganger, kystturer, festivalglade og stille øyeblikk i naturen.'
@@ -229,9 +229,9 @@ export const photographyStories = [
           en: 'Cabin Days',
           no: 'Dager på hytta'
         },
-        description: './portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/',
-        photos: './portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/'
+        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/description.md',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/',
+        photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/'
       },
       {
         id: 'part-2',
@@ -239,9 +239,9 @@ export const photographyStories = [
           en: 'Coastal Walks',
           no: 'Kystturer'
         },
-        description: './portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/highlights/',
-        photos: './portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/'
+        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/description.md',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/',
+        photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/'
       },
       {
         id: 'part-3',
@@ -249,9 +249,9 @@ export const photographyStories = [
           en: 'Festival Day',
           no: 'Festivallørdag'
         },
-        description: './portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/highlights/',
-        photos: './portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/'
+        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/description.md',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/',
+        photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/'
       },
       {
         id: 'part-4',
@@ -259,9 +259,9 @@ export const photographyStories = [
           en: 'The Walk Home',
           no: 'Turen hjem'
         },
-        description: './portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/Highlights/',
-        photos: './portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/'
+        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/description.md',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/',
+        photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/'
       }
     ]
   }

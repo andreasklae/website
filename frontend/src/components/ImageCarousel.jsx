@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { generateImageDescription } from '../utils/data.jsx'
 
-const ImageCarousel = ({ images, title, projectId, onClose }) => {
+const ImageCarousel = ({ images, title, projectId, startIndex = 0, onClose }) => {
   const { getText } = useLanguage()
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(() => Math.max(0, Math.min(startIndex, (images?.length || 1) - 1)))
+
+  useEffect(() => {
+    setCurrentIndex(Math.max(0, Math.min(startIndex, (images?.length || 1) - 1)))
+  }, [startIndex, images?.length])
 
   // Keyboard navigation
   useEffect(() => {
@@ -25,6 +30,18 @@ const ImageCarousel = ({ images, title, projectId, onClose }) => {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose, images.length])
+
+  // Lock background scroll while carousel is open (non-jumping)
+  useEffect(() => {
+    const html = document.documentElement
+    const prevHtmlScrollBehavior = html.style.scrollBehavior
+    html.style.scrollBehavior = 'auto'
+    document.body.classList.add('modal-open')
+    return () => {
+      document.body.classList.remove('modal-open')
+      html.style.scrollBehavior = prevHtmlScrollBehavior || ''
+    }
+  }, [])
 
   // Focus trap
   useEffect(() => {
@@ -62,9 +79,9 @@ const ImageCarousel = ({ images, title, projectId, onClose }) => {
 
   if (!images || images.length === 0) return null
 
-  return (
+  const overlay = (
     <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 overscroll-contain overflow-auto touch-none"
       onClick={onClose}
       data-carousel
     >
@@ -153,6 +170,9 @@ const ImageCarousel = ({ images, title, projectId, onClose }) => {
       </div>
     </div>
   )
+
+  // Render via portal to avoid transformed ancestors affecting positioning
+  return createPortal(overlay, document.body)
 }
 
 export default ImageCarousel
