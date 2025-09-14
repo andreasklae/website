@@ -19,6 +19,12 @@
     max-width: 100vw; /* Ensure body doesn't exceed viewport width */
   }
   
+  /* Robust scroll lock for modals/fullscreen overlays */
+  body.modal-open {
+    overflow: hidden !important;
+    width: 100%;
+  }
+  
   body.dark-theme {
     background-color: #0d1117;
   }
@@ -195,5 +201,3 @@
     display: none;  /* Safari and Chrome */
   }
 }
-
-

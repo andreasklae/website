@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../contexts/LanguageContext'
 import { photographyStories } from '../utils/data.jsx'
+import LanguageToggle from '../components/LanguageToggle'
 import { getAssetPath } from '../utils/paths'
 import ImageCarousel from '../components/ImageCarousel'
+import PhotoCarousel from '../components/PhotoCarousel'
 
 // Hardcoded text extracted from story.md for clarity and language control
 const STORY_TEXT = {
@@ -31,26 +34,26 @@ const STORY_TEXT = {
 const STORY_HIGHLIGHTS = {
   'stavern-sommer-2025': {
     'part-1': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'
     ],
     'part-2': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/highlights/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/highlights/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/highlights/0CF0A802-D8A2-44EC-80DB-8509AB5960DC_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/highlights/34CEC9DA-1E89-4166-A46F-59904B6CE428_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/0CF0A802-D8A2-44EC-80DB-8509AB5960DC_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/34CEC9DA-1E89-4166-A46F-59904B6CE428_1_105_c.jpeg'
     ],
     'part-3': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/highlights/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/highlights/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/highlights/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/highlights/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg'
     ],
     'part-4': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/Highlights/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/Highlights/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/Highlights/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg'
     ]
   }
 }
@@ -59,93 +62,93 @@ const STORY_HIGHLIGHTS = {
 const STORY_PHOTOS = {
   'stavern-sommer-2025': {
     'part-1': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/36C2670B-C30D-4D87-BB90-E7CD71B16A7C_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/C6D44452-98EC-4E18-9B90-18C22BCDD5D5_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/0B1A03BD-DE20-42F1-BA70-8E6EAF5EEFDE_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/8387DE13-323C-491B-9158-FBAD48055A7D_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/4B798414-C3D1-482D-9D9C-2584BF93B280_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/A4D9CF78-274F-4B0D-A910-7DD965BC2FF9_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/69E96779-286E-4721-9BA4-B1EAA4013220_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/76DE0E86-81B4-44DB-97F0-F6C3CA8767E3_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/4DC74B00-8910-4E1E-ABDC-7F0EB3B9D542_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/7E122CA0-9186-4DBB-8712-832FEDEA6D6C_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/4B76B7A4-7B9B-458D-9BF6-F900C46EC732_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/E76A815B-3184-41EB-B3CF-B1AC0DB71DFD_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/9B6AE445-97D0-4883-95A9-8DF54DDEA1F4_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/A65BAA11-F4E5-42CD-A331-B25D22BD0167_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/A6C954F8-E020-41EC-9DED-C93CA0F4898C_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/308D1B80-E1FF-49C8-80FE-1853D1E85D09_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/448B8EC5-023A-4510-83D8-130CF80B2E1A_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/A8B139C6-5F54-4BB6-AFE7-A509E69C409F_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/83CB36C7-45A6-469F-AAC2-5A120345D5CD_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/A79876F4-990E-426D-8EA3-8EA4828A49C2_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 1 - Cabin Days/photos/9E5D08C9-28E3-4E10-898B-9487AA836CEC_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/36C2670B-C30D-4D87-BB90-E7CD71B16A7C_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/C6D44452-98EC-4E18-9B90-18C22BCDD5D5_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/0B1A03BD-DE20-42F1-BA70-8E6EAF5EEFDE_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/8387DE13-323C-491B-9158-FBAD48055A7D_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/4B798414-C3D1-482D-9D9C-2584BF93B280_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/A4D9CF78-274F-4B0D-A910-7DD965BC2FF9_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/69E96779-286E-4721-9BA4-B1EAA4013220_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/76DE0E86-81B4-44DB-97F0-F6C3CA8767E3_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/4DC74B00-8910-4E1E-ABDC-7F0EB3B9D542_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/7E122CA0-9186-4DBB-8712-832FEDEA6D6C_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/4B76B7A4-7B9B-458D-9BF6-F900C46EC732_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/E76A815B-3184-41EB-B3CF-B1AC0DB71DFD_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/9B6AE445-97D0-4883-95A9-8DF54DDEA1F4_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/A65BAA11-F4E5-42CD-A331-B25D22BD0167_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/A6C954F8-E020-41EC-9DED-C93CA0F4898C_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/308D1B80-E1FF-49C8-80FE-1853D1E85D09_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/448B8EC5-023A-4510-83D8-130CF80B2E1A_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/A8B139C6-5F54-4BB6-AFE7-A509E69C409F_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/83CB36C7-45A6-469F-AAC2-5A120345D5CD_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/A79876F4-990E-426D-8EA3-8EA4828A49C2_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/9E5D08C9-28E3-4E10-898B-9487AA836CEC_1_105_c.jpeg'
     ],
     'part-2': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/1B2A349F-7152-49BD-9211-BB1597A81266_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/1CBE289C-3ED5-4299-BDB6-3E07A02D6C56_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/5761386C-14E8-4166-BBDC-E776D9954B13_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/6597D0A6-B584-4751-B10B-413362E89577_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/56F9A293-2070-453D-BDDA-F4FF138C7DAB_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/55D9B6AB-0C20-409B-B661-04876CBBB1D5_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/C09B4991-B204-43EB-AEA9-B81240D8BB5A_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/D61BF33E-A80C-47A8-B165-EB71D4A6BA63_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/51D05D80-1B09-4AE7-9B05-EB8691E6A37F_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/8C685ACA-22E9-4232-92FA-9D893029276D_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/E9F3955D-555E-426F-846E-010955C1793D_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/665C4967-1ADD-4FD5-AB22-ACE3219BF72A_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/B2724FE7-19C2-46BC-908D-C2F8574AE429_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/E8FC7C12-3388-4D83-A396-CC51A0E341C5_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/2E3C3F4C-1345-4834-8F6C-8EB06C462D94_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/D8C11CED-29C2-4EF9-B0EB-8195AA43789A_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/7D336796-B944-40F8-BC4C-6CC3B39FE624_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/16F98878-547E-49BC-ADD0-D3A63D5F942B_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/B07B66A3-6670-470F-83DB-CB720B25B29F_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/E31C244F-1C7D-4168-B7FD-ED0D6ECCB0C3_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/33A83766-0229-416C-8ED8-D5924B4183D6_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 2 - Coastal Walks/photos/7C4BBB45-73E7-4ACC-A244-000B394962CE_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/1B2A349F-7152-49BD-9211-BB1597A81266_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/1CBE289C-3ED5-4299-BDB6-3E07A02D6C56_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/5761386C-14E8-4166-BBDC-E776D9954B13_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/6597D0A6-B584-4751-B10B-413362E89577_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/56F9A293-2070-453D-BDDA-F4FF138C7DAB_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/55D9B6AB-0C20-409B-B661-04876CBBB1D5_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/C09B4991-B204-43EB-AEA9-B81240D8BB5A_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/D61BF33E-A80C-47A8-B165-EB71D4A6BA63_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/51D05D80-1B09-4AE7-9B05-EB8691E6A37F_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/8C685ACA-22E9-4232-92FA-9D893029276D_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/E9F3955D-555E-426F-846E-010955C1793D_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/665C4967-1ADD-4FD5-AB22-ACE3219BF72A_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/B2724FE7-19C2-46BC-908D-C2F8574AE429_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/E8FC7C12-3388-4D83-A396-CC51A0E341C5_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/2E3C3F4C-1345-4834-8F6C-8EB06C462D94_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/D8C11CED-29C2-4EF9-B0EB-8195AA43789A_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/7D336796-B944-40F8-BC4C-6CC3B39FE624_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/16F98878-547E-49BC-ADD0-D3A63D5F942B_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/B07B66A3-6670-470F-83DB-CB720B25B29F_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/E31C244F-1C7D-4168-B7FD-ED0D6ECCB0C3_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/33A83766-0229-416C-8ED8-D5924B4183D6_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/7C4BBB45-73E7-4ACC-A244-000B394962CE_1_105_c.jpeg'
     ],
     'part-3': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/F7A85B30-ED16-47EC-BE86-3F71C317BF31_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/C06A41BA-F332-4ED4-84C4-9AB41348EF24_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/F0ED4D76-966E-4C91-9270-A168A827E63A_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/97E9474D-413C-4BEE-9D68-D2DE22212DEB_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/B01A933B-3947-4599-AE58-A21AE4E8781B_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/56691637-6EED-4E65-A39D-249192185136_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/FCA56337-2597-492B-9064-EB40125CE683_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/DEC4D468-3AB5-43A1-A9CF-6A91C369A902_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/1710A7EA-FC7A-4FCF-A9B4-209EFBD2743E_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/CA9221C3-FC5F-443A-BB7C-F4D4ACAF789F_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/EDCFFCB3-8179-49E6-9BEA-69A22BD56D65_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/1948EC91-6F65-4E19-A5B1-A554451FB419_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/0C63D9C2-E5E0-48DC-B803-5F0755B56946_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/321D7333-D3F7-4845-8420-485193194743_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/BA406FE6-6622-4728-800A-3BDD06257BBC_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 3 - Festival Day/photos/2A8F87AD-687F-4625-A2AA-96E0F836CFE4_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/F7A85B30-ED16-47EC-BE86-3F71C317BF31_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/C06A41BA-F332-4ED4-84C4-9AB41348EF24_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/F0ED4D76-966E-4C91-9270-A168A827E63A_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/97E9474D-413C-4BEE-9D68-D2DE22212DEB_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/B01A933B-3947-4599-AE58-A21AE4E8781B_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/56691637-6EED-4E65-A39D-249192185136_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/FCA56337-2597-492B-9064-EB40125CE683_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/DEC4D468-3AB5-43A1-A9CF-6A91C369A902_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/1710A7EA-FC7A-4FCF-A9B4-209EFBD2743E_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/CA9221C3-FC5F-443A-BB7C-F4D4ACAF789F_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/EDCFFCB3-8179-49E6-9BEA-69A22BD56D65_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/1948EC91-6F65-4E19-A5B1-A554451FB419_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/0C63D9C2-E5E0-48DC-B803-5F0755B56946_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/321D7333-D3F7-4845-8420-485193194743_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/BA406FE6-6622-4728-800A-3BDD06257BBC_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/2A8F87AD-687F-4625-A2AA-96E0F836CFE4_1_105_c.jpeg'
     ],
     'part-4': [
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/2B0FC1AF-F365-4D86-AB12-99D79AE41685_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/3F508E4C-0363-4FF4-BC34-B4F025910D72_1_201_a.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/D9C2CBBC-46DF-45BC-B365-8D2A0DD8881E_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/B2DCC473-76D5-45C3-AC80-0A1DB30F6EDF_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/C612B5E1-066D-400F-A27D-38201042D935_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/06331420-1049-475F-9F4B-66A7604C3A8D_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/69522BE0-365F-4DC0-9D85-60F9643AB01B_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/6BC0C5FC-1417-40F1-8D47-CF968E01511C_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/64DF19AC-1017-4F27-94E6-576DEDB602ED_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/photos/Part 4 - The Walk Home/photos/072D3785-FD27-429D-8724-8DE0A9C21695_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/2B0FC1AF-F365-4D86-AB12-99D79AE41685_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/3F508E4C-0363-4FF4-BC34-B4F025910D72_1_201_a.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/D9C2CBBC-46DF-45BC-B365-8D2A0DD8881E_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/B2DCC473-76D5-45C3-AC80-0A1DB30F6EDF_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/C612B5E1-066D-400F-A27D-38201042D935_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/06331420-1049-475F-9F4B-66A7604C3A8D_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/69522BE0-365F-4DC0-9D85-60F9643AB01B_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/6BC0C5FC-1417-40F1-8D47-CF968E01511C_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/64DF19AC-1017-4F27-94E6-576DEDB602ED_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/072D3785-FD27-429D-8724-8DE0A9C21695_1_105_c.jpeg'
     ]
   }
 }
@@ -205,7 +208,13 @@ function HeroCarousel({ images, title }) {
           touchStartX.current = null
         }}
       >
-        <img src={getAssetPath(images[index])} alt={`${title} ${index + 1}`} className="max-w-full max-h-full object-contain block" />
+        <img
+          src={(images[index] && (images[index].startsWith('/') || images[index].startsWith('http')))
+            ? images[index]
+            : getAssetPath(images[index])}
+          alt={`${title} ${index + 1}`}
+          className="max-w-full max-h-full object-contain block"
+        />
       </div>
       {images.length > 1 && (
         <>
@@ -485,6 +494,178 @@ function AnimatedText({ children }) {
     </div>
   )
 }
+
+// Generic fade-and-rise on enter/leave for sections
+function AnimatedIn({ children }) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.15 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <div
+      ref={ref}
+      className="transition-all duration-500"
+      style={{ transform: visible ? 'translateY(0)' : 'translateY(16px)', opacity: visible ? 1 : 0 }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Best-effort sort by date encoded in filename; fallback to name
+function sortPhotosByNameDate(list = []) {
+  const parse = (src) => {
+    try {
+      const name = String(src).split('/').pop() || ''
+      const m = name.match(/(20\d{2})[-_]?([01]\d)[-_]?([0-3]\d)(?:[-_]?([0-2]\d)([0-5]\d)([0-5]\d))?/)
+      if (!m) return 0
+      const [_, y, mo, d, h = '00', mi = '00', s = '00'] = m
+      const dt = new Date(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(s))
+      return dt.getTime() || 0
+    } catch { return 0 }
+  }
+  return [...list].sort((a, b) => {
+    const da = parse(a)
+    const db = parse(b)
+    if (da && db) return da - db
+    if (da) return -1
+    if (db) return 1
+    return String(a).localeCompare(String(b))
+  })
+}
+
+// Event-driven, locked body scroll highlights scroller with pinned title
+function ChapterHighlightsScroller({ images, chapterTitle }) {
+  const wrapRef = useRef(null)
+  const stageRef = useRef(null)
+  const [enabled, setEnabled] = useState(false)
+  const [pos, setPos] = useState(0)
+  const posRef = useRef(0)
+  const prevOverflow = useRef('')
+  const touchY = useRef(null)
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
+
+  const checkEnabled = () => {
+    const el = wrapRef.current
+    if (!el) return setEnabled(false)
+    const r = el.getBoundingClientRect()
+    const vh = window.innerHeight || document.documentElement.clientHeight
+    const fully = r.top >= -4 && r.bottom <= vh + 4
+    const engaged = r.top <= 0 && r.bottom >= vh
+    setEnabled(fully || engaged)
+  }
+
+  useEffect(() => {
+    checkEnabled()
+    window.addEventListener('scroll', checkEnabled, { passive: true })
+    window.addEventListener('resize', checkEnabled)
+    return () => {
+      window.removeEventListener('scroll', checkEnabled)
+      window.removeEventListener('resize', checkEnabled)
+    }
+  }, [])
+
+  useEffect(() => { posRef.current = pos }, [pos])
+
+  useEffect(() => {
+    if (enabled) {
+      prevOverflow.current = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = prevOverflow.current || ''
+    }
+    return () => { document.body.style.overflow = prevOverflow.current || '' }
+  }, [enabled])
+
+  useEffect(() => {
+    const el = stageRef.current
+    if (!el) return
+    const total = Math.max(1, (images?.length || 1) - 1)
+    const onWheel = (e) => {
+      if (!enabled) return
+      const cur = posRef.current
+      const atStart = cur <= 0
+      const atEnd = cur >= total
+      const goingDown = e.deltaY > 0
+      if ((goingDown && atEnd) || (!goingDown && atStart)) {
+        // allow page to continue scrolling past edges
+        document.body.style.overflow = prevOverflow.current || ''
+        return
+      }
+      e.preventDefault()
+      const SPEED = 1 / 120
+      setPos((p) => clamp(p + e.deltaY * SPEED, 0, total))
+    }
+    const onTouchStart = (e) => { if (enabled) touchY.current = e.changedTouches?.[0]?.clientY ?? null }
+    const onTouchMove = (e) => {
+      if (!enabled) return
+      if (touchY.current == null) return
+      const y = e.changedTouches?.[0]?.clientY ?? null
+      if (y == null) return
+      const dy = touchY.current - y
+      const cur = posRef.current
+      const atStart = cur <= 0
+      const atEnd = cur >= total
+      const goingDown = dy > 0
+      if (!((goingDown && atEnd) || (!goingDown && atStart))) {
+        e.preventDefault()
+        const SPEED_T = 1 / 180
+        setPos((p) => clamp(p + dy * SPEED_T, 0, total))
+      } else {
+        document.body.style.overflow = prevOverflow.current || ''
+      }
+      touchY.current = y
+    }
+    const opts = { passive: false }
+    el.addEventListener('wheel', onWheel, opts)
+    el.addEventListener('touchstart', onTouchStart, opts)
+    el.addEventListener('touchmove', onTouchMove, opts)
+    return () => {
+      el.removeEventListener('wheel', onWheel, opts)
+      el.removeEventListener('touchstart', onTouchStart, opts)
+      el.removeEventListener('touchmove', onTouchMove, opts)
+    }
+  }, [enabled, images?.length])
+
+  if (!images || images.length === 0) return null
+  const idx = Math.floor(pos)
+  const total = Math.max(1, images.length - 1)
+  const t = clamp(pos - idx, 0, 1)
+  const cur = idx
+  const next = Math.min(idx + 1, images.length - 1)
+
+  const fadeOutStart = 0.35
+  const fadeInStart = 0.55
+  const curOpacity = t < fadeOutStart ? 1 : 1 - (t - fadeOutStart) / (1 - fadeOutStart)
+  const nextOpacity = t < fadeInStart ? 0 : (t - fadeInStart) / (1 - fadeInStart)
+
+  return (
+    <div ref={wrapRef} className="relative" style={{ height: '100vh' }}>
+      <div className="sticky top-0 h-screen bg-white">
+        <div className="text-center py-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
+            {chapterTitle}
+          </h2>
+        </div>
+        <div ref={stageRef} className="relative" style={{ height: 'calc(100vh - 88px)' }}>
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2, transform: `translateY(${-t * 100}%)`, opacity: curOpacity, transition: 'transform 30ms linear, opacity 30ms linear' }}>
+            <img src={images[cur]} alt={`${chapterTitle} ${cur + 1}`} className="max-w-full max-h-full object-contain" />
+          </div>
+          {next !== cur && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1, opacity: nextOpacity, transition: 'opacity 30ms linear' }}>
+              <img src={images[next]} alt={`${chapterTitle} ${next + 1}`} className="max-w-full max-h-full object-contain" />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 // Responsive 2-row preview grid with +X overlay on last tile
 function useColumns() {
   const [cols, setCols] = useState(() => {
@@ -515,12 +696,19 @@ function PreviewGrid({ photos, onOpen, getText, title }) {
     <div>
       <div className={`grid gap-4`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {visible.map((src, i) => (
-          <div key={i} className="aspect-square bg-white border border-black overflow-hidden cursor-pointer group" onClick={onOpen}>
+          <div
+            key={i}
+            className="aspect-square bg-white border border-black overflow-hidden cursor-pointer group"
+            onClick={() => onOpen(i)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onOpen(i) }}
+          >
             <img src={src} alt={`${title} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           </div>
         ))}
         {needsOverlay && (
-          <button onClick={onOpen} className="relative aspect-square border border-black bg-white group">
+          <button onClick={() => onOpen(frames - 1)} className="relative aspect-square border border-black bg-white group" type="button">
             <img src={photos[frames - 1]} alt={`${title} more`} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gray-200/70 flex items-center justify-center">
               <span className="text-xl md:text-2xl font-bold text-black">+{photos.length - (frames - 1)}</span>
@@ -551,14 +739,21 @@ const PhotoStory = () => {
   const getPartContent = (s, p) => {
     const textMap = STORY_TEXT[s.id]?.[p.id]
     const description = textMap ? (language === 'no' ? textMap.no : textMap.en) : ''
-    const highlights = (STORY_HIGHLIGHTS[s.id]?.[p.id] || []).map(getAssetPath)
     const photos = (STORY_PHOTOS[s.id]?.[p.id] || []).map(getAssetPath)
+    const highlights = [] // removed per simplification
     return { description, highlights, photos }
   }
 
   const getHeroHighlights = (s) => {
+    if (!s) return []
+    // Prefer story-level Highlights folder when available (e.g., 1.jpeg..10.jpeg)
+    if (s.id === 'stavern-sommer-2025') {
+      const base = 'portfolio/photography/Stavern sommer 2025/Highlights'
+      const files = Array.from({ length: 10 }, (_, i) => `${base}/${i + 1}.jpeg`)
+      return files.map(getAssetPath)
+    }
     const all = (s?.parts || []).flatMap((p) => STORY_HIGHLIGHTS[s.id]?.[p.id] || [])
-    return all || []
+    return all.map(getAssetPath)
   }
 
   if (loading) {
@@ -586,20 +781,30 @@ const PhotoStory = () => {
 
   return (
     <div className="min-h-screen bg-white text-black animate-page-enter font-serif">
-      {/* Back arrow (glass) */}
-      <div className="fixed top-2 left-4 md:left-6 z-[1000] pointer-events-auto">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="glass-bubble flex items-center gap-2 px-5 py-3 border"
-          style={{ backgroundColor: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.3)', borderRadius: '9999px' }}
-          aria-label={getText({ en: 'Go back', no: 'Tilbake' })}
-          title={getText({ en: 'Go back', no: 'Tilbake' })}
-        >
-          <span aria-hidden className="text-black text-lg md:text-xl">←</span>
-          <span className="hidden sm:inline text-black text-base md:text-lg">{getText({ en: 'Go back', no: 'Tilbake' })}</span>
-        </button>
-      </div>
+      {/* Top controls bar: Back + Language toggle (portal to body so it's truly sticky) */}
+      {createPortal(
+        <div className="fixed top-0 left-0 right-0 z-[2000] pointer-events-none">
+          <div className="flex items-center justify-between gap-2 px-4 md:px-6 pt-2">
+            <div className="pointer-events-auto">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="glass-bubble flex items-center gap-2 px-5 py-3 border"
+                style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.15)', borderRadius: '9999px' }}
+                aria-label={getText({ en: 'Go back', no: 'Tilbake' })}
+                title={getText({ en: 'Go back', no: 'Tilbake' })}
+              >
+                <span aria-hidden className="text-black text-lg md:text-xl">←</span>
+                <span className="hidden sm:inline text-black text-base md:text-lg">{getText({ en: 'Go back', no: 'Tilbake' })}</span>
+              </button>
+            </div>
+            <div className="pointer-events-auto">
+              <LanguageToggle />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <div className="max-w-6xl mx-auto px-6 pt-24 md:pt-32 pb-16">
         {/* Header */}
@@ -614,31 +819,55 @@ const PhotoStory = () => {
           </p>
         </header>
 
-        {/* Top-level highlights carousel (smaller; reuses photography style) */}
-        <div className="mb-10">
-          <HeroCarousel images={getHeroHighlights(story)} title={getText(story.title)} />
-        </div>
+        {/* Top-level highlights carousel (shared component) */}
+        {(() => {
+          const hero = getHeroHighlights(story)
+          return hero && hero.length > 0 ? (
+            <div className="mb-10">
+              <PhotoCarousel
+                images={hero}
+                title={getText({ en: 'Highlights', no: 'Høydepunkter' })}
+                showTitle={true}
+                heightClass="h-[55vh] sm:h-[55vh] md:h-[60vh]"
+                objectFit="contain"
+              />
+            </div>
+          ) : null
+        })()}
 
         {/* Chapters label removed per request */}
 
         {/* Chapters — scroll through sections in order: title → highlights scroller → text → preview grid */}
         {story.parts.map((p, idx) => {
           const { description, highlights, photos } = getPartContent(story, p)
+          const chapterRoot = (p.photos || '').replace(/photos\/?$/i, '')
+          const mainImage = chapterRoot ? getAssetPath(`${chapterRoot}main.jpeg`) : null
           return (
             <section key={p.id} className="mt-14">
-              {/* Sticky stack keeps title + images visible; text below will not show during sequence */}
-              {highlights && highlights.length > 0 && (
-                <StickyImageStack
-                  images={highlights}
-                  chapterTitle={`${getText({ en: `Chapter ${idx + 1}: `, no: `Del ${idx + 1}: ` })}${getText(p.title)}`}
-                />
+              {/* Chapter title */}
+              <AnimatedIn>
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
+                    {getText({ en: `Chapter ${idx + 1}: `, no: `Del ${idx + 1}: ` })}{getText(p.title)}
+                  </h2>
+                </div>
+              </AnimatedIn>
+              {/* Main chapter photo (replaces highlights) */}
+              {mainImage && (
+                <AnimatedIn>
+                  <div className="w-full mb-8">
+                    <div className="w-full flex items-center justify-center" style={{ height: 'calc(100vh - 200px)', maxHeight: 'calc(100vh - 200px)' }}>
+                      <img src={mainImage} alt={`${getText(p.title)} – main`} className="max-w-full max-h-full object-contain" />
+                    </div>
+                  </div>
+                </AnimatedIn>
               )}
 
               {/* Chapter text */}
               {description && (
                 <div className="max-w-3xl mx-auto mt-12">
                   <AnimatedText>
-                    <p className="text-2xl md:text-3xl leading-relaxed whitespace-pre-line" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
+                    <p className="text-2xl md:text-3xl leading-relaxed whitespace-pre-line text-center" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
                       {description}
                     </p>
                   </AnimatedText>
@@ -648,12 +877,23 @@ const PhotoStory = () => {
               {/* Preview grid: exactly 2 rows; last tile becomes +X overlay when more */}
               {photos && photos.length > 0 && (
                 <div className="mt-8">
-                  <PreviewGrid
-                    photos={photos}
-                    onOpen={() => { setCarouselData({ images: photos, title: `${getText(story.title)} - ${getText(p.title)}` }); setShowCarousel(true) }}
-                    getText={getText}
-                    title={getText(p.title)}
-                  />
+                  <AnimatedIn>
+                    <h3 className="text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
+                      {getText({ en: 'Gallery', no: 'Galleri' })}
+                    </h3>
+                  </AnimatedIn>
+                  <AnimatedIn>
+                    <PreviewGrid
+                      photos={sortPhotosByNameDate(photos)}
+                      onOpen={(startAt = 0) => {
+                        const sorted = sortPhotosByNameDate(photos)
+                        setCarouselData({ images: sorted, title: `${getText(story.title)} - ${getText(p.title)}`, startIndex: startAt })
+                        setShowCarousel(true)
+                      }}
+                      getText={getText}
+                      title={getText(p.title)}
+                    />
+                  </AnimatedIn>
                 </div>
               )}
             </section>
@@ -662,7 +902,12 @@ const PhotoStory = () => {
       </div>
 
       {showCarousel && (
-        <ImageCarousel images={carouselData.images} title={carouselData.title} onClose={() => setShowCarousel(false)} />
+        <ImageCarousel
+          images={carouselData.images}
+          title={carouselData.title}
+          startIndex={Math.max(0, Math.min((carouselData.startIndex ?? 0), (carouselData.images?.length || 1) - 1))}
+          onClose={() => setShowCarousel(false)}
+        />
       )}
     </div>
   )

@@ -3,7 +3,9 @@
 export const getAssetPath = (path) => {
   const base = (import.meta?.env?.BASE_URL) || '/'
   const cleanPath = String(path || '').replace(/^\.?\//, '')
-  return `${base}${cleanPath}`
+  // Encode spaces and special chars but keep slashes
+  const encoded = cleanPath.split('/').map(encodeURIComponent).join('/')
+  return `${base}${encoded}`
 }
 
 // Helper for images in the portfolio directory (same behavior)
