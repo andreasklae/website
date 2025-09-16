@@ -456,6 +456,12 @@ const SoftwarePage = () => {
   return (
     <div className="min-h-screen text-ide-text animate-page-enter container-responsive">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 lg:pt-40 pb-12 w-full">
+        {/* Page Header */}
+        <header className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white">
+            {getText({ en: 'Academia', no: 'Akademia' })}
+          </h1>
+        </header>
         {/* About Section */}
         <section className="mb-20 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 flex items-center justify-center gap-3">
@@ -580,7 +586,7 @@ const SoftwarePage = () => {
               
               {/* C Family */}
               {/* C++ */}
-              <img src={getAssetPath('IT logos/programming languages/c++.svg')} alt="C++" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/cpp.svg')} alt="C++" className="w-20 h-20 object-contain" />
               
               {/* C */}
               <img src={getAssetPath('IT logos/programming languages/c.svg')} alt="C" className="w-20 h-20 object-contain" />
@@ -827,7 +833,10 @@ const SoftwarePage = () => {
                       ref={el => categoryRefs.current[category.key] = el}
                       className={`course-container ${isExpanded ? 'expanded' : 'collapsed'}`}
                       style={{
-                        maxHeight: isExpanded ? '5000px' : `${categoryHeights[category.key] || 200}px`,
+                        position: 'relative',
+                        maxHeight: isExpanded 
+                          ? `${(categoryRefs.current[category.key]?.querySelector('.grid')?.scrollHeight || 10000)}px`
+                          : `${categoryHeights[category.key] || 200}px`,
                         transition: isResizing ? 'none' : 'max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         overflow: 'hidden'
                       }}
@@ -946,7 +955,7 @@ const SoftwarePage = () => {
                     </div>
 
                     {hasMore && (
-                      <div className="flex justify-center">
+                      <div className="flex justify-center mt-4 relative z-10">
                         <button
                           onClick={() => toggleCategory(category.key)}
                           className="glass-bubble inline-flex items-center justify-center px-6 py-3 backdrop-blur-sm border transition-all duration-300 hover:scale-105 hover:shadow-xl text-sm font-medium group"
@@ -954,7 +963,9 @@ const SoftwarePage = () => {
                             backgroundColor: 'rgba(59, 130, 246, 0.15)',
                             borderColor: 'rgba(59, 130, 246, 0.2)',
                             borderRadius: '2rem',
-                            color: '#60a5fa'
+                            color: '#60a5fa',
+                            touchAction: 'manipulation',
+                            cursor: 'pointer'
                           }}
                         >
                           <span className="transition-all duration-300 group-hover:text-white">
