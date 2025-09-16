@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/', label: { en: 'Home', no: 'Hjem' } },
-    { path: '/software', label: { en: 'Academia', no: 'Akademia' } },
+    { path: '/software', label: { en: 'Academics', no: 'Akademia' } },
     { path: '/photography', label: { en: 'Photography', no: 'Foto' } }
   ]
 
