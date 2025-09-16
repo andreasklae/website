@@ -264,7 +264,7 @@ const LandingPage = () => {
                   }}
                 >
                   {/* Project Image */}
-                  <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
+                  <div className="aspect-square bg-gray-300/40 rounded-xl overflow-hidden mb-4">
                     {project.photos && project.photos[0] && (
                       <img
                         src={project.photos[0]}
@@ -333,7 +333,7 @@ const LandingPage = () => {
                 }}
               >
                 {/* Project Image */}
-                <div className="aspect-video bg-gray-300/40 rounded-xl overflow-hidden mb-4">
+                <div className="aspect-square bg-gray-300/40 rounded-xl overflow-hidden mb-4">
                   {project.photos && project.photos[0] && (
                     <img
                       src={project.photos[0]}
