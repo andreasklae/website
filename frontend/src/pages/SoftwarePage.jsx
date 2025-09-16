@@ -459,7 +459,7 @@ const SoftwarePage = () => {
         {/* Page Header */}
         <header className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white">
-            {getText({ en: 'Academia', no: 'Akademia' })}
+            {getText({ en: 'Academics', no: 'Akademia' })}
           </h1>
         </header>
         {/* About Section */}
