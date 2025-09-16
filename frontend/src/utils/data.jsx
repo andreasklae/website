@@ -188,24 +188,71 @@ export const portfolioProjects = [
   }
 ]
 
-// Photography highlights - actual images from the portfolio
+// Photography highlights - complete list from public folder
 const highlightImages = [
-  'portfolio/photography/highlights/0A5732E0-D733-479F-91AF-98E56141EB38_1_105_c.jpeg',
+  'portfolio/photography/highlights/04854BAB-216D-4D0E-9ACF-ABD079B4F364.jpeg',
   'portfolio/photography/highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg',
-  'portfolio/photography/highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
-  'portfolio/photography/highlights/0CF0A802-D8A2-44EC-80DB-8509AB5960DC_1_105_c.jpeg',
-  'portfolio/photography/highlights/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
-  'portfolio/photography/highlights/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
+  'portfolio/photography/highlights/0805AE7E-6E74-4F5A-8CDB-E685BB2C1CC0_1_105_c.jpeg',
+  'portfolio/photography/highlights/093C7DA0-7613-40C1-8942-137D5FAAD4A5_1_105_c.jpeg',
+  'portfolio/photography/highlights/0B9990D3-5907-4F05-8A8A-D30D0A9B601A_1_105_c.jpeg',
+  'portfolio/photography/highlights/0D3B9E1A-60DE-4A6C-B534-DC1B96A1DD49_1_102_o.jpeg',
+  'portfolio/photography/highlights/0E76D1F4-4DC7-4148-8185-6154744D59EA_1_201_a.jpeg',
+  'portfolio/photography/highlights/14789848-B71B-4FE4-BC6B-8A51D915BD45_1_102_o.jpeg',
+  'portfolio/photography/highlights/152EF68B-025C-4C04-BACD-AE71BCD05AD7_1_105_c.jpeg',
+  'portfolio/photography/highlights/1973B5E1-8462-4B63-8A66-068164E9C337_1_102_a.jpeg',
+  'portfolio/photography/highlights/1BE2CED2-2FB6-4475-B303-969934E1D6CB_1_105_c.jpeg',
+  'portfolio/photography/highlights/24555F36-678D-4C93-95ED-1A54A69D6456_1_102_a.jpeg',
   'portfolio/photography/highlights/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg',
-  'portfolio/photography/highlights/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
-  'portfolio/photography/highlights/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
-  'portfolio/photography/highlights/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
-  'portfolio/photography/highlights/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg',
-  'portfolio/photography/highlights/E876441F-22E1-4644-BC75-C0BC683E8774_1_105_c.jpeg',
-  'portfolio/photography/highlights/F652948E-8197-4E08-B777-69C725A6FF7C_1_105_c.jpeg',
-  'portfolio/photography/highlights/93DD5B85-15BD-4FFD-B74A-EDC0E733890D_1_105_c.jpeg',
+  'portfolio/photography/highlights/2A81A269-41B8-4021-ACE7-42A8C9A52995_1_201_a.jpeg',
+  'portfolio/photography/highlights/2D1393D1-9F78-47B1-9A6A-9E8CEAEC931F_1_102_o.jpeg',
+  'portfolio/photography/highlights/3002B068-3126-4EE0-89D8-67EE7B4DA412_1_105_c.jpeg',
+  'portfolio/photography/highlights/352DA6D6-056A-4C6C-B808-B0C82A42B868_1_102_a.jpeg',
+  'portfolio/photography/highlights/4839B6E7-C56A-4139-B7FE-CC988A8AC649_1_105_c.jpeg',
+  'portfolio/photography/highlights/4D90D102-A22A-4B6D-B592-87505340CA3C_1_105_c.jpeg',
+  'portfolio/photography/highlights/546A38D8-861B-438C-8CC0-59A47FBC0FCF_1_105_c.jpeg',
+  'portfolio/photography/highlights/59C2DE7C-D78C-431D-B73B-32E5D19316E1_1_102_a.jpeg',
+  'portfolio/photography/highlights/63AE837A-FD39-4EA3-B83E-8D7599E1A418_1_105_c.jpeg',
+  'portfolio/photography/highlights/663EF69C-806F-4B67-BAFD-8A5395A482C8_1_102_a.jpeg',
+  'portfolio/photography/highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
+  'portfolio/photography/highlights/709DEE06-8092-463A-AE2D-F7B866644689_1_105_c.jpeg',
+  'portfolio/photography/highlights/7274D431-85AB-4BE7-9229-C697E91774C3_1_105_c.jpeg',
+  'portfolio/photography/highlights/750921F9-2AF8-47F5-8A6E-43769F471449.jpeg',
+  'portfolio/photography/highlights/76DE0E86-81B4-44DB-97F0-F6C3CA8767E3_1_105_c.jpeg',
+  'portfolio/photography/highlights/7F632829-EE68-42D6-9551-9F86E81E67FA_1_105_c.jpeg',
+  'portfolio/photography/highlights/807A17DA-75AD-447F-997E-E37E31C80CA8_1_105_c.jpeg',
+  'portfolio/photography/highlights/8387DE13-323C-491B-9158-FBAD48055A7D_1_105_c.jpeg',
+  'portfolio/photography/highlights/8E472CD7-D4E4-4B45-8ECA-B26A0AAC137E_1_105_c.jpeg',
+  'portfolio/photography/highlights/8EB37456-F110-4230-8685-882F14E6F4A5_1_105_c.jpeg',
+  'portfolio/photography/highlights/94ED706F-25BE-4300-85FC-D16740A6C1D3.jpeg',
+  'portfolio/photography/highlights/A1C05BD1-7AC1-42B8-BC2F-698D08E5A153_1_105_c.jpeg',
   'portfolio/photography/highlights/A79876F4-990E-426D-8EA3-8EA4828A49C2_1_105_c.jpeg',
-  'portfolio/photography/highlights/B5B1E9A7-5D79-4D27-89E1-1D682658288F_1_105_c.jpeg'
+  'portfolio/photography/highlights/AC8C935E-2B51-4241-A264-8FF3B21117F6_1_102_o.jpeg',
+  'portfolio/photography/highlights/B07B66A3-6670-470F-83DB-CB720B25B29F_1_105_c.jpeg',
+  'portfolio/photography/highlights/B835ECD0-41F0-4778-BCEC-DE0835D738BB_1_105_c.jpeg',
+  'portfolio/photography/highlights/BF21617D-5A31-4652-B3EE-289CC89F1F3B_1_105_c.jpeg',
+  'portfolio/photography/highlights/BF703E8B-CEC3-4049-9533-80BE2E060235_1_105_c.jpeg',
+  'portfolio/photography/highlights/C61311F1-D0F6-4E90-AF36-B21FE8BB2603_1_105_c.jpeg',
+  'portfolio/photography/highlights/C6D44452-98EC-4E18-9B90-18C22BCDD5D5_1_105_c.jpeg',
+  'portfolio/photography/highlights/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
+  'portfolio/photography/highlights/D61BF33E-A80C-47A8-B165-EB71D4A6BA63_1_105_c.jpeg',
+  'portfolio/photography/highlights/D724ADB4-BF32-404B-94EF-0949D83B72A7_1_102_a.jpeg',
+  'portfolio/photography/highlights/DEDF7DA6-6087-4908-BAD3-52CB0D23B0F5_1_102_o.jpeg',
+  'portfolio/photography/highlights/DF356DAA-9B6A-48BF-9A51-A286A3CF3FF8_1_105_c.jpeg',
+  'portfolio/photography/highlights/DSCF3941.JPG',
+  'portfolio/photography/highlights/E722CF07-383F-4773-BA7B-D7D624326CFD_1_105_c.jpeg',
+  'portfolio/photography/highlights/E76F9F19-F960-4F9B-8D17-646AD1F2895A_1_105_c.jpeg',
+  'portfolio/photography/highlights/E9F3955D-555E-426F-846E-010955C1793D_1_105_c.jpeg',
+  'portfolio/photography/highlights/FCE483A0-3423-4DB9-BFA1-10AD73FF4A7A_1_105_c.jpeg',
+  'portfolio/photography/highlights/FEAAC21E-BB5F-4BDE-827B-06C4FF1DF325_1_105_c.jpeg',
+  'portfolio/photography/highlights/FF2DFBA3-9BB3-4A41-A1BF-90BA5A431685_1_105_c.jpeg',
+  'portfolio/photography/highlights/FFF8244B-1644-403A-A5D1-4344960E70DB_1_105_c.jpeg',
+  'portfolio/photography/highlights/IMG_1630.jpg',
+  'portfolio/photography/highlights/IMG_2684 2.jpg',
+  'portfolio/photography/highlights/IMG_2905.JPG',
+  'portfolio/photography/highlights/IMG_3844.JPG',
+  'portfolio/photography/highlights/IMG_3863.JPG',
+  'portfolio/photography/highlights/R1-03421-0028.jpg',
+  'portfolio/photography/highlights/R1-09749-021A.JPG'
 ]
 
 export const photographyHighlights = highlightImages.map(path => getAssetPath(path))
@@ -262,6 +309,50 @@ export const photographyStories = [
         description: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/description.md',
         highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/',
         photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/'
+      }
+    ]
+  },
+  {
+    id: 'portugal-2025',
+    title: {
+      en: 'Portugal 2025',
+      no: 'Portugal 2025'
+    },
+    coverImage: getAssetPath('portfolio/photography/Portugal 2025/Thumbnail.JPG'),
+    description: {
+      en: 'Surf camp, city days in Lisbon, long dinners, and quiet sunset walks.',
+      no: 'Surfecamp, byliv i Lisboa, lange middager og stille kveldsturer.'
+    },
+    parts: [
+      {
+        id: 'part-1',
+        title: { en: 'Surf Camp', no: 'Surf Camp' },
+        description: './portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/description.md',
+        photos: './portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/'
+      },
+      {
+        id: 'part-2',
+        title: { en: 'Lisbon', no: 'Lisboa' },
+        description: './portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/description.md',
+        photos: './portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/'
+      },
+      {
+        id: 'part-3',
+        title: { en: 'The Beach House', no: 'Strandhuset' },
+        description: './portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/description.md',
+        photos: './portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/'
+      },
+      {
+        id: 'part-4',
+        title: { en: 'Dinner Parties', no: 'Middagsselskaper' },
+        description: './portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/description.md',
+        photos: './portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/'
+      },
+      {
+        id: 'part-5',
+        title: { en: 'Sunset Walks', no: 'Kveldsturer' },
+        description: './portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/description.md',
+        photos: './portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/'
       }
     ]
   }

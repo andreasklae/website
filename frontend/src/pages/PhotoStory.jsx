@@ -5,6 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext'
 import { photographyStories } from '../utils/data.jsx'
 import LanguageToggle from '../components/LanguageToggle'
 import { getAssetPath } from '../utils/paths'
+import JournalEntry from '../components/JournalEntry'
 import ImageCarousel from '../components/ImageCarousel'
 import PhotoCarousel from '../components/PhotoCarousel'
 
@@ -26,6 +27,36 @@ const STORY_TEXT = {
     'part-4': {
       en: `I left the main road and followed a field that caught my eye. A doe leapt across the grass and vanished, I chased it and suddenly found myself standing in the middle of the field among golden tall straws, soft light, and a warm silence. I kept to the field for a while, then met up with my friends again and walked the rest of the way together.`,
       no: `Jeg forlot hovedveien og fulgte et jorde jeg fikk øye på. Et rådyr hoppet gjennom gresset og forsvant, og plutselig sto jeg midt i åkeren bland gylne, høye strå. mildt lys og en varm stillhet. Jeg holdt meg i jordet en stund, før jeg møtte vennene mine igjen og gikk resten av veien sammen.`
+    }
+  },
+  'portugal-2025': {
+    'part-1': {
+      en: `We started the trip in Ericeira, where we stayed at a surf camp from the 3rd to the 7th of June. The camp had this flowing rhythm where people came and went — some only stayed for a few days, others for weeks — but everyone we met was warm, friendly, and social. Our days settled into a pattern of surf lessons in the morning and afternoon, with evenings spent hanging out, drinking, and talking with whoever was around. None of us became great surfers overnight, but the process of learning — falling, trying again, slowly getting the hang of it — was its own fun.
+
+One evening we ended up at a rooftop party above a surf shop. The place was packed, people spilling out in every direction, and a live band kept the energy high. It was one of those nights where it felt like everyone there was sharing the same wave of excitement, even far from the ocean.`,
+      no: `Vi startet turen i Ericeira, hvor vi bodde på en surfecamp fra 3. til 7. juni. Campen hadde en flytende rytme der folk kom og gikk — noen var bare innom i noen dager, andre ble i ukevis — men alle vi møtte var varme, vennlige og sosiale. Dagene fant formen med surfetimer morgen og ettermiddag, og kveldene gikk med til å henge, drikke og prate med dem som var rundt. Ingen av oss ble gode surfere over natten, men selve læringen — å falle, prøve igjen, sakte få taket på det — var en glede i seg selv.
+
+En kveld havnet vi på en takfest over en surfebutikk. Det var stappfullt, folk i alle retninger, og et liveband holdt energien oppe. En sånn kveld der det føltes som om alle delte den samme bølgen av begeistring — selv langt fra havet.`
+    },
+    'part-2': {
+      en: `On the 8th and 9th we moved into the city, trading the waves for winding streets and viewpoints. Lisbon was all about miradouros — we hopped between them, pausing for beers or lunch while taking in views over the city. We ate amazing food, wandered through the neighborhoods, and let ourselves get lost in the atmosphere. One night we went out to party, moving between bars, clubs, and streets full of people. It wasn’t about a single venue but about soaking up the city’s energy as a whole.`,
+      no: `8. og 9. dro vi inn til byen, byttet bølger med svingete gater og utsiktspunkter. Lisboa handlet om miradouros — vi hoppet fra sted til sted, stoppet for øl eller lunsj mens vi så utover byen. Vi spiste nydelig mat, vandret gjennom nabolagene og lot oss gå litt vill i stemningen. En kveld dro vi ut for å feste, mellom barer, klubber og folketette gater. Det handlet ikke om ett sted, men om å suge til seg byens energi.`
+    },
+    'part-3': {
+      en: `From the 10th to the 12th we stayed in Caparica, in a small house literally on the beach. It felt almost too good to be true: the house came with a surfboard, a JBL partybox, a grill, and even a complimentary bottle of red wine. Our days were spent swimming, surfing, tanning, and drinking at a beach bar.
+
+We got to know the neighbor next door, whose grandfather had built the house and passed it down through the family. He appreciated that we stopped to chat, and one day he even gave us a bag of charcoal to use for the grill. Later, local fishermen came ashore and sold us fresh fish straight from their boats. We grilled it outside as the sun dropped lower, salt still in the air from the waves.`,
+      no: `Fra 10. til 12. bodde vi i Caparica, i et lite hus bokstavelig talt på stranden. Det føltes nesten for godt til å være sant: huset kom med surfebrett, JBL partyboks, grill og til og med en flaske rødvin. Dagene gikk med til bading, surfing, soling og en drink på strandbaren.
+
+Vi ble kjent med naboen ved siden av, hvis bestefar hadde bygget huset og latt det gå i arv i familien. Han satte pris på at vi stoppet for å prate, og en dag ga han oss til og med en pose grillkull. Senere kom lokale fiskere inn og solgte fersk fisk rett fra båtene. Vi grillet ute mens sola sank, og saltet fra bølgene hang fortsatt i lufta.`
+    },
+    'part-4': {
+      en: `Caparica also became the setting for one of the best nights of the trip. We invited friends who were staying elsewhere to come over for dinner. Everyone brought food and drinks, and we cooked together on the grill in the sand. It wasn’t carefully planned — just a spontaneous gathering sparked by being in a place that begged to be shared. The house turned into a meeting point, laughter spilling out to the beach as we ate, drank, and enjoyed the night.`,
+      no: `Caparica ble også rammen for en av turens beste kvelder. Vi inviterte venner som bodde andre steder til middag. Alle tok med mat og drikke, og vi lagde mat sammen på grillen i sanden. Det var ikke nøye planlagt — bare en spontan samling, født av et sted som ba om å deles. Huset ble et samlingspunkt, med latter som rant ut på stranden mens vi spiste, drakk og nøt kvelden.`
+    },
+    'part-5': {
+      en: `The west coast location gave us front-row seats to sunsets over the Atlantic. Each evening the sky shifted from orange to purple as we ate dinner with the waves as background music. On the last night, when the sun was hanging just above the horizon, I walked along the beach with a friend. The light was low, the air calm, and the day seemed to stretch endlessly before fading into night. It was the perfect ending to a trip that had been adventurous, social, and filled with moments that felt almost too spontaneous to be real.`,
+      no: `Vestkysten gav oss første rad til solnedganger over Atlanteren. Hver kveld skiftet himmelen fra oransje til lilla mens vi spiste middag med bølgene som bakgrunnsmusikk. Den siste kvelden, da solen hang like over horisonten, gikk jeg langs stranden med en venn. Lyset var lavt, luften rolig, og dagen virket å strekke seg uendelig før den tonet ut i natt. En perfekt avslutning på en tur som var eventyrlig, sosial og full av øyeblikk som nesten var for spontane til å være virkelige.`
     }
   }
 }
@@ -149,6 +180,105 @@ const STORY_PHOTOS = {
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/64DF19AC-1017-4F27-94E6-576DEDB602ED_1_105_c.jpeg',
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg',
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/072D3785-FD27-429D-8724-8DE0A9C21695_1_105_c.jpeg'
+    ]
+  },
+  'portugal-2025': {
+    'part-1': [
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/IMG_5011.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0003.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0004.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0008.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0010.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0011.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0013.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0014.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0016.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0020.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0021.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0022.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0024.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0025.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0026.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0027.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0028.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0029.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0030.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0031.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0032.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0034.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0037.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-001A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-002A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-003A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-004A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-005A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-007A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-008A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-010A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-011A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-012A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-015A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-017A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-018A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-019A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-025A.JPG'
+      ,
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait1.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait2.jpg'
+    ],
+    'part-2': [
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0003.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0004.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0005.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0007.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0009.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0010.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0011.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0012.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0013.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0014.jpg'
+    ],
+    'part-3': [
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0015.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0017.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0019.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0020.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0021.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0026.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0027.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0028.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-023A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-024A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-028A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-033A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-035A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/h.jpg'
+    ],
+    'part-4': [
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0022.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0025.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0034.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0035.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-001A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-003A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-004A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-005A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-006A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-007A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-008A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-009A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-011A.jpg'
+    ],
+    'part-5': [
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-014A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-015A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-016A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-017A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-018A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-019A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-020A.jpg',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-021A.JPG',
+      'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-022A.jpg'
     ]
   }
 }
@@ -727,6 +857,8 @@ const PhotoStory = () => {
 
   const [story, setStory] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [content, setContent] = useState(null)
+  const [contentLoading, setContentLoading] = useState(true)
   const [showCarousel, setShowCarousel] = useState(false)
   const [carouselData, setCarouselData] = useState({ images: [], title: '' })
 
@@ -736,20 +868,57 @@ const PhotoStory = () => {
     setLoading(false)
   }, [storyId])
 
-  const getPartContent = (s, p) => {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setContentLoading(true)
+        const res = await fetch(getAssetPath(`content/photography/stories/${storyId}.json`), { cache: 'no-store' })
+        if (!res.ok) throw new Error('no json')
+        const data = await res.json()
+        setContent(data)
+      } catch {
+        setContent(null)
+      } finally {
+        setContentLoading(false)
+      }
+    }
+    load()
+  }, [storyId])
+
+  const resolvePartContent = (s, p) => {
+    if (content) {
+      const ch = (content.chapters || []).find((c) => c.id === p.id)
+      const description = ch?.text ? (language === 'no' ? ch.text.no : ch.text.en) : ''
+      const photos = (ch?.gallery || []).map(getAssetPath)
+      return { description, highlights: [], photos }
+    }
     const textMap = STORY_TEXT[s.id]?.[p.id]
     const description = textMap ? (language === 'no' ? textMap.no : textMap.en) : ''
     const photos = (STORY_PHOTOS[s.id]?.[p.id] || []).map(getAssetPath)
-    const highlights = [] // removed per simplification
-    return { description, highlights, photos }
+    return { description, highlights: [], photos }
   }
 
   const getHeroHighlights = (s) => {
     if (!s) return []
+    if (content && Array.isArray(content.highlights)) {
+      return content.highlights.map(getAssetPath)
+    }
     // Prefer story-level Highlights folder when available (e.g., 1.jpeg..10.jpeg)
     if (s.id === 'stavern-sommer-2025') {
       const base = 'portfolio/photography/Stavern sommer 2025/Highlights'
       const files = Array.from({ length: 10 }, (_, i) => `${base}/${i + 1}.jpeg`)
+      return files.map(getAssetPath)
+    }
+    if (s.id === 'portugal-2025') {
+      const base = 'portfolio/photography/Portugal 2025/Highlights'
+      const files = [
+        `${base}/R1-09749-033A.JPG`,
+        `${base}/R1-09749-019A.JPG`,
+        `${base}/R1-09748-0026.JPG`,
+        `${base}/R1-09748-0011.jpg`,
+        `${base}/R1-09749-020A.jpg`,
+        `${base}/R1-09748-0013.jpg`,
+      ]
       return files.map(getAssetPath)
     }
     const all = (s?.parts || []).flatMap((p) => STORY_HIGHLIGHTS[s.id]?.[p.id] || [])
@@ -807,98 +976,48 @@ const PhotoStory = () => {
       )}
 
       <div className="max-w-6xl mx-auto px-6 pt-24 md:pt-32 pb-16">
-        {/* Header */}
-        <header className="text-center select-none mb-10">
-          <div className="border-y border-black py-4 mb-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight px-2" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-              {getText(story.title).toUpperCase()}
-            </h1>
-          </div>
-          <p className="text-lg md:text-xl italic" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-            {getText(story.description)}
-          </p>
-        </header>
-
-        {/* Top-level highlights carousel (shared component) */}
         {(() => {
-          const hero = getHeroHighlights(story)
-          return hero && hero.length > 0 ? (
-            <div className="mb-10">
-              <PhotoCarousel
-                images={hero}
-                title={getText({ en: 'Highlights', no: 'Høydepunkter' })}
-                showTitle={true}
-                heightClass="h-[55vh] sm:h-[55vh] md:h-[60vh]"
-                objectFit="contain"
-              />
-            </div>
-          ) : null
-        })()}
-
-        {/* Chapters label removed per request */}
-
-        {/* Chapters — scroll through sections in order: title → highlights scroller → text → preview grid */}
-        {story.parts.map((p, idx) => {
-          const { description, highlights, photos } = getPartContent(story, p)
-          const chapterRoot = (p.photos || '').replace(/photos\/?$/i, '')
-          const mainImage = chapterRoot ? getAssetPath(`${chapterRoot}main.jpeg`) : null
+          const display = content
+            ? {
+                ...story,
+                title: content.title,
+                description: content.description,
+                parts: (content.chapters || []).map((ch) => ({ id: ch.id, title: ch.title, photos: '' }))
+              }
+            : story
+          const getChapterHero = content
+            ? ((s, p) => {
+                const ch = (content.chapters || []).find((c) => c.id === p.id)
+                if (!ch?.mainImage) return null
+                return { main: getAssetPath(ch.mainImage), extras: [] }
+              })
+            : ((s, p) => {
+                if (s?.id === 'portugal-2025' && p?.id === 'part-1') {
+                  const chapterRoot = (p.photos || '').replace(/photos\/?$/i, '')
+                  const main = chapterRoot ? getAssetPath(`${chapterRoot}Main.JPG`) : null
+                  return { main, extras: [] }
+                }
+                return null
+              })
+          const meta = content ? { dates: content.dates, camera: content.camera } : null
           return (
-            <section key={p.id} className="mt-14">
-              {/* Chapter title */}
-              <AnimatedIn>
-                <div className="text-center mb-6">
-                  <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-                    {getText({ en: `Chapter ${idx + 1}: `, no: `Del ${idx + 1}: ` })}{getText(p.title)}
-                  </h2>
-                </div>
-              </AnimatedIn>
-              {/* Main chapter photo (replaces highlights) */}
-              {mainImage && (
-                <AnimatedIn>
-                  <div className="w-full mb-8">
-                    <div className="w-full flex items-center justify-center" style={{ height: 'calc(100vh - 200px)', maxHeight: 'calc(100vh - 200px)' }}>
-                      <img src={mainImage} alt={`${getText(p.title)} – main`} className="max-w-full max-h-full object-contain" />
-                    </div>
-                  </div>
-                </AnimatedIn>
-              )}
-
-              {/* Chapter text */}
-              {description && (
-                <div className="max-w-3xl mx-auto mt-12">
-                  <AnimatedText>
-                    <p className="text-2xl md:text-3xl leading-relaxed whitespace-pre-line text-center" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-                      {description}
-                    </p>
-                  </AnimatedText>
-                </div>
-              )}
-
-              {/* Preview grid: exactly 2 rows; last tile becomes +X overlay when more */}
-              {photos && photos.length > 0 && (
-                <div className="mt-8">
-                  <AnimatedIn>
-                    <h3 className="text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-                      {getText({ en: 'Gallery', no: 'Galleri' })}
-                    </h3>
-                  </AnimatedIn>
-                  <AnimatedIn>
-                    <PreviewGrid
-                      photos={sortPhotosByNameDate(photos)}
-                      onOpen={(startAt = 0) => {
-                        const sorted = sortPhotosByNameDate(photos)
-                        setCarouselData({ images: sorted, title: `${getText(story.title)} - ${getText(p.title)}`, startIndex: startAt })
-                        setShowCarousel(true)
-                      }}
-                      getText={getText}
-                      title={getText(p.title)}
-                    />
-                  </AnimatedIn>
-                </div>
-              )}
-            </section>
+            <JournalEntry
+              story={display}
+              getText={getText}
+              getHeroImages={getHeroHighlights}
+              getPartContent={(s, p) => {
+                const { description, photos } = resolvePartContent(s, p)
+                return { description, photos }
+              }}
+              getChapterHero={getChapterHero}
+              meta={meta}
+              onOpenGallery={(images, title, startIndex = 0) => {
+                setCarouselData({ images, title, startIndex: Math.max(0, Math.min(startIndex, (images?.length || 1) - 1)) })
+                setShowCarousel(true)
+              }}
+            />
           )
-        })}
+        })()}
       </div>
 
       {showCarousel && (

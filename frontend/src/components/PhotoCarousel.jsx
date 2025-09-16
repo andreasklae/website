@@ -20,7 +20,7 @@ export default function PhotoCarousel({
   showAutoSkip = true,
   showCounter = true,
   durationMs = 5000,
-  heightClass = 'h-[68vh] sm:h-[70vh] md:h-[70vh]',
+  heightClass = 'h-[80vh] sm:h-[82vh] md:h-[85vh]',
   objectFit = 'contain',
   className = ''
 }) {
@@ -29,6 +29,9 @@ export default function PhotoCarousel({
   const [autoPlay, setAutoPlay] = useState(true)
   const [progress, setProgress] = useState(0)
   const touchStartX = useRef(null)
+  const headerRef = useRef(null)
+  const frameOuterRef = useRef(null)
+  const [innerHeightPx, setInnerHeightPx] = useState(null)
 
   // Resolve image URLs safely to avoid double-encoding
   const urls = useMemo(() => {
@@ -63,52 +66,84 @@ export default function PhotoCarousel({
   const previous = () => { setProgress(0); setIndex((prev) => (prev === 0 ? urls.length - 1 : prev - 1)) }
   const next = () => { setProgress(0); setIndex((prev) => (prev === urls.length - 1 ? 0 : prev + 1)) }
 
+  // Dynamically size the image frame so that only the header (title + controls + progress)
+  // and the carousel fit within the viewport height.
+  useEffect(() => {
+    const compute = () => {
+      try {
+        const vh = window.innerHeight || document.documentElement.clientHeight || 800
+        const headerEl = headerRef.current
+        const frameEl = frameOuterRef.current
+        const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0
+        let paddingV = 0
+        if (frameEl) {
+          const cs = getComputedStyle(frameEl)
+          paddingV = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0)
+        }
+        // Small breathing room under the frame
+        const GAP = 12
+        const available = Math.max(160, vh - headerH - GAP)
+        // Reduce max height by 5% for a touch more breathing room
+        const SCALE = 0.95
+        const inner = Math.max(120, (available - paddingV) * SCALE)
+        setInnerHeightPx(inner)
+      } catch {}
+    }
+    compute()
+    window.addEventListener('resize', compute)
+    return () => window.removeEventListener('resize', compute)
+  }, [title, showTitle, urls.length])
+
   if (!urls || urls.length === 0) return null
 
   return (
     <div className={`select-none ${className}`}>
-      {/* Header row: Title → x/n → Auto-skip */}
-      <div className="flex items-center gap-3 sm:gap-4 mb-2">
-        {showTitle && !!title && (
-          <h3 className="flex-1 min-w-0 truncate text-xl md:text-2xl lg:text-3xl font-bold" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
-            {title}
-          </h3>
-        )}
-        {showCounter && (
-          <span className="hidden md:inline text-sm md:text-base font-semibold bg-white/70 px-2 py-0.5 rounded" aria-live="polite">
-            {index + 1} / {urls.length}
-          </span>
-        )}
-        {showAutoSkip && (
-          <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-            <span className="text-sm md:text-base">{getText({ en: 'Auto skip', no: 'Auto-hopp' })}</span>
-            <input
-              type="checkbox"
-              className="h-5 w-5 sm:h-6 sm:w-6 border border-black accent-black"
-              checked={autoPlay}
-              onChange={(e) => setAutoPlay(e.target.checked)}
-              aria-label={getText({ en: 'Toggle autoplay', no: 'Slå på/av automatisk avspilling' })}
-            />
-          </label>
-        )}
-      </div>
+      {/* Header group: Title/controls + Progress bars */}
+      <div ref={headerRef}>
+        {/* Header row: Title → x/n → Auto-skip */}
+        <div className="flex items-center gap-3 sm:gap-4 mb-2">
+          {showTitle && !!title && (
+            <h3 className="flex-1 min-w-0 truncate text-xl md:text-2xl lg:text-3xl font-bold" style={{ fontFamily: 'Georgia, Cambria, \"Times New Roman\", Times, serif' }}>
+              {title}
+            </h3>
+          )}
+          {showCounter && (
+            <span className="hidden md:inline text-sm md:text-base font-semibold bg-white/70 px-2 py-0.5 rounded" aria-live="polite">
+              {index + 1} / {urls.length}
+            </span>
+          )}
+          {showAutoSkip && (
+            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+              <span className="text-sm md:text-base">{getText({ en: 'Auto skip', no: 'Auto-hopp' })}</span>
+              <input
+                type="checkbox"
+                className="h-5 w-5 sm:h-6 sm:w-6 border border-black accent-black"
+                checked={autoPlay}
+                onChange={(e) => setAutoPlay(e.target.checked)}
+                aria-label={getText({ en: 'Toggle autoplay', no: 'Slå på/av automatisk avspilling' })}
+              />
+            </label>
+          )}
+        </div>
 
-      {/* Progress bars */}
-      <div className="flex gap-1 mb-2">
-        {urls.map((_, i) => {
-          const w = i < index ? 1 : i === index ? (autoPlay ? progress : 1) : 0
-          return (
-            <div key={i} className="flex-1 h-1 bg-black/20 rounded-full overflow-hidden">
-              <div className="h-full bg-black" style={{ width: `${Math.max(0, Math.min(1, w)) * 100}%`, transition: 'width 100ms linear' }} />
-            </div>
-          )
-        })}
+        {/* Progress bars */}
+        <div className="flex gap-1 mb-2">
+          {urls.map((_, i) => {
+            const w = i < index ? 1 : i === index ? (autoPlay ? progress : 1) : 0
+            return (
+              <div key={i} className="flex-1 h-1 bg-black/20 rounded-full overflow-hidden">
+                <div className="h-full bg-black" style={{ width: `${Math.max(0, Math.min(1, w)) * 100}%`, transition: 'width 100ms linear' }} />
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* Image frame */}
-      <div className="relative border border-black bg-white p-2 sm:p-3 md:p-4">
+      <div ref={frameOuterRef} className="relative border border-black bg-white p-2 sm:p-3 md:p-4">
         <div
           className={`w-full ${heightClass} flex items-center justify-center overflow-hidden`}
+          style={innerHeightPx ? { height: `${innerHeightPx}px` } : undefined}
           onTouchStart={(e) => (touchStartX.current = e.changedTouches?.[0]?.clientX ?? null)}
           onTouchEnd={(e) => {
             const endX = e.changedTouches?.[0]?.clientX ?? null

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { loadCVData, portfolioProjects, parseMarkdownText, photographyHighlights, loadPhotosManifest } from '../utils/data.jsx'
 import { getAssetPath } from '../utils/paths'
@@ -29,6 +29,37 @@ const LandingPage = () => {
       }
     }
     loadData()
+  }, [])
+
+  // Helper to pick N unique random items
+  function pickRandom(arr, n) {
+    const copy = [...(arr || [])]
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[copy[i], copy[j]] = [copy[j], copy[i]]
+    }
+    return copy.slice(0, Math.min(n, copy.length))
+  }
+
+  // Cycle 4 random highlights every 10s with fade transition
+  const [currentHighlights, setCurrentHighlights] = useState(() => pickRandom(photographyHighlights, 4))
+  const [fadeOut, setFadeOut] = useState(false)
+  const intervalRef = useRef(null)
+  const timeoutRef = useRef(null)
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setFadeOut(true)
+      // Switch after fade-out
+      timeoutRef.current = setTimeout(() => {
+        setCurrentHighlights(pickRandom(photographyHighlights, 4))
+        setFadeOut(false)
+      }, 400) // match CSS duration-700 (slightly earlier to feel snappy)
+    }, 10000)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
   }, [])
 
   // Function to render description with clickable citations
@@ -113,11 +144,11 @@ const LandingPage = () => {
                 
                 <Link 
                   to="/photography" 
-                  className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-orange-500/80 to-amber-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-800 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-600/60"
                 >
                   <span className="flex items-center gap-2">
                     {getText({ en: 'View Photography', no: 'Se foto' })}
-                    <svg className="w-5 h-5 text-orange-100 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-white/90 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -169,8 +200,10 @@ const LandingPage = () => {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-amber-600">1000+</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-2xl font-bold">
+                    <span className="bg-gradient-to-r from-black to-gray-800 bg-clip-text text-transparent">1000+</span>
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">
                     {getText({ en: 'Photos', no: 'Bilder' })}
                   </div>
                 </div>
@@ -375,18 +408,18 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Photography Samples */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className={`grid grid-cols-2 gap-4 transition-opacity duration-700 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
               <div className="space-y-4">
                 <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
                   <img
-                    src={photographyHighlights[0]}
+                    src={currentHighlights[0]}
                     alt="Photography highlight 1"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                   <img
-                    src={photographyHighlights[1]}
+                    src={currentHighlights[1]}
                     alt="Photography highlight 2"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
@@ -395,14 +428,14 @@ const LandingPage = () => {
               <div className="space-y-4 pt-8">
                 <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                   <img
-                    src={photographyHighlights[2]}
+                    src={currentHighlights[2]}
                     alt="Photography highlight 3"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
                   <img
-                    src={photographyHighlights[3]}
+                    src={currentHighlights[3]}
                     alt="Photography highlight 4"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
@@ -411,11 +444,11 @@ const LandingPage = () => {
             </div>
 
             {/* Right Column - Photography Description */}
-            <div className="space-y-6">
+            <div className="space-y-6" style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif' }}>
               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">
                 {getText({ en: 'Visual Storytelling', no: 'Visuell historiefortelling' })}
               </h2>
-              <p className="text-lg text-gray-700 leading-relaxed">
+              <p className="text-lg text-gray-700 leading-relaxed italic">
                 {getText({
                   en: 'Through photography, I capture moments that tell stories. From Norwegian summer landscapes to urban adventures, each image is part of a larger narrative about life, nature, and human experiences.',
                   no: 'Gjennom fotografering fanger jeg øyeblikk som forteller historier. Fra norske sommerlandskap til urbane eventyr, hvert bilde er en del av en større fortelling om livet, naturen og menneskelige opplevelser.'
@@ -423,19 +456,19 @@ const LandingPage = () => {
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-black to-gray-800 border border-gray-600/60"></div>
                   <span className="text-gray-700">
                     {getText({ en: 'Nature & Landscape Photography', no: 'Natur- og landskapsfotografering' })}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-black to-gray-800 border border-gray-600/60"></div>
                   <span className="text-gray-700">
                     {getText({ en: 'Story-driven Photo Series', no: 'Historiedrevne fotoserier' })}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-sky-500 rounded-full"></div>
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-black to-gray-800 border border-gray-600/60"></div>
                   <span className="text-gray-700">
                     {getText({ en: 'Digital Curation & Presentation', no: 'Digital kurasjon og presentasjon' })}
                   </span>
@@ -443,10 +476,10 @@ const LandingPage = () => {
               </div>
               <Link
                 to="/photography"
-                className="glass-bubble inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-500/80 to-amber-500/80 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="glass-bubble inline-flex items-center px-6 py-3 bg-gradient-to-r from-black to-gray-800 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-600/60"
               >
                 {getText({ en: 'Explore Photography', no: 'Utforsk foto' })}
-                <svg className="w-5 h-5 ml-2 text-orange-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 ml-2 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>

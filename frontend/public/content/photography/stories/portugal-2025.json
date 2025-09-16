@@ -1,0 +1,162 @@
+{
+  "id": "portugal-2025",
+  "thumbnail": "portfolio/photography/Portugal 2025/Thumbnail.JPG",
+  "title": { "en": "Portugal 2025", "no": "Portugal 2025" },
+  "description": {
+    "en": "Surf camp, city days in Lisbon, long dinners, and quiet sunset walks.",
+    "no": "Surfecamp, byliv i Lisboa, lange middager og stille kveldsturer."
+  },
+  "dates": { "start": "2025-06-03", "end": "2025-06-12" },
+  "camera": { "en": "Pentax KX · Kodak Ultramax 400", "no": "Pentax KX · Kodak Ultramax 400" },
+  "highlights": [
+    "portfolio/photography/Portugal 2025/Highlights/R1-09749-033A.JPG",
+    "portfolio/photography/Portugal 2025/Highlights/R1-09749-019A.JPG",
+    "portfolio/photography/Portugal 2025/Highlights/R1-09748-0026.JPG",
+    "portfolio/photography/Portugal 2025/Highlights/R1-09748-0011.jpg",
+    "portfolio/photography/Portugal 2025/Highlights/R1-09749-020A.jpg",
+    "portfolio/photography/Portugal 2025/Highlights/R1-09748-0013.jpg"
+  ],
+  "chapters": [
+    {
+      "id": "part-1",
+      "title": { "en": "Surf Camp", "no": "Surf Camp" },
+      "mainImage": "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/Main.JPG",
+      "text": {
+        "en": "We started the trip in Ericeira, where we stayed at a surf camp for five days. People came and went, some only stayed for a few days, others for weeks, but everyone we met was warm, friendly, and social. Our days consisted of surf lessons in the morning and afternoon, with evenings spent hanging out, drinking, and talking with whoever was around. I didn't become a great surfer overnight, but the process of learning, falling, trying again, slowly getting the hang of it, was its own fun. One evening we ended up at a rooftop party above a surf shop. The place was packed, people spilling out in every direction, and a live band played music.",
+        "no": "Vi startet turen i Ericeira, hvor vi bodde på en surfecamp i fem dager. Folk kom og gikk, noen var bare innom i noen dager, andre ble i ukevis, men alle vi møtte var vennlige og sosiale. Dagene besto av surfetimer på morgenen og ettermiddagen, og kveldene gikk med til å henge, drikke og prate med hvem enn som var til stede. Jeg ble ikke en god surfer over natten, men selve læringen, å falle, prøve igjen, sakte få taket på det, var en glede i seg selv. En kveld havnet vi på en rooftop fest over en surfebutikk. Det var stappfullt, folk i alle retninger, og et liveband spilte musikk"
+      },
+      "gallery": [
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/IMG_5011.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0003.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0004.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0008.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0010.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0011.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0013.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0014.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0016.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0020.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0021.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0022.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0024.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0025.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0026.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0027.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0028.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0029.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0030.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0031.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0032.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0034.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09750-0037.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-001A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-002A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-003A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-004A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-005A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-007A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-008A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-010A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-011A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-012A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-015A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-017A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-018A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-019A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-025A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait1.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait2.jpg"
+      ]
+    },
+    {
+      "id": "part-2",
+      "title": { "en": "Lisbon", "no": "Lisboa" },
+      "mainImage": "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/main.jpeg",
+      "text": {
+        "en": "We moved into the city for two days, trading the waves for winding streets and viewpoints. Lisbon was all about miradouros, we hopped between them, pausing for beers or lunch while taking in views over the city. We ate amazing food, wandered through the neighborhoods, and let ourselves get lost in the atmosphere. One night we went out to party, moving between bars, clubs, and streets full of people. It wasn’t about a single venue but about soaking up the city’s energy as a whole.",
+        "no": "Vi dro inn til byen i to dager, byttet bølger med bratte gater og utsiktspunkter. Lisboa handlet om miradouros, vi hoppet mellom dem, stoppet for øl eller lunsj mens vi så utover byen. Vi spiste nydelig mat, vandret gjennom nabolagene og lot oss gå litt vill i stemningen. En kveld dro vi ut for å feste, mellom barer, klubber og folketette gater. Det handlet ikke om ett sted, men om å ta til seg byens energi."
+      },
+      "gallery": [
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0003.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0004.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0005.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0007.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0009.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0010.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0011.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0012.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0013.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0014.jpg"
+      ]
+    },
+    {
+      "id": "part-3",
+      "title": { "en": "The Beach House", "no": "Strandhuset" },
+      "mainImage": "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/main.jpeg",
+      "text": {
+        "en": "We stayed in Caparica for three days, in a small house we rented literally on the beach. It felt almost too good to be true, the house came with a surfboard, a JBL partybox, a grill, and even a complimentary bottle of red wine. Our days were spent swimming, surfing, tanning, and having beers at a beach bar close by. We got to know the neighbor next door, whose grandfather had built his beach house and passed it down through the family. He appreciated that we stopped to chat, and as a “thank you”, he gave us a bag of charcoal to use for the grill. Later, local fishermen came ashore and sold us fresh fish straight from their boats.",
+        "no": "Vi bodde i Caparica i tre dager i et lite hus vi leide som lå bokstavelig talt på stranden. Det føltes nesten for godt til å være sant, huset kom med surfebrett, en JBL partybox, grill og til og med en flaske rødvin. Dagene ble tilbragt med bading, surfing, soling og øl på en nærliggende strandbar. Vi ble kjent med naboen ved siden av, hans bestefar hadde bygget strandhuset hans for mange år siden og latt det gå i arv i familien. Han satte pris på at vi stoppet for å prate, og han ga oss en pose trekull som takk. Senere kom lokale fiskere inn og solgte fersk fisk rett fra båtene."
+      },
+      "gallery": [
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0015.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0017.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0019.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0020.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0021.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0026.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0027.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09748-0028.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-023A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-024A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-028A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-033A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/R1-09749-035A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/h.jpg"
+      ]
+    },
+    {
+      "id": "part-4",
+      "title": { "en": "Dinner Parties", "no": "Middagsselskaper" },
+      "mainImage": "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/main.jpeg",
+      "text": {
+        "en": "Our beach house at Caparica also became the setting for one of the best nights of the trip. We invited friends who were staying elsewhere to come over for dinner. Everyone brought food and drinks, and we cooked together on the grill in the sand. It wasn’t carefully planned, just a spontaneous gathering sparked by being in a place that begged to be shared. The house turned into a meeting point, laughter spilling out to the beach as we ate, drank, and enjoyed the night.",
+        "no": "En av turens beste kvelder fant også sted i strandhuset vårt i Caparica. Vi inviterte venner som bodde et annet sted til middag. Alle tok med mat og drikke, og vi lagde mat sammen på grillen i sanden. Det var ikke nøye planlagt, bare en spontan samling, motivert av et sted som ba om å deles. Huset ble et samlingspunkt, med latter som rant ut på stranden mens vi spiste, drakk og nøt kvelden."
+      },
+      "gallery": [
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0022.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0025.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0034.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09748-0035.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-001A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-003A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-004A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-005A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-006A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-007A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-008A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-009A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/R1-09749-011A.jpg"
+      ]
+    },
+    {
+      "id": "part-5",
+      "title": { "en": "Sunset Walks", "no": "Kveldsturer" },
+      "mainImage": "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/main.jpeg",
+      "text": {
+        "en": "The west coast location gave us front-row seats to sunsets over the Atlantic. Each evening the sky shifted from orange to purple as we ate dinner with the waves as background music. On the last night, when the sun was hanging just above the horizon, I walked along the beach with a friend. The light was low, the air calm, and the day seemed to stretch endlessly before fading into night. It was the perfect ending to a trip that had been adventurous, social, and filled with memories that I cherish.",
+        "no": "Vestkysten ga oss fantastiske solnedganger over Atlanteren. Hver kveld så vi himmelen gå fra oransje til lilla mens vi spiste middag med havets sus som bakgrunnsmusikk. Den siste kvelden, da solen hang like over horisonten, gikk jeg langs stranden med en venn. Lyset var lavt, luften rolig, og dagen virket å strekke seg i det uendelige før det til slutt ble natt. En perfekt avslutning på en tur som var eventyrlig, sosial og full av minner jeg verdsetter."
+      },
+      "gallery": [
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-014A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-015A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-016A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-017A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-018A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-019A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-020A.jpg",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-021A.JPG",
+        "portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-022A.jpg"
+      ]
+    }
+  ]
+}
