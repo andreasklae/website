@@ -155,6 +155,26 @@ export const portfolioProjects = [
     githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {
+    id: '3dpathfinding',
+    title: {
+      en: '3D Pathfinding: Algorithm Benchmarking',
+      no: '3D Pathfinding: Algoritme-benchmarking'
+    },
+    description: {
+      en: 'Benchmarking framework for 3D pathfinding algorithms on voxel mazes with interactive visualization and reproducible analysis.',
+      no: 'Benchmark-rammeverk for 3D-pathfinding-algoritmer på voxel-labyrinter med interaktiv visualisering og reproduserbar analyse.'
+    },
+    linkLabel: {
+      en: '3D model',
+      no: '3D-modell'
+    },
+    tags: ['Python', 'Algorithms/data', 'Pathfinding', 'A*', 'Dijkstra', 'Theta*', 'NumPy', 'Plotly', 'Visualization'],
+    type: 'website',
+    link: 'https://andreasklae.github.io/3Dpathfinding/',
+    githubLink: 'https://github.com/andreasklae/3Dpathfinding',
+    photos: [] // Will be loaded dynamically from photos-manifest.json
+  },
+  {
     id: 'ml-project',
     title: {
       en: 'GraphSynergy: Drug Discovery AI',
