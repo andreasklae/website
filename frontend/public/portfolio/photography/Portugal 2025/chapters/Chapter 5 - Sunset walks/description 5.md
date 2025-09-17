@@ -1,0 +1,5 @@
+### Part 5 - Sunset walks / Del 5 – Kveldsturer
+
+The west coast location gave us front-row seats to sunsets over the Atlantic. Each evening the sky shifted from orange to purple as we ate dinner with the waves as background music. On the last night, when the sun was hanging just above the horizon, I walked along the beach with a friend. The light was low, the air calm, and the day seemed to stretch endlessly before fading into night. It was the perfect ending to a trip that had been adventurous, social, and filled with moments that felt almost too spontaneous to be real.
+
+Vestkysten gav oss første rad til solnedganger over Atlanteren. Hver kveld skiftet himmelen fra oransje til lilla mens vi spiste middag med bølgene som bakgrunnsmusikk. Den siste kvelden, da solen hang like over horisonten, gikk jeg langs stranden med en venn. Lyset var lavt, luften rolig, og dagen virket å strekke seg uendelig før den tonet ut i natt. En perfekt avslutning på en tur som var eventyrlig, sosial og full av øyeblikk som nesten var for spontane til å være virkelige.
