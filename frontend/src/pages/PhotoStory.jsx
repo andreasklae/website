@@ -65,26 +65,26 @@ Vi ble kjent med naboen ved siden av, hvis bestefar hadde bygget huset og latt d
 const STORY_HIGHLIGHTS = {
   'stavern-sommer-2025': {
     'part-1': [
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/68209391-AA1C-4272-A78D-E2E7EC5CD546_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/23E90F2C-3975-432C-850C-CD6A49B74DDB_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/04CAB51D-54E2-4453-8D28-C36321A46635_1_105_c.jpeg'
     ],
     'part-2': [
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/0CF0A802-D8A2-44EC-80DB-8509AB5960DC_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/34CEC9DA-1E89-4166-A46F-59904B6CE428_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/1AAB2DEA-765F-466C-B563-895DDB2511CD_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/9B5C5D4B-1F85-41F4-9024-86BE25CD8598_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/0CF0A802-D8A2-44EC-80DB-8509AB5960DC_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/34CEC9DA-1E89-4166-A46F-59904B6CE428_1_105_c.jpeg'
     ],
     'part-3': [
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/1DD4F0E1-95E5-4AF9-9FAD-3F6AFE1E1AC6_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/CFE4E1E5-642D-4DCC-992D-FC3EF715BEA8_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/3A378108-010C-4944-AEED-66519AFCC108_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/284A1B7B-F731-4DCA-8735-A01FFC325FB4_1_105_c.jpeg'
     ],
     'part-4': [
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
-      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg'
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
+      'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg'
     ]
   }
 }
@@ -222,9 +222,6 @@ const STORY_PHOTOS = {
       'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-018A.jpg',
       'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-019A.jpg',
       'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/R1-09751-025A.JPG'
-      ,
-      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait1.jpg',
-      'portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/portait2.jpg'
     ],
     'part-2': [
       'portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/R1-09748-0003.jpg',

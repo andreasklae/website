@@ -289,6 +289,10 @@ export const photographyStories = [
       en: 'Long Norwegian summer days with late sunsets, coastal walks, festival celebrations, and quiet moments in nature.',
       no: 'Lange norske sommerdager med sene solnedganger, kystturer, festivalglade og stille øyeblikk i naturen.'
     },
+    storyMd: {
+      en: './portfolio/photography/Stavern sommer 2025/story.en.md',
+      no: './portfolio/photography/Stavern sommer 2025/story.no.md'
+    },
     parts: [
       {
         id: 'part-1',
@@ -296,8 +300,7 @@ export const photographyStories = [
           en: 'Cabin Days',
           no: 'Dager på hytta'
         },
-        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/Highlights/',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/',
         photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 1 - Cabin Days/photos/'
       },
       {
@@ -306,8 +309,7 @@ export const photographyStories = [
           en: 'Coastal Walks',
           no: 'Kystturer'
         },
-        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/highlights/',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/',
         photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 2 - Coastal Walks/photos/'
       },
       {
@@ -316,8 +318,7 @@ export const photographyStories = [
           en: 'Festival Day',
           no: 'Festivallørdag'
         },
-        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/highlights/',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/',
         photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 3 - Festival Day/photos/'
       },
       {
@@ -326,8 +327,7 @@ export const photographyStories = [
           en: 'The Walk Home',
           no: 'Turen hjem'
         },
-        description: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/description.md',
-        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/Highlights/',
+        highlights: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/',
         photos: './portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/'
       }
     ]
@@ -343,35 +343,34 @@ export const photographyStories = [
       en: 'Surf camp, city days in Lisbon, long dinners, and quiet sunset walks.',
       no: 'Surfecamp, byliv i Lisboa, lange middager og stille kveldsturer.'
     },
+    storyMd: {
+      en: './portfolio/photography/Portugal 2025/story.en.md',
+      no: './portfolio/photography/Portugal 2025/story.no.md'
+    },
     parts: [
       {
         id: 'part-1',
         title: { en: 'Surf Camp', no: 'Surf Camp' },
-        description: './portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/description.md',
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 1 - Surf Camp/photos/'
       },
       {
         id: 'part-2',
         title: { en: 'Lisbon', no: 'Lisboa' },
-        description: './portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/description.md',
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 2 - Lisbon/photos/'
       },
       {
         id: 'part-3',
         title: { en: 'The Beach House', no: 'Strandhuset' },
-        description: './portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/description.md',
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 3 - The beach house/photos/'
       },
       {
         id: 'part-4',
         title: { en: 'Dinner Parties', no: 'Middagsselskaper' },
-        description: './portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/description.md',
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 4 - Dinner parties/photos/'
       },
       {
         id: 'part-5',
         title: { en: 'Sunset Walks', no: 'Kveldsturer' },
-        description: './portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/description.md',
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/'
       }
     ]
