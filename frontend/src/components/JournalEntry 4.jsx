@@ -121,16 +121,28 @@ export default function JournalEntry({
   }
   const formatDateHuman = (iso) => {
     if (!iso) return ''
+    const locale = language === 'no' ? 'no-NO' : 'en-US'
+    const monthYearMatch = typeof iso === 'string' ? iso.match(/^(\d{4})-(\d{2})$/) : null
+    if (monthYearMatch) {
+      const [_, year, month] = monthYearMatch
+      const d = new Date(Number(year), Number(month) - 1, 1)
+      if (Number.isNaN(d.getTime())) return iso
+      const formatted = d.toLocaleString(locale, { month: 'long', year: 'numeric' })
+      if (language === 'no') {
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1)
+      }
+      return formatted
+    }
     const d = new Date(iso)
-    if (isNaN(d)) return iso
+    if (Number.isNaN(d.getTime())) return iso
     const day = d.getDate()
     const year = d.getFullYear()
     if (language === 'no') {
-      const month = d.toLocaleString('no-NO', { month: 'long' })
+      const month = d.toLocaleString(locale, { month: 'long' })
       const capMonth = month.charAt(0).toUpperCase() + month.slice(1)
       return `${day}. ${capMonth} ${year}`
     } else {
-      const month = d.toLocaleString('en-US', { month: 'long' })
+      const month = d.toLocaleString(locale, { month: 'long' })
       return `${formatOrdinalEn(day)} of ${month} ${year}`
     }
   }

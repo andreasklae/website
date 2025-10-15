@@ -374,6 +374,56 @@ export const photographyStories = [
         photos: './portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/'
       }
     ]
+  },
+  {
+    id: 'semester-in-berlin',
+    title: {
+      en: 'Semester in Berlin',
+      no: 'Berlinsemesteret'
+    },
+    coverImage: getAssetPath('portfolio/photography/Semester in Berlin/Thumbnail.jpg'),
+    description: {
+      en: 'From autobahn escapes to canal-side bike commutes, candlelit bars, dance floors, and an abandoned ferris wheel still whispering stories.',
+      no: 'Fra autobahn og flyttelass til sykkelturer langs kanalene, barer i stearinlys, klubbnetter og et forlatt pariserhjul som fortsatt hvisker historier.'
+    },
+    storyMd: {
+      en: './portfolio/photography/Semester in Berlin/story.en.md',
+      no: './portfolio/photography/Semester in Berlin/story.no.md'
+    },
+    parts: [
+      {
+        id: 'part-1',
+        title: {
+          en: 'The Drive Down',
+          no: 'Bilturen ned'
+        },
+        photos: './portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/'
+      },
+      {
+        id: 'part-2',
+        title: {
+          en: 'The City',
+          no: 'Byen'
+        },
+        photos: './portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/'
+      },
+      {
+        id: 'part-3',
+        title: {
+          en: 'Nightlife',
+          no: 'Nattelivet'
+        },
+        photos: './portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/'
+      },
+      {
+        id: 'part-4',
+        title: {
+          en: 'Abandoned Amusement Park',
+          no: 'Fornøyelsesparken som forsvant'
+        },
+        photos: './portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/'
+      }
+    ]
   }
 ]
 

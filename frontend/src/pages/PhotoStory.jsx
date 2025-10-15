@@ -58,6 +58,24 @@ Vi ble kjent med naboen ved siden av, hvis bestefar hadde bygget huset og latt d
       en: `The west coast location gave us front-row seats to sunsets over the Atlantic. Each evening the sky shifted from orange to purple as we ate dinner with the waves as background music. On the last night, when the sun was hanging just above the horizon, I walked along the beach with a friend. The light was low, the air calm, and the day seemed to stretch endlessly before fading into night. It was the perfect ending to a trip that had been adventurous, social, and filled with moments that felt almost too spontaneous to be real.`,
       no: `Vestkysten gav oss første rad til solnedganger over Atlanteren. Hver kveld skiftet himmelen fra oransje til lilla mens vi spiste middag med bølgene som bakgrunnsmusikk. Den siste kvelden, da solen hang like over horisonten, gikk jeg langs stranden med en venn. Lyset var lavt, luften rolig, og dagen virket å strekke seg uendelig før den tonet ut i natt. En perfekt avslutning på en tur som var eventyrlig, sosial og full av øyeblikk som nesten var for spontane til å være virkelige.`
     }
+  },
+  'semester-in-berlin': {
+    'part-1': {
+      en: `We left Oslo with a car full of luggage and expectations. The plan was improvised but generous: a night on a friend’s couch in Copenhagen, another on a borrowed floor in Berlin, then a quick detour through the Dutch countryside to collect the boxes my roommate had stashed with his uncle. The autobahn was the part everyone warns you about, and they’re right. There’s a moment when you press the accelerator and you realise how small your car feels among trucks and low, sleek sedans eating the asphalt. It was both exhilarating and faintly terrifying, a reminder that distance isn’t only kilometres but the speed you dare to hold. When we finally rolled back into Berlin, the car was heavier but our shoulders loosened. The apartment was empty and echoing, but it was ours. We carried in the suitcases, then the half-forgotten belongings from the Dutch attic, and suddenly the journey settled. After nights on borrowed beds, unfurling a mattress in our own place felt like the true arrival.`,
+      no: `Vi dro fra Oslo med bilen full av bagasje og forventninger. Planen var improvisert, men god: en natt på en kompis sin sofa i København, en natt på et lånt gulv i Berlin, og deretter en tur innom Nederland for å hente eiendelene romkameraten min hadde lagret hos onkelen sin. Autobahnen er den delen alle advarer deg om, og de har rett. Det øyeblikket du gasser og kjenner hvor liten bilen føles mellom trailere og lave, raske biler som sluker asfalt, det er både spennende og litt skremmende. Avstand handler ikke bare om kilometer, men om farten du tør å holde. Da vi omsider rullet tilbake inn i Berlin, var bilen tyngre, men skuldrene lettere. Leiligheten var tom, men den var vår. Vi bar inn koffertene, deretter de halvglemte tingene fra loftet i Nederland, og plutselig falt ting på plass. Etter netter på lånte madrasser føltes det å legge seg sin egen seng som den ekte ankomsten.`
+    },
+    'part-2': {
+      en: `September in Berlin meant trading car keys for bike locks. The city opened up on two wheels: canals glinting in the morning, graffiti blinking by in layers, kebab stands perfuming the air. From Maybachufer we pushed off each day, tracing the canal before diving into Neukölln and Kreuzberg neighbourhoods. The ride was its own education. You learn the city by tracing its arteries, crossing canals, following bike lanes that seem to lead straight into new worlds. Every turn introduced someone unforgettable: a painter hauling canvases, a goth riding backwards on a bike, a saxophonist rehearsing to the traffic. In Berlin you’re never the strangest person on the street, and that realisation felt oddly comforting.`,
+      no: `September i Berlin betydde å bytte bilnøkler mot sykkellås. Byen åpnet seg på to hjul: kanaler som glitret om morgenen, graffiti som blinket forbi, kebabsjapper som parfymerte luften. Fra Maybachufer trillet vi ut hver dag, fulgte kanalen før vi dykket inn i Neukölln og Kreuzberg. Sykkelturene var alltid lærerrike. Du lærer byen gjennom å følge pulsårene, krysse kanalene og ta sykkelstier som ser ut til å lede inn i nye verdener. Hver sving introduserte noen uforglemmelige: en maler som drasset med seg lerreter, en goth som syklet baklengs, en saksofonist som øvde i trafikken. I Berlin er du aldri den merkeligste på gata, og den erkjennelsen var overraskende beroligende.`
+    },
+    'part-3': {
+      en: `The nights started at our Maybachufer apartment, where friends crowded in our living room, music spilling from a small speaker as beer pong and laughter blurred together. We biked out into Neukölln and Kreuzberg, drifting between bars that felt more like living rooms. Candles on mismatched tables, bartenders who remembered your name, conversations that lasted until the wax ran out. In the clubs, phones stayed in pockets; their cameras were stickered. The effect was immediate. People danced to be present, not for social media points. By sunrise we’d be back by the canal, watching the sky fade from charcoal to violet to gold. We’d sit by the water with our feet swinging above it and watch the city change gears. Berlin quietly shifting back into day.`,
+      no: `Kveldene startet i leiligheten på Maybachufer, der venner fylte stua, musikk rant ut av en liten høyttaler og beer pong komplimentert av latter. Vi syklet videre til Neukölln og Kreuzberg, og hoppet mellom barer som føltes mer som stuer. Stearinlys på  bordene, bartendere som husket navnet ditt, samtaler som varte til stearinlyset var tomt. I klubbene ble mobilene i lommene og kameraene var teipet. Effekten var umiddelbar. Folk danset for å være til stede, ikke for sosiale medier. Ved soloppgang satt vi igjen ved kanalen, så himmelen gå fra kullsvart til fiolett til oransje. Vi lot beina dingle over vannet og så byen skifte gir. Berlin gled stille tilbake til dag.`
+    },
+    'part-4': {
+      en: `Spreepark was a rumour before it became a destination. An abandoned amusement park. People said the ferris wheel still creaked in the wind even though the ticket booths had been empty for years. One clear afternoon me and a couple friends followed the story and slipped through a gap in the fence. City noise fell away, replaced by the hush that settles over places designed for joy but abandoned to time. The rides stood frozen mid-laugh—swan boats stranded in dry grass, roller-coaster tracks tangled in ivy, the ferris wheel creaking faintly above us. It felt eerie and playful at once, like stepping into the ghost of a childhood memory. We wandered quietly, half afraid to break the spell, imagining the echoes of laughter that once filled the air. When we climbed back through the fence, the noise of Berlin returned, but something of that silence stayed with us—a reminder that even the forgotten parts of the city never really sleep.`,
+      no: `Spreepark var et rykte før det ble en destinasjon. En forlatt fornøyelsespark der pariserhjulet visstnok fortsatt knirket i vinden selv om billettlukene hadde vært tomme i årevis. En ettermiddag fulgte vi historien og smatt gjennom et hull i gjerdet. Bystøyen forsvant, erstattet av stillheten som legger seg over steder bygd for glede, men forlatt av tid. Karusellene sto fast midt i latteren, båter på tørt gress, berg-og-dalbaneskinner kvelt av eføy, pariserhjulet som knirket svakt over oss. Det var rart og lekent på samme tid, som et spøkelse av et barndomsminne. Vi vandret sakte og stille, halvveis redde for å bryte stemningen, og forestilte oss ekkoet av latter som en gang fylte lufta. Da vi klatret tilbake gjennom gjerdet, kom bylydene tilbake, men noe av stemningen vedvarte. En påminnelse om at selv de glemte delene av byen aldri helt sover.`
+    }
   }
 }
 
@@ -85,6 +103,28 @@ const STORY_HIGHLIGHTS = {
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/1B28F38D-D879-4965-AAE1-F24967382940_1_105_c.jpeg',
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/0F072DF0-6376-47A4-9EA6-0F6E2709CE92_1_105_c.jpeg',
       'portfolio/photography/Stavern sommer 2025/chapters/Part 4 - The Walk Home/photos/3CE8CF6A-912F-49D9-BC16-DCAEEDDE8158_1_105_c.jpeg'
+    ]
+  },
+  'semester-in-berlin': {
+    'part-1': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1251.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1624.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1647.jpg'
+    ],
+    'part-2': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1630.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1636.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2696.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3841.jpg'
+    ],
+    'part-3': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_1977.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2169.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2905.JPG'
+    ],
+    'part-4': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_2980.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_3849.jpg'
     ]
   }
 }
@@ -276,6 +316,87 @@ const STORY_PHOTOS = {
       'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-020A.jpg',
       'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-021A.JPG',
       'portfolio/photography/Portugal 2025/chapters/Chapter 5 - Sunset walks/photos/R1-09749-022A.jpg'
+    ]
+  },
+  'semester-in-berlin': {
+    'part-1': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1251.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1616.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1622.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1624.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1629.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1631.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1635.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1643.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1645.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1647.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_1649.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 1 - The drive down/Photos/IMG_AB1F61659F17-2.jpeg'
+    ],
+    'part-2': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1485.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1617 2.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1619.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1621.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1628.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1630.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1634.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1636.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1638.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1639.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1640.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1642.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1648.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1650.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1699.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1707.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1727.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1829.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_1931.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2268.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2679.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2680.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2682.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2683.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2684 2.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2690.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2695.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2696.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2699.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2720.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_28E5A6AFF4A2-1.jpeg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2918.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_2930.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3058.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3841.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3844.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3855.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3860.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3861.jpg',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_3953.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_4664.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_4686.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 2 - The city/Photos/IMG_4708.JPG'
+    ],
+    'part-3': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/308449c8-525f-41d5-ad63-b92b5ccbbe4b.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_1977.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_1989.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2164.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2166.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2169.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2170.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_2905.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_3936.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/IMG_3963.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 3 - Nightlife/Photos/Skjermbilde 2025-09-19 kl. 18.44.08.jpg'
+    ],
+    'part-4': [
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_2980.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_3028.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_3846.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_3847.JPG',
+      'portfolio/photography/Semester in Berlin/Chapters/Chapter 4 - Abandoned amusement park/Photos/IMG_3849.jpg'
     ]
   }
 }
