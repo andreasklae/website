@@ -1,174 +1,76 @@
-# Andreas Klæboe — Portfolio Website
+# Andreas Klæboe Portfolio Website
 
-A modern, bilingual (EN/NO) portfolio website showcasing software engineering projects and photography work.
+A modern bilingual site that highlights Andreas Klæboe's software engineering work and photography. The project is a Vite powered React app with a small workspace root that hosts shared scripts, documentation, and GitHub Pages automation.
 
-## Quick Start
+## Highlights
+- Feature based routing for landing, software, and photography sections with distinct visual systems
+- Language toggle with automatic browser detection plus persistent preference storage
+- JSON driven content model for CV data, course catalog, personal copy, and per project media manifests
+- Accessibility conscious UI patterns such as focus managed carousels, keyboard navigation, and reduced motion support
+- GitHub Pages deployment pipeline with Git LFS support for large media files
 
-From the project root directory:
+## Tech Stack
+- React 19 with React Router 7 and functional components
+- Vite 7 for development tooling and builds
+- Tailwind CSS plus custom glassmorphism and IDE inspired themes
+- Swiper for image carousels and styled components for bespoke UI states
 
-```bash
-# Install dependencies
-npm run install-deps
-
-# Start development server
-npm start
-# or
-npm run dev
-```
-
-The website will be available at `http://localhost:3000`
-
-## Project Structure
-
+## Repository Layout
 ```
 website/
-├── docs/
-│   ├── ARCHITECTURE.md          # High-level overview
-│   └── DEPLOYMENT.md            # GitHub Pages deployment guide
-├── .github/workflows/deploy.yml # CI to GitHub Pages
-├── frontend/
-│   ├── public/
-│   │   ├── content/             # JSON data (cv, courses, personal, photos-manifest)
-│   │   ├── docs/                # PDFs (CVs, course exams, misc.)
-│   │   └── portfolio/           # Images/PDFs per project/story
+├── frontend/                  React application (Vite)
+│   ├── public/                Static assets, JSON content, PDFs, portfolio media
 │   ├── src/
-│   │   ├── features/
-│   │   │   ├── software/        # Software route (re-export)
-│   │   │   └── photography/     # Photography route + carousel wrappers
-│   │   ├── components/          # Shared UI (Navbar, Footer, etc.)
-│   │   ├── contexts/            # LanguageContext
-│   │   ├── pages/               # Original pages (referenced by features)
-│   │   └── utils/               # paths.js, data.jsx (fetch + metadata)
-│   └── package.json
-├── package.json                 # Workspace scripts
-└── README.md
+│   │   ├── features/          Route level modules (software and photography)
+│   │   ├── components/        Shared layout, navigation, and UI primitives
+│   │   ├── contexts/          Language context and helpers
+│   │   ├── utils/             Asset path helpers and data loaders
+│   │   └── pages/             Legacy pages referenced by features
+│   └── package.json           Frontend dependencies and scripts
+├── docs/                      Architecture and deployment notes
+├── .github/workflows/         GitHub Pages CI configuration
+├── package.json               Workspace scripts that orchestrate frontend commands
+└── README.md                  This document
 ```
 
-## Features
+## Getting Started
+1. Install Node 18 or newer.
+2. From the repo root run:
+   ```bash
+   npm run install-deps
+   npm start        # or npm run dev
+   ```
+   The dev server runs on `http://localhost:3000` and hot reloads public assets and source files.
 
-### Landing Page (`/`)
-- Clean hero section with name and role
-- Language toggle (EN/NO)
-- CTAs to Software and Photography sections
-- Placeholder for future chatbot integration
-
-### Software Page (`/software`)
-- **Dark IDE theme** with syntax highlighting colors
-- About section from CV data
-- Education timeline with date formatting
-- Filterable courses with bilingual tags
-- Interactive project cards with photo carousels
-- PDF download functionality
-
-### Photography Page (`/photography`)
-- **Light theme** with glassmorphism effects
-- Highlights grid with lightbox functionality
-- Photo stories with consistent layout
-- Individual story navigation with parts/chapters
-
-## Bilingual Support
-
-The website supports both English and Norwegian:
-- Automatic browser language detection
-- Persistent language preference in localStorage
-- All content properly localized
-- Fallback to English if translation missing
-
-## Design System
-
-- **Light theme** by default with clean aesthetics
-- **Dark IDE theme** for software section
-- **Glassmorphism** effects on cards and buttons
-- **Design tokens** for easy customization
-- **Responsive** grid layouts
-- **Accessible** with keyboard navigation and ARIA labels
-
-## Available Scripts
+### Root Scripts
+All commands proxy into the `frontend` workspace:
 
 | Command | Description |
-|---------|-------------|
-| `npm start` | Start development server |
-| `npm run dev` | Start development server (alias) |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
+| ------- | ----------- |
+| `npm start` | Launch Vite dev server |
+| `npm run dev` | Alias for `npm start` |
+| `npm run build` | Create a production build in `frontend/dist` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint with the repo rules |
 | `npm run install-deps` | Install frontend dependencies |
+| `npm run deploy` | Build and publish via the frontend deploy script |
 
-## Responsive Design
-
-The website is fully responsive and works across:
-- Desktop (1200px+)
-- Tablet (768px - 1199px)
-- Mobile (320px - 767px)
-
-## Accessibility
-
-- WCAG AA contrast compliance
-- Keyboard navigation support
-- Screen reader friendly
-- Focus management in modals
-- Respects `prefers-reduced-motion`
+## Content Architecture
+- **JSON sources** in `frontend/public/content/` hold structured information such as CV entries, personal profile text, course metadata, and the photos manifest consumed by `frontend/src/utils/data.jsx`.
+- **Photography highlights manifest** is generated by a custom Vite plugin (`frontend/vite.config.js`). Editing media under `frontend/public/portfolio/photography/highlights` while the dev server runs will refresh the manifest automatically; builds regenerate it before output.
+- **Asset paths** go through `frontend/src/utils/paths.js` so deployments under a custom base path (set via `VITE_BASE_URL`) resolve correctly. When hosting at the root domain no extra configuration is required.
+- **Documents and PDFs** live under `frontend/public/docs/` and are linked through project metadata.
 
 ## Deployment
+- GitHub Pages is configured through `.github/workflows/deploy.yml`. Every push to `main` or `master` installs dependencies, runs the Vite build, and publishes `frontend/dist`.
+- The workflow initializes Git LFS to ensure large binaries (PDFs, media) are available during builds.
+- To test production locally run `npm run build` followed by `npm run preview`.
+- Custom domains are supported via `frontend/public/CNAME`. Update `VITE_BASE_URL` if you ever deploy under a subpath, for example `VITE_BASE_URL=/website/`.
 
-### GitHub Pages (Automatic)
+## Development Notes
+- Keep JSON content as the single source of truth; React components load it at runtime which allows translations and data tweaks without code changes.
+- When adding new projects or photography stories place assets under `frontend/public/portfolio/` and update the appropriate manifest entries.
+- Follow the existing feature based folder pattern (`frontend/src/features`) for large UI additions so software and photography surfaces stay isolated.
+- See `docs/ARCHITECTURE.md` for a deeper technical overview and `docs/DEPLOYMENT.md` for Pages specific guidance.
 
-The website is configured for automatic deployment to GitHub Pages via GitHub Actions:
-
-1. **Push to main/master branch** - Automatically triggers deployment
-2. **GitHub Actions workflow** - Builds and deploys the site
-3. **Live URL** - Available at `https://www.andreasklaeboe.com` (custom domain)
-   - Alternate (project pages): build with `VITE_BASE_URL=/website/` and host at `https://andreasklae.github.io/website/`
-
-### Manual Deployment
-
-To build for production:
-
-```bash
-npm run build
-```
-
-To deploy manually to GitHub Pages:
-
-```bash
-npm run deploy
-```
-
-### Configuration
-
-- **Base path**: `/` by default (custom domain). Override via `VITE_BASE_URL` for subpath hosting
-- **GitHub Actions**: Automatic deployment on push to main
-- **Build output**: `frontend/dist/` directory
-- **Static hosting**: Compatible with any static hosting service
-
-### GitHub Pages Setup
-
-1. Go to your repository Settings → Pages
-2. Set Source to "GitHub Actions"
-3. (Custom domain) Set Custom domain to `www.andreasklaeboe.com` and verify DNS
-4. The workflow will automatically deploy on push to main branch
-5. Your site will be available at `https://www.andreasklaeboe.com`
-
-## Data & Assets
-
-- **JSON files** (single source of truth): `frontend/public/content/{cv.json,courses.json,personal.json,photos-manifest.json}`
-- **PDFs**: `frontend/public/docs/` (CVs and course exam PDFs)
-- **Portfolio images**: `frontend/public/portfolio/`
-- **Markdown** in stories provides context only; not parsed as primary data
-
-## Customization
-
-### Colors
-Edit `frontend/tailwind.config.js` to modify the color scheme:
-- Primary colors for light theme
-- IDE colors for dark theme
-- Accent colors for syntax highlighting
-
-### Content
-- Update JSON files under `frontend/public/content/`
-- Add new portfolio projects in `frontend/src/utils/data.jsx`
-- Add new images to `frontend/public/portfolio/`
-
----
-
-Built with React, Tailwind CSS, and Vite.
+Built with React, Tailwind CSS, Swiper, and Vite.
