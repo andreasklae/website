@@ -860,11 +860,6 @@ const SoftwarePage = () => {
                                 
                                 <p className="text-ide-accent-orange text-sm mb-2">
                                   {getText(course.semester)} • {course.ects} ECTS
-                                  {course.grade && (
-                                    <span className="ml-2 text-ide-accent-green">
-                                      Grade: {course.grade}
-                                    </span>
-                                  )}
                                 </p>
                                 
                                 <p className="text-ide-text text-sm mb-4 text-wrap break-words">
