@@ -13,3 +13,4 @@ Thumbs.db
 *.temp
 frontend/node_modules/
 frontend/dist/
+prompt.md
