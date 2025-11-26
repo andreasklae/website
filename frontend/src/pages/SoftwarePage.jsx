@@ -556,69 +556,72 @@ const SoftwarePage = () => {
             <div className="flex flex-wrap gap-8 items-center justify-center max-w-4xl mx-auto">
               {/* Web Technologies (Most Popular) */}
               {/* JavaScript */}
-              <img src={getAssetPath('IT logos/programming languages/javascript.svg')} alt="JavaScript" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/javascript.svg')} alt="JavaScript" title="JavaScript" className="w-20 h-20 object-contain" />
               
               {/* HTML */}
-              <img src={getAssetPath('IT logos/others/html.svg')} alt="HTML" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/html.svg')} alt="HTML" title="HTML" className="w-20 h-20 object-contain" />
               
               {/* CSS */}
-              <img src={getAssetPath('IT logos/others/css.svg')} alt="CSS" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/css.svg')} alt="CSS" title="CSS" className="w-20 h-20 object-contain" />
               
               {/* React */}
-              <img src={getAssetPath('IT logos/frameworks/react.svg')} alt="React" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/frameworks/react.svg')} alt="React" title="React" className="w-20 h-20 object-contain" />
               
               {/* Tailwind CSS */}
-              <img src={getAssetPath('IT logos/frameworks/tailwind-svgrepo-com.svg')} alt="Tailwind CSS" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/frameworks/tailwind-svgrepo-com.svg')} alt="Tailwind CSS" title="Tailwind CSS" className="w-20 h-20 object-contain" />
+              
+              {/* Cloud & DevOps */}
+              {/* Firebase */}
+              <img src={getAssetPath('IT logos/cloud/firebase.svg')} alt="Firebase" title="Firebase" className="w-20 h-20 object-contain" />
+              
+              {/* Azure */}
+              <img src={getAssetPath('IT logos/cloud/azure.svg')} alt="Azure" title="Azure" className="w-20 h-20 object-contain" />
               
               {/* Python & ML */}
               {/* Python */}
-              <img src={getAssetPath('IT logos/programming languages/python.svg')} alt="Python" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/python.svg')} alt="Python" title="Python" className="w-20 h-20 object-contain" />
               
               {/* PyTorch */}
-              <img src={getAssetPath('IT logos/others/pytorch-svgrepo-com.svg')} alt="PyTorch" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/pytorch-svgrepo-com.svg')} alt="PyTorch" title="PyTorch" className="w-20 h-20 object-contain" />
               
               {/* Java Family */}
               {/* Java */}
-              <img src={getAssetPath('IT logos/programming languages/java.svg')} alt="Java" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/java.svg')} alt="Java" title="Java" className="w-20 h-20 object-contain" />
               
               {/* Kotlin */}
-              <img src={getAssetPath('IT logos/programming languages/kotlin.svg')} alt="Kotlin" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/kotlin.svg')} alt="Kotlin" title="Kotlin" className="w-20 h-20 object-contain" />
               
               {/* C Family */}
               {/* C++ */}
-              <img src={getAssetPath('IT logos/programming languages/cpp.svg')} alt="C++" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/cpp.svg')} alt="C++" title="C++" className="w-20 h-20 object-contain" />
               
               {/* C */}
-              <img src={getAssetPath('IT logos/programming languages/c.svg')} alt="C" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/programming languages/c.svg')} alt="C" title="C" className="w-20 h-20 object-contain" />
               
               {/* Version Control */}
               {/* Git */}
-              <img src={getAssetPath('IT logos/others/git.svg')} alt="Git" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/git.svg')} alt="Git" title="Git" className="w-20 h-20 object-contain" />
               
               {/* Github */}
-              <img src={getAssetPath('IT logos/cloud/github.svg')} alt="Github" className="w-20 h-20 object-contain invert" />
+              <img src={getAssetPath('IT logos/cloud/github.svg')} alt="Github" title="Github" className="w-20 h-20 object-contain invert" />
               
               {/* Database */}
               {/* SQL (PostgreSQL) */}
-              <img src={getAssetPath('IT logos/databases/postgresql-vertical.svg')} alt="SQL" className="w-20 h-20 object-contain" />
-              
-              {/* Cloud & DevOps */}
-              {/* Azure */}
-              <img src={getAssetPath('IT logos/cloud/azure.svg')} alt="Azure" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/databases/postgresql-vertical.svg')} alt="SQL" title="SQL" className="w-20 h-20 object-contain" />
               
               {/* Mobile Development */}
               {/* Android Studio */}
-              <img src={getAssetPath('IT logos/ides/android-studio.svg')} alt="Android Studio" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/ides/android-studio.svg')} alt="Android Studio" title="Android Studio" className="w-20 h-20 object-contain" />
               
               {/* Jetpack Compose */}
-              <img src={getAssetPath('IT logos/others/jetpackcompose-original.svg')} alt="Jetpack Compose" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/jetpackcompose-original.svg')} alt="Jetpack Compose" title="Jetpack Compose" className="w-20 h-20 object-contain" />
               
               {/* Hardware */}
               {/* Arduino */}
-              <img src={getAssetPath('IT logos/others/arduino-official.svg')} alt="Arduino" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/arduino-official.svg')} alt="Arduino" title="Arduino" className="w-20 h-20 object-contain" />
               
               {/* Raspberry Pi */}
-              <img src={getAssetPath('IT logos/others/raspberry-pi.svg')} alt="Raspberry Pi" className="w-20 h-20 object-contain" />
+              <img src={getAssetPath('IT logos/others/raspberry-pi.svg')} alt="Raspberry Pi" title="Raspberry Pi" className="w-20 h-20 object-contain" />
             </div>
           </div>
         </section>
