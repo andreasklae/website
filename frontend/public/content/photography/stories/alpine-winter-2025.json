@@ -1,0 +1,147 @@
+{
+  "id": "alpine-winter-2025",
+  "thumbnail": "portfolio/photography/Alpine winter 2025/Thumbnail.JPG",
+  "title": { "en": "Alpine Winter 2025", "no": "Alpevinter 2025" },
+  "description": {
+    "en": "Fog, mountains, and a life lived in transit. From a quiet Bavarian valley to Milan’s warm evenings, and finally the stillness of lakes tucked between the Alps.",
+    "no": "Tåke, fjell og et liv i bevegelse. Fra en stille dal i Bayern til varme kvelder i Milano, og videre til innsjøer som ligger som speil mellom Alpene."
+  },
+  "dates": { "start": "2025-11", "end": "2025-12" },
+  "camera": { "en": "Pentax KX · Kodak Ultramax 400", "no": "Pentax KX · Kodak Ultramax 400" },
+  "highlights": [
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-00749-0014.jpg",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-00749-0019.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-00749-0025.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-00750-0023.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-00750-0025.jpg",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-001A.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-005A.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-011A.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-021A.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-022A.jpg",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-030A.JPG",
+    "portfolio/photography/Alpine winter 2025/Highlights/R1-02670-035A.JPG"
+  ],
+  "chapters": [
+    {
+      "id": "part-1",
+      "title": { "en": "Berchtesgaden", "no": "Berchtesgaden" },
+      "mainImage": "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Main.JPG",
+      "text": {
+        "en": "We climbed toward the Eagle’s Nest, Hitlers old cabin, in thick fog, the kind that muffles sound and turns the world into a small circle around your feet. Every now and then it opened just enough to reveal a slice of the Alps. A sudden drop, a ridge line, a hint of the valley, before the white swallowed it again. At the top we caught those glimpses like stolen frames, standing there tired and a little breathless, mostly in awe.\n\nWe stayed in a small loft at the bottom of the valley, with a balcony view that made the mountains feel like walls around the day. We also went to Königssee in the off-season. Everything was closed, the restaurants empty, and the place had the quiet of a set after the actors have left. You could tell summer would be packed with tours and crowds, but in November it felt like a ghost town, fog hanging over the water and silence doing most of the talking.",
+        "no": "Vi gikk opp mot Ørneredet, Hitlers gamle hytte, i tett tåke. Innimellom åpnet det seg akkurat nok til å gi oss et glimt av Alpene; en bratt kant, en rygg, et hint av dalen, før alt forsvant i hvitt igjen. På toppen sto vi der slitne av turen, men mest av alt i beundring, og tok imot utsikten i små bruddstykker.\n\nVi bodde i en liten loftsleilighet nederst i dalen, med balkong og utsikt mot fjellene som rammet inn hele dagen. Vi dro også til Königssee utenfor sesong. Alt var stengt, restaurantene tomme, og stedet hadde en merkelig ro. som om sommeren hadde forlatt det og glemt å komme tilbake. Det var lett å se for seg hvor fullt det ville vært i juli. I november var det tåke over vannet og nesten ingen mennesker, en stillhet som gjorde innsjøen enda større."
+      },
+      "gallery": [
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0001.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0002 2.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0005.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0006.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0008.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0009.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0011.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0012.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0013.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0014.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0015.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0016.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0018.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0019.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0021.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0022.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0023.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0024.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00749-0025.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0002.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0017.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0018.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0019.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0020.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0023.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0024.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/R1-00750-0025.jpg"
+      ]
+    },
+    {
+      "id": "part-2",
+      "title": { "en": "Salzburg", "no": "Salzburg" },
+      "mainImage": "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Main.JPG",
+      "text": {
+        "en": "Salzburg was a day trip, a quick shift from valley quiet to city rhythm. We wandered through old streets and open squares, taking in palaces, castles, and buildings that seemed to carry their age with confidence. The best moments were the viewpoints: climbing, turning a corner, and watching the city arrange itself below. Rooftops, spires, and the surrounding hills dissolving into haze. It didn’t feel dead the way the lakes did; cafés were still warm with people, even on an ordinary weekday.",
+        "no": "Salzburg var en dagstur. Vi vandret gjennom gamle gater og åpne plasser, og lot oss imponere av slott, palasser og bygninger som bar historien sin helt uanstrengt. Det beste var utsiktspunktene: å gå opp, snu seg, og se byen ligge under oss med tak, spir og åser. Det føltes ikke tomt slik innsjøene kunne gjøre. kafeene var varme med folk, selv på en helt vanlig ukedag."
+      },
+      "gallery": [
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0004.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0005.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0007.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0008.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0009.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0010.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0011.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0012.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0013.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0014.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/R1-00750-0015.JPG"
+      ]
+    },
+    {
+      "id": "part-3",
+      "title": { "en": "Milano", "no": "Milano" },
+      "mainImage": "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Main.JPG",
+      "text": {
+        "en": "Milan was evenings that went on without rushing. Aperitivo by the canal in Navigli then dinner somewhere packed and loud in the best way. Pasta, red wine, and the kind of atmosphere that makes you forget the weather outside. Dessert always meant tiramisu, followed by espresso as if it was punctuation. A local friend showed us the city in that casual way that makes it feel less like a destination and more like a place you could belong. One night we ended up at a bar, rowdy and crowded, where someone ordered an absurd 8 litre glass cannon of beer to share. It wasn’t fancy, but it was exactly right. Strangers and friends folded into the same loud, easy energy.",
+        "no": "Milano var kvelder som varer lenge uten at man skynder seg. Aperitivo ved kanalen i Navigli før vi gikk videre til middag et sted som var fullt, høyt og akkurat passe kaotisk. Pasta, rødvin, og den typen stemning som får deg til å glemme kulda ute. Dessert var alltid tiramisu, etterfulgt av espresso, som et punktum. En venn som kjenner byen viste oss rundt på den enkle, lokale måten som gjør at et sted føles mer som et hjem enn en destinasjon. En kveld endte vi på en tettpakket bar med god energi og hyggelige folk. Vi bestilte et absurd stort glass kanon med øl som alle delte. Ikke fancy, men perfekt."
+      },
+      "gallery": [
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/IMG_7030.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-000A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-001A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-002A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-003A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-004A.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-005A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-006A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-007A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-008A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-009A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-011A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-012A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-014A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02670-015A.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02671-0034.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02671-004A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/R1-02671-005A.JPG"
+      ]
+    },
+    {
+      "id": "part-4",
+      "title": { "en": "Italian and Swiss Lakes", "no": "Italienske og sveitsiske innsjøer" },
+      "mainImage": "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Main.jpg",
+      "text": {
+        "en": "From Milan we traded streets for water and steep slopes. Lake Como gave us a funicular ride into higher air, where the view kept expanding as we climbed. More lake, more rooftops, more mountain behind mountain. Later we drove toward Lago di Lugano and stayed in Albogasio, right across the border from Switzerland. Mornings started at a local café, then we spent the day moving village to village along the lake, stopping whenever the scenery demanded it. Some places were old and Italian, pressed right up against the water. Others were Swiss towns sat improbably higher on the mountain, with a town hall, schools, and everyday life perched among steep slopes like it had always been there. In the evening we wandered Lugano. It was bigger, brighter, but still carrying that lakeside charm, and found a Christmas market glowing against the cold. It felt like the perfect ending to a trip that never stayed still for long: fog lifting into views, cities warming into nights, and lakes reflecting the Alps at a distance.",
+        "no": "Etter Milano byttet vi gater med vann og bratte fjellsider. Ved Comosjøen tok vi funicular opp i høyden, og utsikten ble bare større og større jo lenger opp vi kom. Mer innsjø, flere tak, fjell bak fjell. Senere kjørte vi mot Lago di Lugano og bodde i Albogasio, rett over grensa. Morgenene startet på en lokal café, før vi brukte dagen på å dra landsby til landsby langs vannet og stoppet hver gang utsikten krevde det. Noen steder var små, gamle italienske landsbyer helt nede ved innsjøen. En sveitsisk liten by lå høyere oppe i fjellet, med rådhus, skoler og hverdagsliv midt i bratte skråninger. Om kvelden gikk vi rundt i Lugano. Det var større og mer by, men fortsatt med sjarmen fra innsjøene og fant et julemarked som lyste i vintermørket. Det føltes som en riktig avslutning på en tur som aldri sto stille lenge: tåke som åpnet seg til utsikt, byer som ble til kvelder, og innsjøer som speilet Alpene i det fjerne."
+      },
+      "gallery": [
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/IMG_7098.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-017A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-018A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-019A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-021A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-022A.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-023A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-024A.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-025A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-027A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-030A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-031A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-032A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-035A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02670-036A.jpg",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02671-006A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02671-012A.JPG",
+        "portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/R1-02671-017A.JPG"
+      ]
+    }
+  ]
+}
+
+

@@ -279,6 +279,44 @@ export const photographyHighlights = highlightImages.map(path => getAssetPath(pa
 
 export const photographyStories = [
   {
+    id: 'alpine-winter-2025',
+    title: {
+      en: 'Alpine Winter 2025',
+      no: 'Alpevinter 2025'
+    },
+    coverImage: getAssetPath('portfolio/photography/Alpine winter 2025/Thumbnail.JPG'),
+    description: {
+      en: 'Fog, mountains, and a life lived in transit. From a quiet Bavarian valley to Milan’s warm evenings, and finally the stillness of lakes tucked between the Alps.',
+      no: 'Tåke, fjell og et liv i bevegelse. Fra en stille dal i Bayern til varme kvelder i Milano, og videre til innsjøer som ligger som speil mellom Alpene.'
+    },
+    storyMd: {
+      en: './portfolio/photography/Alpine winter 2025/story.en.md',
+      no: './portfolio/photography/Alpine winter 2025/story.no.md'
+    },
+    parts: [
+      {
+        id: 'part-1',
+        title: { en: 'Berchtesgaden', no: 'Berchtesgaden' },
+        photos: './portfolio/photography/Alpine winter 2025/Chapters/Chapter 1 - Berchtesgaden/Photos/'
+      },
+      {
+        id: 'part-2',
+        title: { en: 'Salzburg', no: 'Salzburg' },
+        photos: './portfolio/photography/Alpine winter 2025/Chapters/Chapter 2 - Salzburg/Photos/'
+      },
+      {
+        id: 'part-3',
+        title: { en: 'Milano', no: 'Milano' },
+        photos: './portfolio/photography/Alpine winter 2025/Chapters/Chapter 3 - Milano/Photos/'
+      },
+      {
+        id: 'part-4',
+        title: { en: 'Italian and Swiss Lakes', no: 'Italienske og sveitsiske innsjøer' },
+        photos: './portfolio/photography/Alpine winter 2025/Chapters/Chapter 4 - Italian and swiss lakes/Photos/'
+      }
+    ]
+  },
+  {
     id: 'stavern-sommer-2025',
     title: {
       en: 'Stavern Summer 2025',
