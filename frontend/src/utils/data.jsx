@@ -155,7 +155,7 @@ export const portfolioProjects = [
     githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {
-    id: '3dpathfinding',
+    id: 'pathfinding-3d',
     title: {
       en: '3D Pathfinding: Algorithm Benchmarking',
       no: '3D Pathfinding: Algoritme-benchmarking'
