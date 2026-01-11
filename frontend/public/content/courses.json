@@ -317,5 +317,83 @@
       "no": "Gruppeprosjekt som forbedret en eksisterende graf-nevral nettverks maskinlæringsmodel på biomedisinske data. Fokuserte på prediksjon av legemiddelkombinasjon-synergi ved bruk av dataprosessering som IQR outlier removal, edge shuffling, grafmanipulasjon og GCN/GAT arkitekturer med omfattende evaluering."
     },
     "portfolioLink": "/software#ml-project"
+  },
+  {
+    "code": "IN4050",
+    "name": {
+      "en": "Introduction to Artificial Intelligence and Machine Learning",
+      "no": "Introduksjon til kunstig intelligens og maskinlæring"
+    },
+    "semester": { "en": "Autumn 2025", "no": "Høst 2025" },
+    "ects": 10,
+    "grade": "C",
+    "link": "https://www.uio.no/studier/emner/matnat/ifi/IN4050/",
+    "tags": {
+      "en": ["Informatics", "Machine Learning", "Algorithms/data", "AI"],
+      "no": ["Informatikk", "Maskinlæring", "Algoritmer/data", "AI"]
+    },
+    "summary": {
+      "en": "Introduction to machine learning and artificial intelligence with an algorithmic approach. Covers supervised classification (neural networks, deep learning), unsupervised learning, regression, optimization, and reinforcement learning. Emphasis on implementing methods and designing experiments.",
+      "no": "Introduksjon til maskinlæring og kunstig intelligens med en algoritmisk tilnærming. Dekker veiledet klassifikasjon (nevrale nettverk, dyp læring), ikke-veiledet læring, regresjon, optimalisering og forsterkende læring. Vekt på implementering av metoder og design av eksperimenter."
+    }
+  },
+  {
+    "code": "IN5320",
+    "name": {
+      "en": "Development in Platform Ecosystems",
+      "no": "Utvikling i plattformøkosystemer"
+    },
+    "semester": { "en": "Autumn 2025", "no": "Høst 2025" },
+    "ects": 10,
+    "grade": "B",
+    "link": "https://www.uio.no/studier/emner/matnat/ifi/IN5320/",
+    "tags": {
+      "en": ["Informatics", "Programming", "JavaScript", "API", "React", "Design", "DHIS2"],
+      "no": ["Informatikk", "Programmering", "JavaScript", "API", "React", "Design", "DHIS2"]
+    },
+    "summary": {
+      "en": "Group project developing web applications with JavaScript using DHIS2 platform APIs. Covers principles of application development within platform ecosystems, socio-technical complexities of large-scale information systems, and platform architectures and governance.",
+      "no": "Gruppeprosjekt med utvikling av webapplikasjoner i JavaScript ved bruk av DHIS2-plattformens APIer. Dekker prinsipper for applikasjonsutvikling i plattformøkosystemer, sosiotekniske kompleksiteter i store informasjonssystemer, og plattformarkitekturer og styring."
+    },
+    "githubLink": "https://github.com/andreasklae/IN5320-project-copy"
+  },
+  {
+    "code": "IN5700",
+    "name": {
+      "en": "Fog and Cloud Computing",
+      "no": "Tåke og Sky Databehandling"
+    },
+    "semester": { "en": "Autumn 2025", "no": "Høst 2025" },
+    "ects": 10,
+    "grade": "C",
+    "link": "https://www.uio.no/studier/emner/matnat/ifi/IN5700/index.html",
+    "tags": {
+      "en": ["Informatics", "Programming", "Docker"],
+      "no": ["Informatikk", "Programmering", "Docker"]
+    },
+    "summary": {
+      "en": "Fundamentals of fog computing systems and their relation to cloud computing and near-far models. Covers challenges in fog-based applications and middleware: security, offloading, SDN, load balancing, containers and orchestration. Project implementing containerized applications with performance analysis.",
+      "no": "Grunnleggende om tåkeberegningssystemer og forholdet til cloud computing og near-far-modeller. Dekker utfordringer i tåkebaserte applikasjoner og mellomvare: sikkerhet, avlasting, SDN, lastbalansering, containere og orkestrering. Prosjekt med implementering av containeriserte applikasjoner og ytelsesanalyse."
+    }
+  },
+  {
+    "code": "IN5060",
+    "name": {
+      "en": "Quantitative Performance Analysis",
+      "no": "Kvantitativ ytelsesanalyse"
+    },
+    "semester": { "en": "Autumn 2025", "no": "Høst 2025" },
+    "ects": 10,
+    "grade": "D",
+    "link": "https://www.uio.no/studier/emner/matnat/ifi/IN5060/",
+    "tags": {
+      "en": ["Informatics", "Algorithms/data", "Python", "Statistics"],
+      "no": ["Informatikk", "Algoritmer/data", "Python", "Statistikk"]
+    },
+    "summary": {
+      "en": "Techniques for analyzing system performance and locating bottlenecks in high-performance systems. Covers performance demands in distributed systems, experimenting with algorithms and architectures, and presenting analysis results through visualization.",
+      "no": "Teknikker for å analysere systemytelse og finne flaskehalser i høyytelsessystemer. Dekker ytelseskrav i distribuerte systemer, eksperimentering med algoritmer og arkitekturer, og presentasjon av analyseresultater gjennom visualisering."
+    },
+    "portfolioLink": "/software#pathfinding-3d"
   }
 ]
