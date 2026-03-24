@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
-import { loadCVData, portfolioProjects, parseMarkdownText, photographyHighlights, loadPhotosManifest } from '../utils/data.jsx'
+import { loadCVData, portfolioProjects, photographyHighlights, loadPhotosManifest } from '../utils/data.jsx'
 import { getAssetPath } from '../utils/paths'
+import SimulaLogo from '../components/SimulaLogo'
 
 const LandingPage = () => {
   const { getText } = useLanguage()
@@ -114,14 +115,14 @@ const LandingPage = () => {
                 
                 <p className="text-xl lg:text-2xl text-gray-600 mb-6 text-center lg:text-left">
                   {getText({
-                    en: 'MSc student, BSc graduate, Photographer',
-                    no: 'Masterstudent, Bachelorutdannet, Fotograf'
+                    en: 'MSc student · Software engineer · Photographer',
+                    no: 'Masterstudent · Software engineer · Fotograf'
                   })}
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed text-center lg:text-left">
                   {getText({
-                    en: 'Currently pursuing MSc in Informatics: Programming and Systems Architecture at the University of Oslo. Completed BSc in Informatics: Design, Use, Interaction with an exchange semester at Freie Universität Berlin focusing on algorithms and machine learning. I also enjoy photography as a hobby and like to comine it with my love for travel. Welcome to my website where I present my work!',
-                      no: 'Tar for tiden master i informatikk: programmering og systemarkitektur ved Universitetet i Oslo. Fullført bachelor i informatikk: design, bruk, interaksjon med utvekslingsopphold ved Freie Universität Berlin med fokus på algoritmer og maskinlæring. Jeg liker også fotografering som hobby og liker å kombinere det med min kjærlighet for reising. Velkommen til min nettside hvor jeg presenterer mitt arbeid!'
+                    en: 'I work as a software engineer at Zypp.io while pursuing an MSc in Informatics: Programming and Systems Architecture at the University of Oslo. I am writing my master’s thesis in affiliation with Simula Research Laboratory. I completed a BSc in Informatics: Design, Use, Interaction with an exchange semester at Freie Universität Berlin focused on algorithms and machine learning. I also enjoy photography and like to combine it with travel. Welcome to my site, where I present my work.',
+                      no: 'Jeg jobber som programvareingeniør i Zypp.io samtidig som jeg tar master i informatikk: programmering og systemarkitektur ved Universitetet i Oslo. Jeg skriver masteroppgaven i tilknytning til Simula Research Laboratory. Jeg har fullført bachelor i informatikk: design, bruk, interaksjon med utvekslingsopphold ved Freie Universität Berlin med fokus på algoritmer og maskinlæring. Jeg liker også fotografering og å kombinere det med reising. Velkommen til nettsiden min, der jeg presenterer arbeidet mitt.'
                   })}
                 </p>
               </div>
@@ -185,27 +186,47 @@ const LandingPage = () => {
                 </a>
               </div>
 
-              {/* Quick Stats */}
-              <div className="flex flex-wrap gap-6 pt-4 justify-center lg:justify-start">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">4+</div>
-                  <div className="text-sm text-gray-600">
-                    {getText({ en: 'Projects', no: 'Prosjekter' })}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">15+</div>
-                  <div className="text-sm text-gray-600">
-                    {getText({ en: 'Courses', no: 'Emner' })}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    <span className="bg-gradient-to-r from-black to-gray-800 bg-clip-text text-transparent">1000+</span>
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {getText({ en: 'Photos', no: 'Bilder' })}
-                  </div>
+              {/* Affiliations: linked logos */}
+              <div className="pt-6 space-y-3">
+                <h2 className="text-lg lg:text-xl font-bold text-gray-900 text-center lg:text-left">
+                  {getText({ en: 'My affiliations', no: 'Mine tilknytninger' })}
+                </h2>
+                <div className="flex flex-wrap items-center gap-x-10 gap-y-8 sm:gap-x-12 justify-center lg:justify-start">
+                <a
+                  href="https://www.zypp.io/en/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-opacity hover:opacity-85"
+                  aria-label="Zypp"
+                >
+                  <img
+                    src={getAssetPath('affiliations/zypp.png')}
+                    alt=""
+                    className="h-12 w-auto max-h-12 sm:h-14 sm:max-h-14 object-contain object-center pointer-events-none shrink-0 translate-y-[7px] sm:translate-y-[9px]"
+                  />
+                </a>
+                <a
+                  href="https://www.uio.no/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-opacity hover:opacity-85"
+                  aria-label="Universitetet i Oslo"
+                >
+                  <img
+                    src={getAssetPath('affiliations/uio.png')}
+                    alt=""
+                    className="h-[62px] w-[62px] shrink-0 object-contain pointer-events-none sm:h-[74px] sm:w-[74px]"
+                  />
+                </a>
+                <a
+                  href="https://www.simula.no/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-opacity hover:opacity-85"
+                  aria-label="Simula Research Laboratory"
+                >
+                  <SimulaLogo className="h-12 w-auto max-h-12 sm:h-14 sm:max-h-14 shrink-0 pointer-events-none object-contain -translate-y-[7px] sm:-translate-y-[9px]" />
+                </a>
                 </div>
               </div>
             </div>

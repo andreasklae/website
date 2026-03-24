@@ -224,6 +224,42 @@ const ProjectCard = ({ project }) => {
                       })}
                     </div>
                   )}
+                  {project.id === 'initech-ai-kurs' && (
+                    <div>
+                      {getText({
+                        en: "The site promotes Initech’s four-hour AI fundamentals course in Norwegian. Copy and structure speak to newcomers: why AI literacy matters, what participants learn in themed modules, and a clear path to sign up.",
+                        no: "Siden promoterer Initech sitt fire timers AI-grunnkurs på norsk. Tekst og struktur henvender seg til nybegynnere: hvorfor AI-kompetanse betyr noe, hva deltakerne lærer i temabaserte moduler, og en tydelig vei til påmelding."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Course dates can load from a Google Sheet (Apps Script or CSV), with capacity and “full” states when configured. The signup form supports individual and company flows and sends both staff notification and attendee confirmation through EmailJS.",
+                        no: "Kursdatoer kan hentes fra et Google-ark (Apps Script eller CSV), med kapasitet og «fullt»-status når det er satt opp. Påmeldingsskjemaet støtter enkeltperson og bedrift og sender både varsel til arrangør og bekreftelse til deltaker via EmailJS."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Built as a client-side React SPA with Vite and Tailwind: glass-style surfaces, scroll-driven motion (progress bar, reveals, light parallax), and accessible focus patterns. Deployed with GitHub Actions to GitHub Pages, with build-time environment variables for EmailJS and sheet endpoints.",
+                        no: "Bygget som en klientside React-SPA med Vite og Tailwind: glassaktige flater, bevegelse styrt av scrolling (fremdriftslinje, avsløringer, lett parallax) og tilgjengelige fokusmønstre. Utrullet med GitHub Actions til GitHub Pages, med byggetidsmiljøvariabler for EmailJS og ark-endepunkter."
+                      })}
+                    </div>
+                  )}
+                  {project.id === 'frekvens' && (
+                    <div>
+                      {getText({
+                        en: "The site introduces the collective and keeps fans oriented: you can read the story in Norwegian or English, see who runs things versus who is on the decks, and open individual nights with flyers, optional photos, and links to tickets or Resident Advisor when that is how the event is sold. Contact and Instagram sit where you would expect, and the overall feel stays dark and club-forward, with drifting motion in the hero and supporting canvas effects elsewhere in the kit.",
+                        no: "Siden presenterer kollektivet og hjelper publikum å finne fram: du kan lese fortellingen på norsk eller engelsk, se hvem som driver det versus hvem som spiller, og åpne enkeltkvelder med plakater, valgfrie bilder og lenker til billetter eller Resident Advisor når det er salgskanalen. Kontakt og Instagram ligger der man forventer det, og helheten er mørk og klubb-orientert, med drivende bevegelse i hero og støttende canvas-effekter andre steder i verktøysettet."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "There are separate routes for home, people, the events list, and each event’s own page with its own chrome. I kept editorial data in JSON for the team and for events, and wired the DJ list to a Google Sheet the group already edits, using a public CSV export from the client so there is no Apps Script in the loop. Gallery folders on disk are reconciled back into the events file by a Node step before dev and build. What you see from Instagram is the standard embed; a Graph API fetch exists as an optional maintenance script if you add tokens.",
+                        no: "Det er egne ruter for hjem, folk, arrangementsliste og hver arrangements egen side med eget skall. Jeg la redaksjonelle data i JSON for team og arrangementer, og koblet DJ-listen til et Google-ark gruppa allerede redigerer, med offentlig CSV-eksport fra klienten så det ikke ligger Apps Script i løypa. Bildemapper på disk synkes tilbake inn i arrangementsfilen med et Node-steg før dev og bygg. Det du ser fra Instagram er vanlig innbygg; Graph API-henting finnes som valgfritt vedlikeholdsskript hvis du legger inn nøkler."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Technically it is a React 18 and TypeScript app on Vite, with React Router handling navigation, Tailwind and Framer Motion for the look and motion, and carousel and small UI primitives in the same spirit as shadcn. The hero shader is OGL-based (Threads). Some Three.js-related dependencies are still in package.json from earlier experiments but are not imported in the app today. Continuous deployment goes through GitHub Actions to GitHub Pages, including a CNAME for the live domain and a copied 404 page so direct URLs to nested routes keep working on static hosting.",
+                        no: "Teknisk er det en React 18- og TypeScript-app på Vite, med React Router for navigasjon, Tailwind og Framer Motion for uttrykk og bevegelse, og karusell og små UI-primitiver i samme ånd som shadcn. Hero-shaderen er OGL-basert (Threads). Noen Three.js-relaterte avhengigheter ligger fortsatt i package.json fra tidligere eksperimenter, men importeres ikke i appen i dag. Kontinuerlig utrulling skjer med GitHub Actions til GitHub Pages, med CNAME for live-domene og kopiert 404-side slik at direkte URL-er til undersider fungerer på statisk hosting."
+                      })}
+                    </div>
+                  )}
                   {project.id === '3dpathfinding' && (
                     <div>
                       {getText({

@@ -17,6 +17,8 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
   // Visual heights (consistent across images)
   const MOBILE_IMAGE_HEIGHT_REM = 28   // ~448px
   const DESKTOP_IMAGE_HEIGHT_REM = 35  // ~560px
+  /** Must match Carousel visibleItemsCount below */
+  const DESKTOP_VISIBLE_COUNT = 3
 
   // Helper to keep index in [0, images.length - 1]
   const getRealIndex = (index) => {
@@ -87,8 +89,12 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
   useEffect(() => {
     if (!images || images.length <= 1) return
 
-    // Start with image 1 in center (second image in the [n, 1, 2] layout)
-    setCenterIndex(0)
+    // Infinite strip uses initialIndex offset; when all slides fit in the row, highlight the middle image
+    const initialCenter =
+      images.length <= DESKTOP_VISIBLE_COUNT
+        ? Math.floor((images.length - 1) / 2)
+        : 0
+    setCenterIndex(initialCenter)
 
     // Listen for carousel navigation button clicks
     const carousel = carouselRef.current
@@ -234,10 +240,10 @@ const CircularCarousel = ({ images, title, projectId, className = '' }) => {
       {/* Desktop: Carousel (kept same API) */}
       <div className="hidden md:block py-6" ref={carouselRef}>
         <Carousel
-          visibleItemsCount={3}
+          visibleItemsCount={DESKTOP_VISIBLE_COUNT}
           withIndicator
-          isInfinite
-          initialIndex={2}
+          isInfinite={images.length > DESKTOP_VISIBLE_COUNT}
+          initialIndex={images.length > DESKTOP_VISIBLE_COUNT ? 2 : 0}
           imageHeight={DESKTOP_IMAGE_HEIGHT_REM * 16} // 560px
         >
           {images.map((image, index) => (
