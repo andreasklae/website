@@ -31,5 +31,8 @@
   ],
   "dependencies": {
     "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "shadcn": "^4.1.0"
   }
 }

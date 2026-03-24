@@ -123,6 +123,36 @@ export const generateImageDescription = (imagePath, projectId) => {
 // Portfolio project data structure (chronologically ordered - newest to oldest)
 export const portfolioProjects = [
   {
+    id: 'initech-ai-kurs',
+    title: {
+      en: 'Initech AI kurs',
+      no: 'Initech AI kurs'
+    },
+    description: {
+      en: 'Norwegian marketing and registration site for Initech’s four-hour AI fundamentals course: themed learning outcomes, optional Google Sheet–backed dates, and EmailJS signups—aimed at people who have not really started using AI yet.',
+      no: 'Norsk markedsførings- og påmeldingsside for Initech sitt fire timers AI-grunnkurss: tematiserte læringsmål, valgfrie kursdatoer fra Google Sheet og påmelding via EmailJS—rettet mot folk som knapt har begynt med AI.'
+    },
+    tags: ['React', 'Vite', 'Tailwind CSS', 'EmailJS', 'Norwegian', 'Marketing', 'Motion', 'GitHub Pages'],
+    type: 'website',
+    link: 'https://ai-kurs.initech.no/',
+    photos: []
+  },
+  {
+    id: 'frekvens',
+    title: {
+      en: 'Frekvens',
+      no: 'Frekvens'
+    },
+    description: {
+      en: 'Bilingual marketing site for Frekvens, an Oslo underground DJ collective: brand story, team, live roster from Google Sheets, WebGL hero threads, and a dark UI with red accents.',
+      no: 'Tospråklig nettside for Frekvens, et undergrunns-DJ-kollektiv i Oslo: historie, team, levende roster fra Google Sheets, WebGL-tråder i hero og mørk UI med røde aksenter.'
+    },
+    tags: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion', 'WebGL', 'ogl', 'Bilingual', 'Google Sheets'],
+    type: 'website',
+    link: 'https://frekvenscollective.com/',
+    photos: []
+  },
+  {
     id: 'fjordquest',
     title: {
       en: 'Fjord Quest Adventure',
@@ -155,7 +185,7 @@ export const portfolioProjects = [
     githubLink: 'https://github.com/andreasklae/varsmart'
   },
   {
-    id: 'pathfinding-3d',
+    id: '3dpathfinding',
     title: {
       en: '3D Pathfinding: Algorithm Benchmarking',
       no: '3D Pathfinding: Algoritme-benchmarking'

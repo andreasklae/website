@@ -224,6 +224,42 @@ const ProjectCard = ({ project }) => {
                       })}
                     </div>
                   )}
+                  {project.id === 'initech-ai-kurs' && (
+                    <div>
+                      {getText({
+                        en: "The site promotes Initech’s four-hour AI fundamentals course in Norwegian. Copy and structure speak to newcomers: why AI literacy matters, what participants learn in themed modules, and a clear path to sign up.",
+                        no: "Siden promoterer Initech sitt fire timers AI-grunnkurs på norsk. Tekst og struktur henvender seg til nybegynnere: hvorfor AI-kompetanse betyr noe, hva deltakerne lærer i temabaserte moduler, og en tydelig vei til påmelding."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Course dates can load from a Google Sheet (Apps Script or CSV), with capacity and “full” states when configured. The signup form supports individual and company flows and sends both staff notification and attendee confirmation through EmailJS.",
+                        no: "Kursdatoer kan hentes fra et Google-ark (Apps Script eller CSV), med kapasitet og «fullt»-status når det er satt opp. Påmeldingsskjemaet støtter enkeltperson og bedrift og sender både varsel til arrangør og bekreftelse til deltaker via EmailJS."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Built as a client-side React SPA with Vite and Tailwind: glass-style surfaces, scroll-driven motion (progress bar, reveals, light parallax), and accessible focus patterns. Deployed with GitHub Actions to GitHub Pages, with build-time environment variables for EmailJS and sheet endpoints.",
+                        no: "Bygget som en klientside React-SPA med Vite og Tailwind: glassaktige flater, bevegelse styrt av scrolling (fremdriftslinje, avsløringer, lett parallax) og tilgjengelige fokusmønstre. Utrullet med GitHub Actions til GitHub Pages, med byggetidsmiljøvariabler for EmailJS og ark-endepunkter."
+                      })}
+                    </div>
+                  )}
+                  {project.id === 'frekvens' && (
+                    <div>
+                      {getText({
+                        en: "Frekvens is a bilingual single-page site for an Oslo underground DJ collective. It presents the brand, mission, core team, and a roster of artists, with smooth in-page navigation and a dark visual identity accented in red.",
+                        no: "Frekvens er en tospråklig enkeltside for et undergrunns-DJ-kollektiv i Oslo. Den presenterer merkevaren, oppdraget, kjerneteamet og en DJ-roster, med myk navigasjon på siden og mørk visuell identitet med røde aksenter."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "Team profiles load from static JSON; the artist roster is driven by a public Google Sheet CSV with parsing for aliases, images (including Drive thumbnails), social links, and a simple status filter so only active members appear.",
+                        no: "Teamprofiler lastes fra statisk JSON; artistrosteret hentes fra et offentlig Google Sheet CSV med tolking av alias, bilder (inkludert Drive-miniatyrbilder), sosiale lenker og en enkel statusfilter slik at bare aktive medlemmer vises."
+                      })}
+                      <br /><br />
+                      {getText({
+                        en: "The stack is React 18 with TypeScript and Vite, Tailwind for layout and typography, Framer Motion for entrance and scroll effects, lucide-react for icons, and a custom OGL/WebGL shader (“threads”) behind the hero wordmark. Language defaults from the browser or localStorage and can be toggled between Norwegian and English.",
+                        no: "Stacken er React 18 med TypeScript og Vite, Tailwind for layout og typografi, Framer Motion for inn- og scroll-animasjoner, lucide-react for ikoner, og en egen OGL/WebGL-shader («tråder») bak hero-ordmerket. Språk velges fra nettleser eller localStorage og kan byttes mellom norsk og engelsk."
+                      })}
+                    </div>
+                  )}
                   {project.id === '3dpathfinding' && (
                     <div>
                       {getText({
