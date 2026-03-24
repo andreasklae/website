@@ -1,6 +1,18 @@
 {
-  "initech-ai-kurs": [],
-  "frekvens": [],
+  "initech-ai-kurs": [
+    "portfolio/Software engineering/Initech AI kurs/Photos/Screenshot 2026-03-24 at 22.30.30.png",
+    "portfolio/Software engineering/Initech AI kurs/Photos/Screenshot 2026-03-24 at 22.30.48.png",
+    "portfolio/Software engineering/Initech AI kurs/Photos/Screenshot 2026-03-24 at 22.31.13.png",
+    "portfolio/Software engineering/Initech AI kurs/Photos/image.png"
+  ],
+  "frekvens": [
+    "portfolio/Software engineering/Frekvens/Photos/Screenshot 2026-03-24 at 22.17.18.png",
+    "portfolio/Software engineering/Frekvens/Photos/Screenshot 2026-03-24 at 22.18.25.png",
+    "portfolio/Software engineering/Frekvens/Photos/Screenshot 2026-03-24 at 22.18.34.png",
+    "portfolio/Software engineering/Frekvens/Photos/Screenshot 2026-03-24 at 22.19.19.png",
+    "portfolio/Software engineering/Frekvens/Photos/Screenshot 2026-03-24 at 22.20.10.png",
+    "portfolio/Software engineering/Frekvens/Photos/test_frek-10.jpg"
+  ],
   "fjordquest": [
     "portfolio/Software engineering/Fjordquest adventure/Photos/white_logo_transparent_background.png",
     "portfolio/Software engineering/Fjordquest adventure/Photos/landingpage.jpg",
