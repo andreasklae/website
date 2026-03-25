@@ -157,11 +157,12 @@ const LandingPage = () => {
                 </Link>
               </div>
 
-              {/* CV Download Buttons */}
+              {/* CV Download Buttons — opens PDF in browser (new tab); no download attribute */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
                 <a
                   href={getAssetPath('docs/CV_Andreas_Klaeboe_EN.pdf')}
-                  download="CV_Andreas_Klaeboe_EN.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 >
                   <span className="flex items-center gap-2">
@@ -171,10 +172,11 @@ const LandingPage = () => {
                     {getText({ en: 'Download CV (EN)', no: 'Last ned CV (EN)' })}
                   </span>
                 </a>
-                
+
                 <a
                   href={getAssetPath('docs/CV_Andreas_Klaeboe_NO.pdf')}
-                  download="CV_Andreas_Klaeboe_NO.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="glass-bubble group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500/80 to-emerald-500/80 text-white rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 >
                   <span className="flex items-center gap-2">
