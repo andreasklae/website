@@ -8,8 +8,8 @@
     "no": "Masterstudent i informatikk"
   },
   "summary": {
-    "en": "Master's student at the University of Oslo pursuing **MSc in Informatics: Programming and Systems Architecture**. Completed **BSc in Informatics: Design, Use, Interaction** with an exchange semester at Freie Universität Berlin during my bachelor's studies, focusing on advanced algorithms and machine learning.",
-    "no": "Masterstudent ved Universitetet i Oslo på **MSc-programmet i informatikk: programmering og systemarkitektur**. Fullførte **bachelor i informatikk: design, bruk, interaksjon** med et utvekslingssemester ved Freie Universität Berlin under bachelorstudiene, med fokus på avanserte algoritmer og maskinlæring."
+    "en": "Master's student at the University of Oslo pursuing **MSc in Informatics: Programming and Systems Architecture**, and **software engineer at Zypp**, working on development of AI agents, backend and frontend. Completed **BSc in Informatics: Design, Use, Interaction** with an exchange semester at Freie Universität Berlin during my bachelor's studies, focusing on advanced algorithms and machine learning.",
+    "no": "Masterstudent ved Universitetet i Oslo på **MSc-programmet i informatikk: programmering og systemarkitektur**, og **programvareingeniør i Zypp** med utvikling av AI-agenter, backend og frontend. Fullførte **bachelor i informatikk: design, bruk, interaksjon** med et utvekslingssemester ved Freie Universität Berlin under bachelorstudiene, med fokus på avanserte algoritmer og maskinlæring."
   },
   "contacts": {
     "location": {
@@ -19,8 +19,26 @@
     "email": "andreasklaeboe@gmail.com",
     "phone": "+47 967 98 001",
     "github": "https://github.com/andreasklae",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/andreas-kl%C3%A6boe-80a6523b8",
     "site": "https://www.andreasklaeboe.com"
+  },
+  "aboutMe": {
+    "dateOfBirth": {
+      "en": "26 May 2001",
+      "no": "26. mai 2001"
+    },
+    "from": {
+      "en": "Bærum, Norway",
+      "no": "Bærum, Norge"
+    },
+    "gender": {
+      "en": "Male",
+      "no": "Mann"
+    },
+    "living": {
+      "en": "Oslo, Norway",
+      "no": "Oslo, Norge"
+    }
   },
   "languagesSpoken": [
     {
@@ -55,10 +73,28 @@
   },
   "experience": [
     {
-      "title": { "en": "IT Consultant", "no": "IT Konsulent" },
+      "title": { "en": "Software Engineer", "no": "Programvareingeniør" },
+      "org": { "en": "Zypp AS", "no": "Zypp AS" },
+      "start": "2026-03",
+      "end": "present",
+      "bullets": {
+        "en": [
+          "Development of AI agents",
+          "Backend development",
+          "Frontend development"
+        ],
+        "no": [
+          "Utvikling av AI-agenter",
+          "Backend-utvikling",
+          "Frontend-utvikling"
+        ]
+      }
+    },
+    {
+      "title": { "en": "IT Consultant", "no": "IT-konsulent" },
       "org": { "en": "Initech Consulting AS", "no": "Initech Consulting AS" },
       "start": "2025-11",
-      "end": "present",
+      "end": "2026-03",
       "bullets": {
         "en": [
           "General IT tasks",
@@ -80,8 +116,8 @@
       "start": "2025-09",
       "end": "present",
       "bullets": {
-        "en": ["Part-time bartender in Frogner, Oslo."],
-        "no": ["Deltidsbartender i Frogner, Oslo."]
+        "en": ["Part-time bartender in Frogner, Oslo"],
+        "no": ["Deltidsbartender i Frogner, Oslo"]
       }
     },
     {
@@ -90,8 +126,8 @@
       "start": "2025-03",
       "end": "2025-09",
       "bullets": {
-        "en": ["Part-time bartender in Majorstuen, Oslo."],
-        "no": ["Deltidsbartender i Majorstuen, Oslo."]
+        "en": ["Part-time bartender in Majorstuen, Oslo"],
+        "no": ["Deltidsbartender i Majorstuen, Oslo"]
       }
     },
     {
@@ -100,8 +136,8 @@
       "start": "2022-09",
       "end": "2024-09",
       "bullets": {
-        "en": ["Part-time bartender in Frogner, Oslo."],
-        "no": ["Deltidsbartender i Frogner, Oslo."]
+        "en": ["Part-time bartender in Frogner, Oslo"],
+        "no": ["Deltidsbartender i Frogner, Oslo"]
       }
     },
     {
@@ -111,12 +147,12 @@
       "end": "2022-06",
       "bullets": {
         "en": [
-          "Substitute teaching between high school and bachelor’s studies.",
-          "Also during breaks from military service."
+          "Substitute teaching between high school and bachelor’s studies",
+          "Also during breaks from military service"
         ],
         "no": [
-          "Vikarlærer mellom VGS og bachelorstudier.",
-          "Også under permisjon i førstegangstjenesten."
+          "Vikarlærer mellom VGS og bachelorstudier",
+          "Også under permisjon i førstegangstjenesten"
         ]
       }
     },
@@ -129,10 +165,8 @@
       "start": "2021-04",
       "end": "2022-04",
       "bullets": {
-        "en": [
-          "Served as gunner, fireman, and representative for the privates."
-        ],
-        "no": ["Artillerist, røykdykker og tillitsvalgt for mannskapet."]
+        "en": ["Gunner", "Fireman", "Representative for the privates"],
+        "no": ["Artillerist", "Røykdykker", "Tillitsvalgt for mannskapet"]
       }
     },
     {
@@ -142,12 +176,12 @@
       "end": "2021-04",
       "bullets": {
         "en": [
-          "Coached younger gymnasts.",
-          "Competitive background: bronze at European Championship; multiple national gold medals."
+          "Coached younger gymnasts",
+          "Competitive background: bronze at European Championship, multiple national gold medals"
         ],
         "no": [
-          "Trente yngre gymnaster.",
-          "Konkurransebakgrunn: bronse i EM; flere NM-gull."
+          "Trente yngre gymnaster",
+          "Konkurransebakgrunn: bronse i EM, flere NM-gull"
         ]
       }
     }
@@ -164,7 +198,14 @@
       },
       "start": "2025-08",
       "end": "present",
-      "bullets": { "en": [], "no": [] }
+      "bullets": {
+        "en": [
+          "Master's thesis with Simula Research Laboratory (from Jan 2026, ongoing): developing a multimodal AI agent application for tourism and travel guidance."
+        ],
+        "no": [
+          "Masteroppgave ved Simula Research Laboratory (fra jan. 2026, pågår): utvikling av en flermodal AI-agentapp for turisme og reiseguiding."
+        ]
+      }
     },
     {
       "degree": {
@@ -190,7 +231,10 @@
       },
       "start": "2024-10",
       "end": "2025-03",
-      "bullets": { "en": [], "no": [] }
+      "bullets": {
+        "en": ["Courses in advanced algorithms and machine learning"],
+        "no": ["Emner i avanserte algoritmer og maskinlæring"]
+      }
     },
     {
       "degree": {
