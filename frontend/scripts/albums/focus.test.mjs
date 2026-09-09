@@ -58,3 +58,56 @@ test('a half-page photo keeps its real proportions in world units', () => {
   close(box.w, (400 / FACE_W) * PAGE_WIDTH)
   close(box.h, (600 / FACE_H) * PAGE_HEIGHT)
 })
+
+// ---- proportional lean-in (mirrors leanTarget in lib/focus.js) -------------
+
+const LEAN_VIEW = 0.6
+const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
+
+function leanTarget(box, point) {
+  const relX = clamp((point.x - box.x) / (box.w / 2 || 1), -1, 1)
+  const relY = clamp((point.y - box.y) / (box.h / 2 || 1), -1, 1)
+  const panX = (box.w * (1 - LEAN_VIEW)) / 2
+  const panY = (box.h * (1 - LEAN_VIEW)) / 2
+  return { x: box.x + relX * panX, y: box.y + relY * panY, w: box.w * LEAN_VIEW, h: box.h * LEAN_VIEW }
+}
+
+const photo = { x: 0.6, y: 0.2, w: 0.5, h: 0.75 }
+
+test('leaning in converges instead of drifting under a still cursor', () => {
+  // The failure this guards against: centring the camera on the cursor moves
+  // the world point under a stationary cursor by the same amount each frame,
+  // so the target runs away and the photo slides out from under the pointer.
+  let camera = { x: photo.x, y: photo.y }
+  const cursorOffset = { x: 0.18, y: -0.12 } // cursor held off-centre
+  const steps = []
+  for (let i = 0; i < 40; i++) {
+    // The world point under a fixed cursor tracks the camera one-for-one.
+    const point = { x: camera.x + cursorOffset.x, y: camera.y + cursorOffset.y }
+    const t = leanTarget(photo, point)
+    steps.push(Math.hypot(t.x - camera.x, t.y - camera.y))
+    camera = { x: t.x, y: t.y }
+  }
+  assert.ok(steps.at(-1) < 1e-6, `still moving by ${steps.at(-1)} after 40 steps`)
+  assert.ok(steps.at(-1) < steps[0], 'steps must shrink, not grow')
+  // And it must settle INSIDE the photograph, not on some far-off point.
+  assert.ok(Math.abs(camera.x - photo.x) <= photo.w / 2, 'settled outside the photo')
+  assert.ok(Math.abs(camera.y - photo.y) <= photo.h / 2, 'settled outside the photo')
+})
+
+test('the pointer can reach every corner of the photograph', () => {
+  const tl = leanTarget(photo, { x: photo.x - photo.w / 2, y: photo.y + photo.h / 2 })
+  const br = leanTarget(photo, { x: photo.x + photo.w / 2, y: photo.y - photo.h / 2 })
+  // The framed view at each extreme should touch the photo's own edge.
+  close(tl.x - tl.w / 2, photo.x - photo.w / 2)
+  close(tl.y + tl.h / 2, photo.y + photo.h / 2)
+  close(br.x + br.w / 2, photo.x + photo.w / 2)
+  close(br.y - br.h / 2, photo.y - photo.h / 2)
+})
+
+test('a cursor beyond the photo clamps rather than flinging the camera', () => {
+  const far = leanTarget(photo, { x: photo.x + 99, y: photo.y - 99 })
+  const edge = leanTarget(photo, { x: photo.x + photo.w / 2, y: photo.y - photo.h / 2 })
+  close(far.x, edge.x)
+  close(far.y, edge.y)
+})

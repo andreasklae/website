@@ -84,8 +84,14 @@ function ZoomView({ slot, onClose, getText }) {
   )
 }
 
-/** One card in the held stack. Only the front card is draggable. */
-function StackCard({ photo, index, isFront, box, onSendToBack, children }) {
+/**
+ * One card in the held stack. Only the front card is draggable.
+ *
+ * `fling` lets the buttons throw the card the same way a drag does, so
+ * pressing an arrow and swiping produce the same motion rather than one
+ * animating and the other cutting.
+ */
+function StackCard({ photo, index, isFront, box, fling, onSendToBack, children }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useTransform(y, [-200, 200], [STACK.tiltStrength, -STACK.tiltStrength])
@@ -99,19 +105,21 @@ function StackCard({ photo, index, isFront, box, onSendToBack, children }) {
     else { x.set(0); y.set(0) }
   }
 
+  const thrown = isFront && fling
   return (
     <motion.div
       className={`absolute ${isFront ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
       style={{
         width: box.w,
         height: box.h,
-        x: isFront ? x : 0,
-        y: isFront ? y : 0,
-        rotateX: isFront ? rotateX : 0,
-        rotateY: isFront ? rotateY : 0,
+        x: isFront && !thrown ? x : 0,
+        y: isFront && !thrown ? y : 0,
+        rotateX: isFront && !thrown ? rotateX : 0,
+        rotateY: isFront && !thrown ? rotateY : 0,
         zIndex: 100 - index,
       }}
-      drag={isFront}
+      animate={thrown ? { x: fling * (box.w + 220), y: -40, rotate: fling * 18, opacity: 0.85 } : {}}
+      drag={isFront && !thrown}
       dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
       dragElastic={0.55}
       onDragEnd={handleDragEnd}
@@ -133,39 +141,72 @@ function StackCard({ photo, index, isFront, box, onSendToBack, children }) {
   )
 }
 
+const orientationOf = (photo) => ((photo?.aspect || 1.5) >= 1 ? 'landscape' : 'portrait')
+
+/** Card box for an orientation, capped to the viewport on both axes. */
+function boxFor(orientation) {
+  const aspect = orientation === 'landscape' ? 3 / 2 : 2 / 3
+  const maxW = Math.min(window.innerWidth * 0.78, 560)
+  const maxH = Math.min(window.innerHeight * 0.58, 620)
+  let w = maxW
+  let h = w / aspect
+  if (h > maxH) { h = maxH; w = h * aspect }
+  return { w: Math.round(w), h: Math.round(h) }
+}
+
 /**
  * A stack lifted off the page. Drag or swipe the top print away to reach the
- * one beneath; on a phone the arrows do the same thing without a gesture.
+ * one beneath; the arrows fling it the same way, so a phone needs no gesture.
+ *
+ * Mixed orientations are handled the way a real pile behaves: the next
+ * photograph arrives in whatever shape the pile currently has — lying on its
+ * side if it disagrees — and once it has landed the whole stack turns a
+ * quarter turn to stand it upright.
  */
 function StackView({ slot, onClose, getText }) {
   const [order, setOrder] = useState(() => slot.photos.map((_, i) => i))
+  const [fling, setFling] = useState(0)
+  // The shape the pile currently holds, and the turn still owed to correct it.
+  const [pileOrientation, setPileOrientation] = useState(() => orientationOf(slot.photos[0]))
+  const [spin, setSpin] = useState(0)
 
-  useEffect(() => { setOrder(slot.photos.map((_, i) => i)) }, [slot])
-
-  const sendToBack = useCallback(() => {
-    setOrder((prev) => (prev.length < 2 ? prev : [...prev.slice(1), prev[0]]))
-  }, [])
-
-  const bringToFront = useCallback(() => {
-    setOrder((prev) => (prev.length < 2 ? prev : [prev[prev.length - 1], ...prev.slice(0, -1)]))
-  }, [])
+  useEffect(() => {
+    setOrder(slot.photos.map((_, i) => i))
+    setPileOrientation(orientationOf(slot.photos[0]))
+    setSpin(0)
+    setFling(0)
+  }, [slot])
 
   const front = slot.photos[order[0]]
+  const box = useMemo(() => boxFor(pileOrientation), [pileOrientation])
 
-  // The card box takes the front photograph's own shape, so nothing is
-  // cropped, and it is capped to the viewport on both axes.
-  const box = useMemo(() => {
-    const aspect = front?.aspect || 1.5
-    const maxW = Math.min(window.innerWidth * 0.78, 560)
-    const maxH = Math.min(window.innerHeight * 0.6, 620)
-    let w = maxW
-    let h = w / aspect
-    if (h > maxH) { h = maxH; w = h * aspect }
-    return { w: Math.round(w), h: Math.round(h) }
-  }, [front])
+  /** Advance, then turn the pile if the new photograph disagrees with it. */
+  const settle = useCallback((nextOrder) => {
+    setOrder(nextOrder)
+    setFling(0)
+    const incoming = orientationOf(slot.photos[nextOrder[0]])
+    if (incoming === pileOrientation) return
+    // Show it lying the wrong way in the old shape, then turn the pile upright.
+    setSpin(incoming === 'landscape' ? -90 : 90)
+    setPileOrientation(incoming)
+    requestAnimationFrame(() => requestAnimationFrame(() => setSpin(0)))
+  }, [slot, pileOrientation])
 
-  // Only the nearest few cards are mounted; a 40-photo stack does not need 40
-  // DOM nodes to look like a pile.
+  const advance = useCallback((direction) => {
+    if (fling) return
+    setFling(direction)
+    const next = () => {
+      const o = order
+      settle(direction > 0 ? [...o.slice(1), o[0]] : [o[o.length - 1], ...o.slice(0, -1)])
+    }
+    // Let the throw play before the pile re-forms behind it.
+    setTimeout(next, 220)
+  }, [fling, order, settle])
+
+  const sendToBack = useCallback(() => {
+    settle([...order.slice(1), order[0]])
+  }, [order, settle])
+
   const visible = order.slice(0, 5)
 
   return (
@@ -182,9 +223,9 @@ function StackView({ slot, onClose, getText }) {
 
       <motion.div
         className="relative"
-        style={{ width: box.w, height: box.h, perspective: 1200 }}
+        style={{ perspective: 1200 }}
         initial={{ scale: 0.86, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
+        animate={{ scale: 1, opacity: 1, width: box.w, height: box.h, rotate: spin }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 240, damping: 26 }}
         onClick={(e) => e.stopPropagation()}
@@ -196,6 +237,7 @@ function StackView({ slot, onClose, getText }) {
             index={i}
             isFront={i === 0}
             box={box}
+            fling={i === 0 ? fling : 0}
             onSendToBack={sendToBack}
           >
             <PrintFrame className="h-full w-full">
@@ -212,11 +254,11 @@ function StackView({ slot, onClose, getText }) {
 
       <div className="relative flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
         <p className="text-xs tracking-widest text-white/45">
-          {order.length ? `${(order[0] ?? 0) + 1} / ${slot.photos.length}` : ''}
+          {`${(order[0] ?? 0) + 1} / ${slot.photos.length}`}
         </p>
         <div className="flex items-center gap-3">
           <button
-            onClick={bringToFront}
+            onClick={() => advance(-1)}
             aria-label={getText({ en: 'Previous photo', no: 'Forrige bilde' })}
             className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25
                        bg-black/45 text-white/90 backdrop-blur transition hover:bg-black/70 active:scale-95"
@@ -225,7 +267,7 @@ function StackView({ slot, onClose, getText }) {
           </button>
           <CloseButton onClick={onClose} label={getText({ en: 'Put back', no: 'Legg tilbake' })} />
           <button
-            onClick={sendToBack}
+            onClick={() => advance(1)}
             aria-label={getText({ en: 'Next photo', no: 'Neste bilde' })}
             className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25
                        bg-black/45 text-white/90 backdrop-blur transition hover:bg-black/70 active:scale-95"

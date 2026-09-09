@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
-import { focusBoxFor } from '../lib/focus'
+import { focusBoxFor, worldPointFor, leanTarget } from '../lib/focus'
 import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
 
 // Every sheet is a real mesh — the page geometry is shared, so the cost of a
@@ -13,14 +13,12 @@ import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
 // carry a painted face, the rest render as blank paper.
 const WINDOW = 3
 
-// Long enough that sweeping the cursor across a spread does not drag the
-// camera around, short enough that resting on a photograph feels immediate.
-const HOVER_FOCUS_DELAY = 130
+
 
 /** Touch devices have no hover, so every hover affordance needs a tap path. */
 const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
 
-export default function Album({ album, language, onCoverClick }) {
+export default function Album({ album, language }) {
   const mode = useAlbumStore((s) => s.mode)
   const page = useAlbumStore((s) => s.page)
   const heldStack = useAlbumStore((s) => s.heldStack)
@@ -104,9 +102,11 @@ export default function Album({ album, language, onCoverClick }) {
     const hit = hitTest(event, faceIndex)
 
     const key = hit ? `${faceIndex}:${hit.index}` : null
-    if (key === currentHit.current) return
+    const sameSlot = key === currentHit.current
     currentHit.current = key
     clearTimers()
+    // Repeat moves within one photograph must still be processed — that is
+    // what pans the camera. Only the cursor/hover bookkeeping is skipped.
 
     // Left the photograph's own borders: fall back to the whole spread.
     if (!hit) {
@@ -117,21 +117,21 @@ export default function Album({ album, language, onCoverClick }) {
     }
     event.stopPropagation()
 
-    setHoveredSlot({ faceIndex, ...hit })
+    if (!sameSlot) setHoveredSlot({ faceIndex, ...hit })
 
     // Photographs and stacks are worth leaning in on; postcards and memos are
     // already legible at spread distance.
     const leanable = hit.slot.kind === 'photo' || hit.slot.kind === 'stack'
-    document.body.style.cursor = leanable ? 'zoom-in' : 'pointer'
+    if (!sameSlot) document.body.style.cursor = leanable ? 'zoom-in' : 'pointer'
 
     if (!leanable) { setFocus(null); return }
 
-    // The camera moving in makes the slot fill more of the screen, so a
-    // stationary cursor stays inside it — the focus is self-stabilising.
-    hoverTimer.current = setTimeout(
-      () => setFocus(focusBoxFor(hit.rect, sheetIndex, delayedPage)),
-      HOVER_FOCUS_DELAY
-    )
+    // Pan with the cursor. leanTarget deliberately does not centre on the
+    // pointer — see the note there — so this updates every move without the
+    // camera chasing itself.
+    const box = focusBoxFor(hit.rect, sheetIndex, delayedPage)
+    const point = worldPointFor(event.uv.x, event.uv.y, sheetIndex, delayedPage)
+    setFocus(leanTarget(box, point))
   }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack])
 
   const handlePointerOut = useCallback(() => {
@@ -144,8 +144,6 @@ export default function Album({ album, language, onCoverClick }) {
 
   const handleClick = useCallback((event, sheetIndex) => {
     if (heldStack) return
-    // While the album is merely facing you, any click on it means "open".
-    if (onCoverClick) { event.stopPropagation(); onCoverClick(); return }
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
 
     const isFront = event.face?.materialIndex === 4
@@ -170,7 +168,7 @@ export default function Album({ album, language, onCoverClick }) {
     event.stopPropagation()
     if (useAlbumStore.getState().mode === MODES.ZOOM) { unzoom(); return }
     if (sheetIndex < delayedPage) prev(); else next()
-  }, [mode, hitTest, delayedPage, prev, next, onCoverClick, zoom, unzoom, takeStack, heldStack])
+  }, [mode, hitTest, delayedPage, prev, next, zoom, unzoom, takeStack, heldStack])
 
   useEffect(() => () => { clearTimers(); document.body.style.cursor = '' }, [])
 

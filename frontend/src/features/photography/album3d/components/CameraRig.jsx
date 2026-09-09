@@ -31,11 +31,13 @@ function shotFor(mode, { narrow, side, shelfWidth, focus }) {
   // so this reads as moving closer to the page, not as replacing it.
   if (focus && (mode === MODES.OPEN || mode === MODES.ZOOM)) {
     return {
+      // Already reduced to a fraction of the photograph by leanTarget, so the
+      // padding here is only enough to keep the edges off the frame.
       box: [focus.w, focus.h],
       target: [focus.x, focus.y, PAGE_WIDTH * 0.5],
-      // Level with the photograph, so leaning in also straightens the view.
+      // Level with what is being looked at, so leaning in straightens the view.
       height: focus.y,
-      pad: 1.45,
+      pad: 1.04,
     }
   }
 
