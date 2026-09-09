@@ -116,10 +116,12 @@ const SHELF_PARALLAX = { x: 0.3, y: 0.12 }
  */
 const SHELF_VIEW = {
   offsetX: 2.35,
-  lookX: 0.02,
-  // Looking a little above the shelf drops it down the frame, which keeps a
-  // book that has been lifted out from under the navbar.
-  lookY: 0.34,
+  // Looking to the right of the case puts it over on the left of the frame,
+  // which leaves the right-hand side to the lamp and the room.
+  lookX: 0.92,
+  // Looking above it drops it down the frame, clear of the navbar and clear of
+  // a book that has been lifted out.
+  lookY: 0.62,
   lean: 0.42,
   closeIn: 0.2,
 }

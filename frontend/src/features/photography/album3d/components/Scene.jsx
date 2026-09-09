@@ -29,7 +29,9 @@ export default function Scene({ shelf, album, language }) {
       */}
       <ambientLight intensity={0.3} color="#8294ad" />
       <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.36]} />
-      <Lamp x={booksLeft + 0.18} />
+      {/* Clear of the case's right-hand upright, so it hangs beside the
+          bookcase rather than in front of it. */}
+      <Lamp x={booksRight + SLIDE_ROOM + 0.85} />
 
       <Suspense fallback={null}>
         <Room booksLeft={booksLeft} booksRight={booksRight} />

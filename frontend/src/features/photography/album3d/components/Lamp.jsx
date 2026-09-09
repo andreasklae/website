@@ -110,7 +110,7 @@ export default function Lamp({ x = 0 }) {
   // Low enough to clear the navbar floating at the top of the page, and far
   // enough forward to hang beside the case rather than inside it.
   const y = PAGE_HEIGHT * 0.08
-  const z = PAGE_WIDTH * 1.35
+  const z = PAGE_WIDTH * 1.3
 
   return (
     <group position={[x, y, z]}>
@@ -119,7 +119,7 @@ export default function Lamp({ x = 0 }) {
           does. */}
       <pointLight ref={light} color={WARM} intensity={0} decay={2} />
       {/* Off to the other side, so the shelf is not lit from one point only. */}
-      <pointLight ref={bounce} color="#ffdcbb" intensity={0} decay={2} position={[-3.4, 0.6, 1.2]} />
+      <pointLight ref={bounce} color="#ffdcbb" intensity={0} decay={2} position={[-4.2, 0.6, 1.2]} />
 
       <group ref={fixture}>
         {/* The bulb itself, so the light has somewhere to come from. */}

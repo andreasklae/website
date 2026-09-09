@@ -273,7 +273,9 @@ export default function Album({
             // sliver of its edge that shows beside the binding reads as a
             // white line down the join.
             edgeColour={isBoard ? boardEdge : undefined}
-            selfLit={!isBoard}
+            // Cloth on the outside, paper on the inside.
+            frontSelfLit={sheetIndex !== 0}
+            backSelfLit={sheetIndex !== leaves - 1}
             frontTexture={front?.texture || (sheetIndex === 0 ? coverTexture : null)}
             backTexture={back?.texture || (sheetIndex === leaves - 1 ? backCoverTexture : null)}
             onPointerMove={active ? (e) => handlePointerMove(e, sheetIndex) : undefined}

@@ -77,13 +77,13 @@ function getPageGeometry(thickness) {
 /**
  * How bright a page reads when the lamp is at full.
  *
- * A printed page is shown through EMISSION rather than lit like a surface, so
- * its colours are its own: a warm lamp does not turn every photograph orange.
- * But it is scaled by the lamp, so the album is dark when the room is dark —
- * a page that stayed at reading brightness in an unlit room looked like a
- * screen, not paper.
+ * A printed page is shown through EMISSION rather than lit like a surface, and
+ * skips tone mapping, so at full lamp a photograph is exactly the image file:
+ * the room contributes nothing to it. It is still scaled by the lamp, so the
+ * album goes dark when the room does — a page that stayed at reading
+ * brightness in an unlit room looked like a screen, not paper.
  */
-const PAGE_EXPOSURE = 0.92
+const PAGE_EXPOSURE = 1
 
 const PAPER = new Color('#efeae0')
 const EDGE = new Color('#d9d2c4')
@@ -98,7 +98,7 @@ const edgeMaterials = [
 
 export default function Page({
   number, page, opened, bookClosed, sheetCount, rigid, pageDepth = PAGE_DEPTH,
-  edgeColour, selfLit = true, frontTexture, backTexture,
+  edgeColour, frontSelfLit = true, backSelfLit = true, frontTexture, backTexture,
   onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
@@ -148,11 +148,15 @@ export default function Page({
 
   // Swap textures without rebuilding the mesh, so page turns never hitch.
   useEffect(() => {
+    // Decided per FACE, not per leaf: the outermost leaves are a cloth board
+    // on one side and a printed page on the other, and treating the whole leaf
+    // as a board left the first and last pages of every album lit like cloth —
+    // the only two pages that went warm under the lamp.
     const pair = [
-      [mesh.material[4], frontTexture],
-      [mesh.material[5], backTexture],
+      [mesh.material[4], frontTexture, frontSelfLit],
+      [mesh.material[5], backTexture, backSelfLit],
     ]
-    for (const [material, texture] of pair) {
+    for (const [material, texture, selfLit] of pair) {
       // A printed page is shown by its own emission: nothing of the lamp's
       // colour lands on it, and tone mapping is skipped, so a photograph is
       // the colour it was taken at. A cloth BOARD is a surface in the room
@@ -166,7 +170,7 @@ export default function Page({
       material.toneMapped = !emits
       material.needsUpdate = true
     }
-  }, [mesh, frontTexture, backTexture, selfLit])
+  }, [mesh, frontTexture, backTexture, frontSelfLit, backSelfLit])
 
   useEffect(() => () => { mesh.material[4].dispose(); mesh.material[5].dispose() }, [mesh])
 
