@@ -28,7 +28,7 @@ function fitDistance(fov, aspect, [w, h], pad) {
  * photographs are unreadable. Narrow viewports therefore frame a single page
  * and step through them one at a time.
  */
-function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX }) {
+function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX, hoveredX }) {
   // Leaning in on a hovered photograph. Padded well past the photo's own edges
   // so this reads as moving closer to the page, not as replacing it.
   switch (mode) {
@@ -73,14 +73,27 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX }
       }
     }
     default:
+      // Resting on an album draws the camera along the row toward it and in a
+      // little, so you are looking at that book rather than at the shelf.
+      const leaning = hoveredX != null
+      const lean = leaning ? SHELF_VIEW.lean : 0
       return {
-        box: [shelfWidth + 0.35, PAGE_HEIGHT * 1.42],
-        target: [SHELF_VIEW.lookX, 0.02, 0],
+        box: [
+          (shelfWidth + 0.35) * (1 - lean * SHELF_VIEW.closeIn),
+          PAGE_HEIGHT * 1.42 * (1 - lean * SHELF_VIEW.closeIn),
+        ],
+        target: [
+          SHELF_VIEW.lookX + (leaning ? (hoveredX - SHELF_VIEW.lookX) * lean : 0),
+          SHELF_VIEW.lookY,
+          0,
+        ],
         // Near enough level with the books: from above you look down onto the
         // shelf board rather than along the row.
         height: -0.02,
-        pad: 1.08,
-        offsetX: SHELF_VIEW.offsetX,
+        // Loose enough to take in the lamp and some of the room, not just
+        // the bay — the lamp has a cord you are meant to be able to reach.
+        pad: 1.32,
+        offsetX: SHELF_VIEW.offsetX * (1 - lean * 0.35),
       }
   }
 }
@@ -101,7 +114,15 @@ const SHELF_PARALLAX = { x: 0.3, y: 0.12 }
  * side the front board of whichever album has turned to look at you is
  * readable, which is the point of the hover.
  */
-const SHELF_VIEW = { offsetX: 2.35, lookX: 0.02 }
+const SHELF_VIEW = {
+  offsetX: 2.35,
+  lookX: 0.02,
+  // Looking a little above the shelf drops it down the frame, which keeps a
+  // book that has been lifted out from under the navbar.
+  lookY: 0.34,
+  lean: 0.42,
+  closeIn: 0.2,
+}
 
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -111,6 +132,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const page = useAlbumStore((s) => s.page)
   const planeZ = useAlbumStore((s) => s.planeZ)
   const activeX = useAlbumStore((s) => s.activeX)
+  const hoveredX = useAlbumStore((s) => s.hoveredX)
   const { camera, size, pointer } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.
@@ -122,7 +144,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
     // never closes against its own back board — and treating the last spread
     // as "shut" put the camera on the left-hand page instead of the middle.
     const closedSide = page === 0 ? 1 : 0
-    const shot = shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX })
+    const shot = shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX, hoveredX })
     const aspect = size.width / Math.max(size.height, 1)
     const leaning = focus && (mode === MODES.OPEN || mode === MODES.ZOOM)
 

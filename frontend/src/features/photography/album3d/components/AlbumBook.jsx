@@ -160,6 +160,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
   const setPlaneZ = useAlbumStore((s) => s.setPlaneZ)
   const setActiveX = useAlbumStore((s) => s.setActiveX)
+  const setHoveredX = useAlbumStore((s) => s.setHoveredX)
   const selectAlbum = useAlbumStore((s) => s.selectAlbum)
 
 
@@ -213,11 +214,13 @@ export default function AlbumBook({ album, full, index, language, active, partX 
         if (reading || mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()
         setHoveredAlbum(album.id)
+        setHoveredX(shelfX)
         document.body.style.cursor = 'pointer'
       }}
       onPointerOut={(e) => {
         e.stopPropagation()
         setHoveredAlbum(null)
+        setHoveredX(null)
         document.body.style.cursor = ''
       }}
       onClick={(e) => {

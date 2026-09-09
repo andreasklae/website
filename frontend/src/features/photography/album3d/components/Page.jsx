@@ -7,6 +7,7 @@ import {
 } from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
 import { LEAF_FRACTION } from '../lib/albumDepth'
+import { lampLevel } from '../lib/lampLevel'
 
 // Page geometry and the bone-driven curl are adapted from
 // github.com/wass08/r3f-animated-book-slider-final — a chain of bones along the
@@ -73,8 +74,16 @@ function getPageGeometry(thickness) {
   return geometry
 }
 
-/** How much of a page's brightness comes from its own image, not the room. */
-const PAGE_SELF_LIT = 0.62
+/**
+ * How bright a page reads when the lamp is at full.
+ *
+ * A printed page is shown through EMISSION rather than lit like a surface, so
+ * its colours are its own: a warm lamp does not turn every photograph orange.
+ * But it is scaled by the lamp, so the album is dark when the room is dark —
+ * a page that stayed at reading brightness in an unlit room looked like a
+ * screen, not paper.
+ */
+const PAGE_EXPOSURE = 1.16
 
 const PAPER = new Color('#efeae0')
 const EDGE = new Color('#d9d2c4')
@@ -89,7 +98,7 @@ const edgeMaterials = [
 
 export default function Page({
   number, page, opened, bookClosed, sheetCount, rigid, pageDepth = PAGE_DEPTH,
-  frontTexture, backTexture, onPointerMove, onClick, onPointerOut,
+  edgeColour, frontTexture, backTexture, onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
@@ -121,7 +130,11 @@ export default function Page({
       emissive: new Color('#ffffff'),
       emissiveIntensity: 0,
     })
-    const materials = [...edgeMaterials, faceMaterial(), faceMaterial()]
+
+    const edges = edgeColour
+      ? Array.from({ length: 4 }, () => new MeshStandardMaterial({ color: new Color(edgeColour), roughness: 0.9 }))
+      : edgeMaterials
+    const materials = [...edges, faceMaterial(), faceMaterial()]
 
     const skinned = new SkinnedMesh(getPageGeometry(pageDepth * LEAF_FRACTION), materials)
     skinned.frustumCulled = false
@@ -130,7 +143,7 @@ export default function Page({
     skinned.add(skeleton.bones[0])
     skinned.bind(skeleton)
     return skinned
-  }, [pageDepth])
+  }, [pageDepth, edgeColour])
 
   // Swap textures without rebuilding the mesh, so page turns never hitch.
   useEffect(() => {
@@ -140,15 +153,26 @@ export default function Page({
     ]
     for (const [material, texture] of pair) {
       material.map = texture || null
-      material.color.set(texture ? '#ffffff' : PAPER)
-      // Self-lit from its own image, so the photograph keeps its colour.
+      // Black diffuse where there is an image: the page is shown by its own
+      // emission instead, so nothing of the lamp's colour lands on it. Bare
+      // paper keeps its diffuse and is lit by the room like everything else.
+      material.color.set(texture ? '#000000' : PAPER)
       material.emissiveMap = texture || null
-      material.emissiveIntensity = texture ? PAGE_SELF_LIT : 0
       material.needsUpdate = true
     }
   }, [mesh, frontTexture, backTexture])
 
   useEffect(() => () => { mesh.material[4].dispose(); mesh.material[5].dispose() }, [mesh])
+
+  // Pages brighten and dim with the room's lamp, read per frame so the warm-up
+  // carries them with it.
+  useFrame(() => {
+    const level = lampLevel.value * PAGE_EXPOSURE
+    for (const i of [4, 5]) {
+      const material = mesh.material[i]
+      if (material.emissiveMap) material.emissiveIntensity = level
+    }
+  })
 
   useFrame((_, delta) => {
     if (!skinnedMeshRef.current || !group.current) return

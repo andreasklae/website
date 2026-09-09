@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT } from './Page'
 import Binding from './Binding'
 import { blockCentre } from '../lib/blockLayout'
+import { shade } from '../lib/material'
+import { BOARD_SHADE } from '../lib/faceCanvas'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
@@ -238,6 +240,7 @@ export default function Album({
   // instead leaves the boards proud at the front and short at the back — the
   // binding then reads as not quite flush with the book it binds.
   const centre = blockCentre(depth, pageDepth)
+  const boardEdge = shade(colours?.cloth || '#332e27', BOARD_SHADE)
 
   return (
     <group ref={group}>
@@ -266,6 +269,10 @@ export default function Album({
             opened={delayedPage > sheetIndex}
             bookClosed={bookClosed}
             rigid={isBoard}
+            // A board is cloth all the way round. Left as page-edge cream, the
+            // sliver of its edge that shows beside the binding reads as a
+            // white line down the join.
+            edgeColour={isBoard ? boardEdge : undefined}
             frontTexture={front?.texture || (sheetIndex === 0 ? coverTexture : null)}
             backTexture={back?.texture || (sheetIndex === leaves - 1 ? backCoverTexture : null)}
             onPointerMove={active ? (e) => handlePointerMove(e, sheetIndex) : undefined}

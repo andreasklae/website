@@ -28,7 +28,7 @@ export default function Scene({ shelf, album, language }) {
       */}
       <ambientLight intensity={0.1} color="#8294ad" />
       <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.14]} />
-      <Lamp x={booksRight + SLIDE_ROOM * 0.55} />
+      <Lamp x={booksLeft + 0.18} />
 
       <Suspense fallback={null}>
         <Room booksLeft={booksLeft} booksRight={booksRight} />

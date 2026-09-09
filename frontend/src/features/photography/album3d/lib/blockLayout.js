@@ -22,8 +22,15 @@ import { PAGE_HEIGHT } from './dimensions.js'
  */
 export const SPINE_PROUD = 0.02
 
-/** How far the binding is tucked inside the boards, to avoid coplanar faces. */
-export const TUCK = 0.0035
+/**
+ * How far the binding is tucked inside the boards.
+ *
+ * Small enough to read as one wrapped edge — the boards are cloth all the way
+ * round, so what shows in the gap is the same material in the same colour —
+ * and large enough that no face of the binding is coplanar with a board, which
+ * is what set them flickering against each other.
+ */
+export const TUCK = 0.0015
 
 /**
  * How far it reaches back behind the hinge, under the leaves that have not

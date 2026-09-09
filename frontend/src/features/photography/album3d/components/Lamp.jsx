@@ -3,6 +3,7 @@ import { easing } from 'maath'
 import { useEffect, useRef, useState } from 'react'
 import { Color } from 'three'
 import { useAlbumStore } from '../lib/store'
+import { lampLevel } from '../lib/lampLevel'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 
 /** Seconds of darkness before the lamp is switched on. */
@@ -80,6 +81,8 @@ export default function Lamp({ x = 0 }) {
     const flicker = catching ? 1 + Math.sin(elapsed.current * 46) * 0.14 * (1 - t / 0.45) : 1
     const out = eased * flicker
 
+    lampLevel.value = out
+
     if (light.current) light.current.intensity = out * LAMP_CANDELA
     if (bounce.current) bounce.current.intensity = out * BOUNCE_CANDELA
     if (filament.current) filament.current.material.emissiveIntensity = out * 3.2
@@ -87,10 +90,13 @@ export default function Lamp({ x = 0 }) {
     if (cord.current) easing.damp(cord.current.position, 'y', -CORD_LEN / 2 - pulled * 0.09, 0.12, delta)
   })
 
-  // Hung clear of the case and high enough to be in shot, so the cord is
-  // something you can actually see and reach for.
-  const y = PAGE_HEIGHT * 0.95
-  const z = PAGE_WIDTH * 0.95
+  // Hung clear of the case, high on the left, where it is in shot and the cord
+  // can be reached. Off to one side rather than overhead so the shelf is lit
+  // across its face rather than straight down it.
+  // Low enough to clear the navbar floating at the top of the page, and far
+  // enough forward to hang beside the case rather than inside it.
+  const y = PAGE_HEIGHT * 0.28
+  const z = PAGE_WIDTH * 1.35
 
   return (
     <group position={[x, y, z]}>
@@ -108,9 +114,15 @@ export default function Lamp({ x = 0 }) {
         <meshBasicMaterial color={WARM} transparent opacity={0} depthWrite={false} toneMapped={false} />
       </mesh>
 
+      {/* The flex it hangs by, running up out of shot. */}
+      <mesh position={[0, 1.9, 0]}>
+        <cylinderGeometry args={[0.009, 0.009, 3.4, 6]} />
+        <meshStandardMaterial color="#2e2721" roughness={0.9} />
+      </mesh>
+
       {/* A shade above it, which is what makes the light read as a lamp. */}
-      <mesh position={[0, 0.17, 0]}>
-        <coneGeometry args={[0.3, 0.26, 24, 1, true]} />
+      <mesh position={[0, 0.19, 0]}>
+        <coneGeometry args={[0.33, 0.3, 24, 1, true]} />
         <meshStandardMaterial color="#8d6a44" roughness={0.8} side={2} />
       </mesh>
 
