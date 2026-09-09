@@ -61,15 +61,18 @@ test('a half-page photo keeps its real proportions in world units', () => {
 
 // ---- proportional lean-in (mirrors leanTarget in lib/focus.js) -------------
 
-const LEAN_VIEW = 0.6
+const LEAN_PAN = 0.4
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
 function leanTarget(box, point) {
   const relX = clamp((point.x - box.x) / (box.w / 2 || 1), -1, 1)
   const relY = clamp((point.y - box.y) / (box.h / 2 || 1), -1, 1)
-  const panX = (box.w * (1 - LEAN_VIEW)) / 2
-  const panY = (box.h * (1 - LEAN_VIEW)) / 2
-  return { x: box.x + relX * panX, y: box.y + relY * panY, w: box.w * LEAN_VIEW, h: box.h * LEAN_VIEW }
+  return {
+    x: box.x + (relX * box.w * LEAN_PAN) / 2,
+    y: box.y + (relY * box.h * LEAN_PAN) / 2,
+    w: box.w,
+    h: box.h,
+  }
 }
 
 const photo = { x: 0.6, y: 0.2, w: 0.5, h: 0.75 }
@@ -95,14 +98,19 @@ test('leaning in converges instead of drifting under a still cursor', () => {
   assert.ok(Math.abs(camera.y - photo.y) <= photo.h / 2, 'settled outside the photo')
 })
 
-test('the pointer can reach every corner of the photograph', () => {
+test('the pan slides toward the pointer but stays inside the photograph', () => {
   const tl = leanTarget(photo, { x: photo.x - photo.w / 2, y: photo.y + photo.h / 2 })
   const br = leanTarget(photo, { x: photo.x + photo.w / 2, y: photo.y - photo.h / 2 })
-  // The framed view at each extreme should touch the photo's own edge.
-  close(tl.x - tl.w / 2, photo.x - photo.w / 2)
-  close(tl.y + tl.h / 2, photo.y + photo.h / 2)
-  close(br.x + br.w / 2, photo.x + photo.w / 2)
-  close(br.y - br.h / 2, photo.y - photo.h / 2)
+  close(tl.x, photo.x - (photo.w * LEAN_PAN) / 2)
+  close(tl.y, photo.y + (photo.h * LEAN_PAN) / 2)
+  close(br.x, photo.x + (photo.w * LEAN_PAN) / 2)
+  assert.ok(Math.abs(tl.x - photo.x) < photo.w / 2, 'pan must not leave the photo')
+  assert.ok(Math.abs(br.y - photo.y) < photo.h / 2, 'pan must not leave the photo')
+})
+
+test('LEAN_PAN is the loop gain and must stay below 1', () => {
+  // The oscillation came from an effective gain of 1 (centre-on-cursor).
+  assert.ok(LEAN_PAN > 0 && LEAN_PAN < 1, `gain ${LEAN_PAN} would not converge`)
 })
 
 test('a cursor beyond the photo clamps rather than flinging the camera', () => {

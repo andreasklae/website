@@ -1,5 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber'
-import { easing } from 'maath'
+import { useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
 import { FaceTextureManager } from '../lib/textures'

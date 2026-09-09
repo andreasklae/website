@@ -28,16 +28,19 @@ const boxGeometry = new BoxGeometry(1, 1, 1)
 const BOARD = new Color('#3a342c')
 const PAGES_EDGE = new Color('#e6dfd0')
 
+// Covers are painted at a fraction of page resolution. They are never read
+// like a page, and five full-size boards would cost ~28MB of texture for
+// something mostly seen edge-on.
+const COVER_SCALE = 0.62
+
 /**
- * Paints the front board once the album is worth looking at. Shelved albums
- * only ever show their spine, so painting five covers up front would cost
- * ~28MB of canvases nobody sees.
+ * Paints the front board immediately, so an album's cover is already there the
+ * moment it turns rather than appearing once the pointer happens to touch it.
  */
-function useCoverTexture(album, language, wanted) {
+function useCoverTexture(album, language) {
   const [texture, setTexture] = useState(null)
 
   useEffect(() => {
-    if (!wanted) return
     let cancelled = false
     const canvas = document.createElement('canvas')
     const tex = new CanvasTexture(canvas)
@@ -61,7 +64,7 @@ function useCoverTexture(album, language, wanted) {
 
     const paint = () => {
       if (cancelled) return
-      paintFace(canvas, face, { language, images: imageCache.map })
+      paintFace(canvas, face, { language, images: imageCache.map, scale: COVER_SCALE })
       tex.needsUpdate = true
     }
 
@@ -72,7 +75,7 @@ function useCoverTexture(album, language, wanted) {
 
     setTexture(tex)
     return () => { cancelled = true; tex.dispose(); canvas.width = canvas.height = 1 }
-  }, [album, language, wanted])
+  }, [album, language])
 
   return texture
 }
@@ -84,8 +87,7 @@ export default function AlbumBook({ album, index, language, offsetX, active }) {
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
   const selectAlbum = useAlbumStore((s) => s.selectAlbum)
 
-  // Painted a beat early on hover, so the board is ready by the time it turns.
-  const coverTexture = useCoverTexture(album, language, active || hoveredAlbum === album.id)
+  const coverTexture = useCoverTexture(album, language)
 
   const spine = useMemo(() => {
     const canvas = document.createElement('canvas')

@@ -91,7 +91,7 @@ function ZoomView({ slot, onClose, getText }) {
  * pressing an arrow and swiping produce the same motion rather than one
  * animating and the other cutting.
  */
-function StackCard({ photo, index, isFront, box, fling, onSendToBack, children }) {
+function StackCard({ index, isFront, box, fling, onSendToBack, children }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useTransform(y, [-200, 200], [STACK.tiltStrength, -STACK.tiltStrength])
@@ -141,78 +141,112 @@ function StackCard({ photo, index, isFront, box, fling, onSendToBack, children }
   )
 }
 
-const orientationOf = (photo) => ((photo?.aspect || 1.5) >= 1 ? 'landscape' : 'portrait')
+const isLandscape = (photo) => (photo?.aspect || 1.5) >= 1
 
-/** Card box for an orientation, capped to the viewport on both axes. */
-function boxFor(orientation) {
-  const aspect = orientation === 'landscape' ? 3 / 2 : 2 / 3
-  const maxW = Math.min(window.innerWidth * 0.78, 560)
-  const maxH = Math.min(window.innerHeight * 0.58, 620)
+/**
+ * The pile's physical print size. Every print in a stack is the same piece of
+ * paper, so this never changes — what changes is which way up the pile is
+ * being held.
+ */
+function printSize() {
+  const maxW = Math.min(window.innerWidth * 0.62, 420)
+  const maxH = Math.min(window.innerHeight * 0.56, 600)
   let w = maxW
-  let h = w / aspect
-  if (h > maxH) { h = maxH; w = h * aspect }
+  let h = w / (2 / 3)
+  if (h > maxH) { h = maxH; w = h * (2 / 3) }
   return { w: Math.round(w), h: Math.round(h) }
+}
+
+/**
+ * One print in the pile.
+ *
+ * Prints are stored portrait, so a landscape photograph lies on its side on
+ * the paper — turned a quarter turn to fit, exactly as it would in a real
+ * album. Its image element is therefore sized to the card's swapped dimensions
+ * and rotated back.
+ */
+function StackPrint({ photo, box }) {
+  const pad = Math.round(box.w * 0.028)
+  const lip = Math.round(box.w * 0.055)
+  const inner = { w: box.w - pad * 2, h: box.h - pad - lip }
+  const turned = isLandscape(photo)
+
+  return (
+    <div
+      className="h-full w-full bg-[#fffdf8] shadow-[0_14px_40px_rgba(0,0,0,0.45)]"
+      style={{ padding: `${pad}px ${pad}px ${lip}px` }}
+    >
+      <div className="relative overflow-hidden" style={{ width: inner.w, height: inner.h }}>
+        <img
+          src={variantUrl(photo, 'page', 'thumb')}
+          alt=""
+          draggable={false}
+          className="pointer-events-none absolute left-1/2 top-1/2 max-w-none object-cover"
+          style={{
+            width: turned ? inner.h : inner.w,
+            height: turned ? inner.w : inner.h,
+            transform: `translate(-50%, -50%) rotate(${turned ? 90 : 0}deg)`,
+          }}
+        />
+      </div>
+    </div>
+  )
 }
 
 /**
  * A stack lifted off the page. Drag or swipe the top print away to reach the
  * one beneath; the arrows fling it the same way, so a phone needs no gesture.
  *
- * Mixed orientations are handled the way a real pile behaves: the next
- * photograph arrives in whatever shape the pile currently has — lying on its
- * side if it disagrees — and once it has landed the whole stack turns a
- * quarter turn to stand it upright.
+ * Mixed orientations work the way they would in your hands: landscape shots
+ * lie sideways on their portrait paper, and when one reaches the top the whole
+ * pile is turned a quarter turn to read it — which leaves the portrait shots
+ * behind it lying sideways instead. Turning back happens on the way out.
  */
 function StackView({ slot, onClose, getText }) {
   const [order, setOrder] = useState(() => slot.photos.map((_, i) => i))
   const [fling, setFling] = useState(0)
-  // The shape the pile currently holds, and the turn still owed to correct it.
-  const [pileOrientation, setPileOrientation] = useState(() => orientationOf(slot.photos[0]))
-  const [spin, setSpin] = useState(0)
 
   useEffect(() => {
     setOrder(slot.photos.map((_, i) => i))
-    setPileOrientation(orientationOf(slot.photos[0]))
-    setSpin(0)
     setFling(0)
   }, [slot])
 
+  const box = useMemo(printSize, [])
   const front = slot.photos[order[0]]
-  const box = useMemo(() => boxFor(pileOrientation), [pileOrientation])
 
-  /** Advance, then turn the pile if the new photograph disagrees with it. */
+  // Turning the pile is what makes the front print upright: its image is
+  // already rotated on the paper, so this cancels it out.
+  const pileRotation = isLandscape(front) ? -90 : 0
+
   const settle = useCallback((nextOrder) => {
     setOrder(nextOrder)
     setFling(0)
-    const incoming = orientationOf(slot.photos[nextOrder[0]])
-    if (incoming === pileOrientation) return
-    // Show it lying the wrong way in the old shape, then turn the pile upright.
-    setSpin(incoming === 'landscape' ? -90 : 90)
-    setPileOrientation(incoming)
-    requestAnimationFrame(() => requestAnimationFrame(() => setSpin(0)))
-  }, [slot, pileOrientation])
-
-  const advance = useCallback((direction) => {
-    if (fling) return
-    setFling(direction)
-    const next = () => {
-      const o = order
-      settle(direction > 0 ? [...o.slice(1), o[0]] : [o[o.length - 1], ...o.slice(0, -1)])
-    }
-    // Let the throw play before the pile re-forms behind it.
-    setTimeout(next, 220)
-  }, [fling, order, settle])
+  }, [])
 
   const sendToBack = useCallback(() => {
     settle([...order.slice(1), order[0]])
   }, [order, settle])
 
+  const advance = useCallback((direction) => {
+    if (fling) return
+    setFling(direction)
+    const current = order
+    // Let the throw play out before the pile re-forms behind it.
+    setTimeout(() => {
+      settle(direction > 0
+        ? [...current.slice(1), current[0]]
+        : [current[current.length - 1], ...current.slice(0, -1)])
+    }, 220)
+  }, [fling, order, settle])
+
   const visible = order.slice(0, 5)
+  // Square frame so the row below does not shift as the pile turns.
+  const side = Math.max(box.w, box.h)
 
   return (
     <motion.div
       key="stack"
-      className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-6 p-4"
+      className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-5 p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -222,32 +256,24 @@ function StackView({ slot, onClose, getText }) {
       <div className="absolute inset-0 bg-[#171512]/80 backdrop-blur-[3px]" />
 
       <motion.div
-        className="relative"
-        style={{ perspective: 1200 }}
+        className="relative flex items-center justify-center"
+        style={{ width: side, height: side, perspective: 1200 }}
         initial={{ scale: 0.86, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1, width: box.w, height: box.h, rotate: spin }}
+        animate={{ scale: 1, opacity: 1, rotate: pileRotation }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 240, damping: 26 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 24 }}
         onClick={(e) => e.stopPropagation()}
       >
         {visible.map((photoIndex, i) => (
           <StackCard
             key={photoIndex}
-            photo={slot.photos[photoIndex]}
             index={i}
             isFront={i === 0}
             box={box}
             fling={i === 0 ? fling : 0}
             onSendToBack={sendToBack}
           >
-            <PrintFrame className="h-full w-full">
-              <img
-                src={variantUrl(slot.photos[photoIndex], 'page', 'thumb')}
-                alt=""
-                draggable={false}
-                className="pointer-events-none h-full w-full object-cover"
-              />
-            </PrintFrame>
+            <StackPrint photo={slot.photos[photoIndex]} box={box} />
           </StackCard>
         ))}
       </motion.div>

@@ -3,6 +3,7 @@ import { easing } from 'maath'
 import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
 import { MODES, SIDES, useAlbumStore } from '../lib/store'
+import { LEAN_DISTANCE, LEAN_RECENTRE } from '../lib/focus'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 
 // One place decides where the camera is. Each mode names the box it has to
@@ -26,21 +27,9 @@ function fitDistance(fov, aspect, [w, h], pad) {
  * photographs are unreadable. Narrow viewports therefore frame a single page
  * and step through them one at a time.
  */
-function shotFor(mode, { narrow, side, shelfWidth, focus }) {
+function shotFor(mode, { narrow, side, shelfWidth }) {
   // Leaning in on a hovered photograph. Padded well past the photo's own edges
   // so this reads as moving closer to the page, not as replacing it.
-  if (focus && (mode === MODES.OPEN || mode === MODES.ZOOM)) {
-    return {
-      // Already reduced to a fraction of the photograph by leanTarget, so the
-      // padding here is only enough to keep the edges off the frame.
-      box: [focus.w, focus.h],
-      target: [focus.x, focus.y, PAGE_WIDTH * 0.5],
-      // Level with what is being looked at, so leaning in straightens the view.
-      height: focus.y,
-      pad: 1.04,
-    }
-  }
-
   switch (mode) {
     case MODES.COVER:
       return {
@@ -77,6 +66,21 @@ function shotFor(mode, { narrow, side, shelfWidth, focus }) {
   }
 }
 
+/** Blends the resting shot toward the hovered photograph, by LEAN_DISTANCE. */
+function applyLean(shot, focus, fov, aspect) {
+  const resting = fitDistance(fov, aspect, shot.box, shot.pad)
+  const closeUp = fitDistance(fov, aspect, [focus.w, focus.h], 1.08)
+  return {
+    distance: resting + (closeUp - resting) * LEAN_DISTANCE,
+    target: [
+      shot.target[0] + (focus.x - shot.target[0]) * LEAN_RECENTRE,
+      shot.target[1] + (focus.y - shot.target[1]) * LEAN_RECENTRE,
+      shot.target[2],
+    ],
+    height: shot.height + (focus.y - shot.height) * LEAN_RECENTRE,
+  }
+}
+
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
   const narrow = useAlbumStore((s) => s.narrow)
@@ -86,21 +90,24 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const current = useRef(new Vector3(0, 0, 0))
 
   useFrame((_, delta) => {
-    const shot = shotFor(mode, { narrow, side, shelfWidth, focus })
+    const shot = shotFor(mode, { narrow, side, shelfWidth })
     const aspect = size.width / Math.max(size.height, 1)
-    const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
+
+    const leaning = focus && (mode === MODES.OPEN || mode === MODES.ZOOM)
+    const { distance, target, height } = leaning
+      ? applyLean(shot, focus, camera.fov, aspect)
+      : {
+          distance: fitDistance(camera.fov, aspect, shot.box, shot.pad),
+          target: shot.target,
+          height: shot.height,
+        }
 
     // Leaning in is quicker than pulling back out, which keeps hovering
     // responsive without the camera feeling twitchy when the cursor leaves.
-    const smooth = focus ? 0.3 : 0.45
+    const smooth = leaning ? 0.3 : 0.45
 
-    easing.damp3(
-      camera.position,
-      [shot.target[0], shot.height, distance + shot.target[2]],
-      smooth,
-      delta
-    )
-    easing.damp3(current.current, shot.target, smooth, delta)
+    easing.damp3(camera.position, [target[0], height, distance + target[2]], smooth, delta)
+    easing.damp3(current.current, target, smooth, delta)
     lookTarget.copy(current.current)
     camera.lookAt(lookTarget)
   })

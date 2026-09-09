@@ -16,16 +16,29 @@ export function worldPointFor(u, v, sheetIndex, page) {
 }
 
 /**
- * Fraction of a photograph the camera shows when leaning in. Below 1 so there
- * is something left to pan across.
+ * How far the view may slide across a photograph, as a fraction of its
+ * half-size. This is ALSO the feedback gain of the hover loop — the world
+ * point under a stationary cursor moves with the camera one-for-one — so it
+ * must stay below 1 for the framing to converge rather than run away.
  */
-export const LEAN_VIEW = 0.6
+export const LEAN_PAN = 0.4
+
+/**
+ * How much of the way from the spread to a full-photo close-up the camera
+ * actually travels. Fitting a photograph exactly is a ~60% cut in distance,
+ * which reads as a jump rather than a lean, so only a fraction of it is taken.
+ */
+export const LEAN_DISTANCE = 0.3
+
+/** How far the camera slides toward the photograph it is leaning on. */
+export const LEAN_RECENTRE = 0.62
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
 /**
- * The box the camera should frame while the cursor rests at `point` inside the
- * photograph `box`.
+ * Where the camera should look while the cursor rests at `point` inside the
+ * photograph `box`. Returns the photograph's own size unchanged — how far to
+ * actually move in is CameraRig's decision, via LEAN_DISTANCE.
  *
  * The camera does NOT centre on the cursor. Centring is divergent: moving the
  * camera moves the world point under a stationary cursor by the same amount,
@@ -41,13 +54,11 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 export function leanTarget(box, point) {
   const relX = clamp((point.x - box.x) / (box.w / 2 || 1), -1, 1)
   const relY = clamp((point.y - box.y) / (box.h / 2 || 1), -1, 1)
-  const panX = (box.w * (1 - LEAN_VIEW)) / 2
-  const panY = (box.h * (1 - LEAN_VIEW)) / 2
   return {
-    x: box.x + relX * panX,
-    y: box.y + relY * panY,
-    w: box.w * LEAN_VIEW,
-    h: box.h * LEAN_VIEW,
+    x: box.x + (relX * box.w * LEAN_PAN) / 2,
+    y: box.y + (relY * box.h * LEAN_PAN) / 2,
+    w: box.w,
+    h: box.h,
   }
 }
 

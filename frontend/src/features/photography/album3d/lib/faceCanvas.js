@@ -382,10 +382,17 @@ function backCoverFace(ctx, slot, language) {
  * loaded so far; anything missing falls back to its average colour, so a face
  * is always drawable and simply sharpens as textures arrive.
  */
-export function paintFace(canvas, face, { language = 'en', images = new Map(), stackOffsets = {} } = {}) {
+export function paintFace(
+  canvas,
+  face,
+  { language = 'en', images = new Map(), stackOffsets = {}, scale = 1 } = {}
+) {
   const ctx = canvas.getContext('2d')
-  canvas.width = FACE_W
-  canvas.height = FACE_H
+  // Everything below draws in the same coordinate system whatever the scale,
+  // so a cheaper texture is one number rather than a second layout pass.
+  canvas.width = Math.round(FACE_W * scale)
+  canvas.height = Math.round(FACE_H * scale)
+  ctx.setTransform(scale, 0, 0, scale, 0, 0)
   ctx.textBaseline = 'alphabetic'
   ctx.textAlign = 'left'
 
