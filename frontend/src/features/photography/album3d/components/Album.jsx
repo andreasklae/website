@@ -32,7 +32,7 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  */
 export default function Album({
   full, sheetCount, active, language, planeZ = 0, hingeX = 0,
-  depth, pageDepth, cloth, albumId,
+  depth, pageDepth, colours, albumId,
   coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -59,11 +59,12 @@ export default function Album({
     () => (active && full
       ? new FaceTextureManager(full, {
           language,
+          colours,
           budget: (WINDOW * 2 + 2) * 2,
           onUpdate: () => { forceRepaint((n) => n + 1); invalidate() },
         })
       : null),
-    [active, full, invalidate]
+    [active, full, invalidate, colours]
   )
 
   useEffect(() => () => manager?.dispose(), [manager])
@@ -244,7 +245,7 @@ export default function Album({
       <Binding
         depth={depth}
         pageDepth={pageDepth}
-        cloth={cloth}
+        cloth={colours?.cloth}
         albumId={albumId}
         spineTexture={spineTexture}
       />

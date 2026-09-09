@@ -212,7 +212,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
         sheetCount={album.sheetCount}
         depth={depth}
         pageDepth={pageDepth}
-        cloth={cloth}
+        colours={colours}
         albumId={album.id}
         active={active}
         language={language}

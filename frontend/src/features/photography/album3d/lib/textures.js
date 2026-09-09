@@ -53,9 +53,14 @@ class ImageCache {
 export const imageCache = new ImageCache()
 
 export class FaceTextureManager {
-  constructor(album, { language = 'en', budget = 8, onUpdate = () => {} } = {}) {
+  constructor(album, { language = 'en', budget = 8, onUpdate = () => {}, colours = {} } = {}) {
     this.album = album
     this.language = language
+    // The album's binding cloth. Its boards are faces like any other, so the
+    // painter needs it here too — without it the chosen album's cover comes
+    // out in the fallback colour, which is why covers looked right on the
+    // shelf and wrong the moment a book was picked up.
+    this.colours = colours
     this.budget = budget
     this.onUpdate = onUpdate
     this.faces = album ? album.sheets.flatMap((s) => [s.front, s.back]) : []
@@ -128,6 +133,7 @@ export class FaceTextureManager {
       language: this.language,
       images: imageCache.map,
       stackOffsets: this.stackOffsets.get(index) || {},
+      ...this.colours,
     })
     entry.texture.needsUpdate = true
     this.onUpdate(index)

@@ -370,11 +370,13 @@ function coverFace(ctx, slot, language, images, seed, cloth, ink) {
   // you picked it out by are the same material.
   paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
 
-  // A board catches the light unevenly across its width.
+  // A board catches the light unevenly across its width. Kept gentle: the
+  // scene lights the board and the binding beside it alike, so anything baked
+  // in here is variation the binding does not share.
   const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
-  g.addColorStop(0, 'rgba(255,255,255,0.05)')
+  g.addColorStop(0, 'rgba(255,255,255,0.028)')
   g.addColorStop(0.55, 'rgba(0,0,0,0)')
-  g.addColorStop(1, 'rgba(0,0,0,0.12)')
+  g.addColorStop(1, 'rgba(0,0,0,0.07)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, FACE_W, FACE_H)
 
@@ -424,8 +426,8 @@ function coverFace(ctx, slot, language, images, seed, cloth, ink) {
 function backCoverFace(ctx, slot, language, seed, cloth, ink) {
   paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
   const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
-  g.addColorStop(0, 'rgba(0,0,0,0.12)')
-  g.addColorStop(1, 'rgba(255,255,255,0.04)')
+  g.addColorStop(0, 'rgba(0,0,0,0.07)')
+  g.addColorStop(1, 'rgba(255,255,255,0.028)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, FACE_W, FACE_H)
   ctx.save()
