@@ -44,11 +44,21 @@ test('no gallery image is ever dropped', () => {
   for (const g of ['P0', ...gallery]) assert.ok(seen.has(g), `${g} was dropped`)
 })
 
-test('portrait photos get a page to themselves', () => {
-  const pages = __test.compileHighlights(['P0', 'P1', 'L0', 'L1'], index, null)
-  for (const p of pages) {
-    if (p.slots.some((s) => s.orientation === 'portrait')) assert.equal(p.slots.length, 1)
-  }
+test('every page carries two items, portrait or not', () => {
+  const pages = __test.compileHighlights(['P0', 'P1', 'L0', 'L1', 'P2', 'L2'], index, null)
+  // Only the final page may be short, when the run does not divide evenly.
+  pages.slice(0, -1).forEach((p, i) => {
+    assert.equal(p.slots.length, 2, `page ${i} holds ${p.slots.length}`)
+  })
+  assert.ok(pages.every((p) => p.slots.length <= 2))
+})
+
+test('a chapter fills all four slots of its spread', () => {
+  const pages = __test.compileChapter(chapter('P0', ['P1', 'P2', 'L1', 'L2', 'L3']), index)
+  const kinds = flatten(pages)
+  assert.equal(kinds.length, 4, `got ${kinds.join()}`)
+  assert.equal(kinds[0], 'postcard')
+  assert.equal(kinds.at(-1), 'stack')
 })
 
 test('chapters begin on a left-hand page', () => {

@@ -10,8 +10,13 @@
 export const PAGE_UNITS = 2
 export const SPREAD_PAGES = 2
 
-/** Units consumed by a slot. Portrait photos take a whole page; cards never do. */
-const unitsFor = (slot) => (slot.kind === 'photo' && slot.orientation === 'portrait' ? 2 : 1)
+/**
+ * Units consumed by a slot. Every slot costs one: a page always carries two
+ * items, whatever their orientation. The page decides how to divide itself —
+ * two landscapes stack, two portraits sit side by side — so orientation is a
+ * rendering concern, not a packing one.
+ */
+const unitsFor = () => 1
 
 const newPage = (role) => ({ role, slots: [], used: 0 })
 

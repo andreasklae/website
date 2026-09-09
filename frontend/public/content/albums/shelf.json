@@ -22,8 +22,8 @@
    "color": "#b4b2b3",
    "aspect": 1.4916
   },
-  "sheetCount": 47,
-  "faceCount": 93
+  "sheetCount": 26,
+  "faceCount": 51
  },
  {
   "id": "alpine-winter-2025",
@@ -54,8 +54,8 @@
    "color": "#82938f",
    "aspect": 1
   },
-  "sheetCount": 12,
-  "faceCount": 24
+  "sheetCount": 9,
+  "faceCount": 18
  },
  {
   "id": "stavern-sommer-2025",
@@ -84,8 +84,8 @@
    "color": "#836a58",
    "aspect": 1
   },
-  "sheetCount": 11,
-  "faceCount": 22
+  "sheetCount": 8,
+  "faceCount": 16
  },
  {
   "id": "portugal-2025",
@@ -116,8 +116,8 @@
    "color": "#8b8486",
    "aspect": 1
   },
-  "sheetCount": 9,
-  "faceCount": 18
+  "sheetCount": 8,
+  "faceCount": 16
  },
  {
   "id": "semester-in-berlin",
@@ -146,7 +146,7 @@
    "color": "#9c9998",
    "aspect": 1
   },
-  "sheetCount": 12,
-  "faceCount": 24
+  "sheetCount": 9,
+  "faceCount": 18
  }
 ]

@@ -117,18 +117,23 @@ function Spine({ album, index, language, hidden, offsetX }) {
 }
 
 /**
- * How far each album steps aside so the turned album has room for its full
- * cover width. Neighbours split the difference left and right.
+ * How far each album steps aside for whichever one has turned to face us.
+ *
+ * Two things make this bigger than it first looks. An OPEN album is two pages
+ * wide (~2.6 units), not one, so room sized for the closed cover leaves the
+ * neighbours standing inside the book. And the active album sits closer to the
+ * camera, so perspective magnifies it relative to the row behind — geometric
+ * clearance alone still overlaps on screen. Hence the generous margins.
  */
-export function partingOffsets(layout, activeId) {
+export function partingOffsets(layout, activeId, spread) {
   const active = layout.findIndex((a) => a.id === activeId)
   if (active < 0) return layout.map(() => 0)
-  const room = Math.max(0, PAGE_WIDTH * 1.06 - layout[active].thickness) / 2
+  const room = spread ? PAGE_WIDTH * 1.28 : PAGE_WIDTH * 0.72
   return layout.map((_, i) => (i < active ? -room : i > active ? room : 0))
 }
 
-export default function Shelf({ layout, language, activeId }) {
-  const offsets = partingOffsets(layout, activeId)
+export default function Shelf({ layout, language, activeId, spread }) {
+  const offsets = partingOffsets(layout, activeId, spread)
 
   return (
     <group>

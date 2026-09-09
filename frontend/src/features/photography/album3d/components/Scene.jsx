@@ -41,7 +41,12 @@ export default function Scene({ shelf, album, language }) {
 
       <Suspense fallback={null}>
         <ShelfPan targetX={slot ? -slot.x : 0}>
-          <Shelf layout={layout} language={language} activeId={mode === MODES.SHELF ? null : activeId} />
+          <Shelf
+            layout={layout}
+            language={language}
+            activeId={mode === MODES.SHELF ? null : activeId}
+            spread={mode === MODES.OPEN || mode === MODES.ZOOM}
+          />
           {slot && (
             <group position={[slot.x, 0, 0]}>
               <ActiveAlbum album={album} slot={slot} language={language} />

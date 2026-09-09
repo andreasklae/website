@@ -24,18 +24,42 @@ const pick = (value, language) => {
   return value[language] ?? value.en ?? Object.values(value)[0] ?? ''
 }
 
-/** Slot rectangles for a face, given how many units each slot occupies. */
+/** Is this slot tall? Cards are always wide; a stack takes its top photo. */
+function slotIsPortrait(slot) {
+  if (slot.kind === 'photo') return slot.orientation === 'portrait'
+  if (slot.kind === 'stack') return slot.photos[0]?.orientation === 'portrait'
+  return false
+}
+
+/**
+ * Divides a face between its slots.
+ *
+ * A page always carries two items, so the split direction has to follow their
+ * shape: two landscapes stack as rows (each row is close to 3:2, so they fill
+ * it), while two portraits sit side by side as columns. Splitting a pair of
+ * portraits into rows would letterbox both of them into slivers.
+ */
 export function slotRects(face) {
-  const rects = []
-  let y = CONTENT.y
-  for (const slot of face.slots || []) {
-    const full = slot.kind === 'photo' ? slot.orientation === 'portrait'
-      : slot.kind === 'cover' || slot.kind === 'back-cover'
-    const h = full ? CONTENT.h : (CONTENT.h - GAP) / 2
-    rects.push({ slot, x: CONTENT.x, y, w: CONTENT.w, h })
-    y += h + GAP
+  const slots = face.slots || []
+  if (!slots.length) return []
+
+  const full = slots.length === 1 || slots[0].kind === 'cover' || slots[0].kind === 'back-cover'
+  if (full) return [{ slot: slots[0], ...CONTENT }]
+
+  const columns = slots.every(slotIsPortrait)
+
+  if (columns) {
+    // Tighter gutter than the row split: side-by-side portraits need the width.
+    const w = (CONTENT.w - GAP * 0.6) / 2
+    return slots.slice(0, 2).map((slot, i) => ({
+      slot, x: CONTENT.x + i * (w + GAP * 0.6), y: CONTENT.y, w, h: CONTENT.h,
+    }))
   }
-  return rects
+
+  const h = (CONTENT.h - GAP) / 2
+  return slots.slice(0, 2).map((slot, i) => ({
+    slot, x: CONTENT.x, y: CONTENT.y + i * (h + GAP), w: CONTENT.w, h,
+  }))
 }
 
 /** Fits a rect inside a box preserving aspect (contain). */
