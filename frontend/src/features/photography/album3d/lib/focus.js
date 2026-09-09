@@ -29,10 +29,11 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
  *
  * Pinning the spot to the pointer one-for-one is exactly right while zooming,
  * but it also means the photograph follows the pointer forever and you can
- * never move off it. Below 1, the page drifts against the pointer as you move,
- * so leaving the photograph still works.
+ * never move off it. Kept just below 1: enough to reach the far edge of a
+ * photograph well before the pointer reaches the edge of the screen, while
+ * still drifting enough that moving away releases it.
  */
-export const LEAN_PAN_GAIN = 0.45
+export const LEAN_PAN_GAIN = 0.85
 
 /** The camera is never allowed to wander further than the open spread. */
 const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }

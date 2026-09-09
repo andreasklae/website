@@ -24,6 +24,13 @@ export const READING_ROTATION = -Math.PI / 2
 /** Both the closed book and the open one sit here, so opening never jumps. */
 export const FORWARD_Z = PAGE_WIDTH * 0.3
 
+/**
+ * The bound album hinges on its spine and its body runs backwards from there,
+ * so the block has to be seated the same way rather than straddling its own
+ * origin — otherwise the two are half a page apart at the handover.
+ */
+const SPINE_SEAT = -(PAGE_WIDTH * 1.02) / 2
+
 /** Shared by the turn out and the turn back, so one is the reverse of the other. */
 export const TURN_SMOOTHING = 0.42
 
@@ -145,7 +152,7 @@ export default function AlbumBook({ album, index, language, offsetX, active, hid
     easing.dampAngle(m.rotation, 'y', active ? READING_ROTATION : SHELF_ROTATION, TURN_SMOOTHING, delta)
     easing.damp3(
       m.position,
-      [offsetX, hovered ? 0.055 : 0, active ? FORWARD_Z : hovered ? 0.07 : 0],
+      [offsetX, hovered ? 0.055 : 0, SPINE_SEAT + (active ? FORWARD_Z : hovered ? 0.07 : 0)],
       TURN_SMOOTHING,
       delta
     )
@@ -162,6 +169,7 @@ export default function AlbumBook({ album, index, language, offsetX, active, hid
       visible={!openedOut}
       geometry={boxGeometry}
       material={materials}
+      position={[0, 0, SPINE_SEAT]}
       scale={[album.thickness, PAGE_HEIGHT * 1.05, PAGE_WIDTH * 1.02]}
       onPointerOver={(e) => {
         if (openedOut || mode === MODES.OPEN || mode === MODES.ZOOM) return

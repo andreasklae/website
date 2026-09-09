@@ -7,7 +7,7 @@
 // actually end up.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { Group, Object3D, Vector3 } from 'three'
+import { Box3, Group, Object3D, Vector3 } from 'three'
 
 const PAGE_WIDTH = 1.28
 const PAGE_DEPTH = 0.012
@@ -188,4 +188,52 @@ test('the block occupies the same volume however the album is opened', () => {
     // against, so that offset is constant.
     assert.equal(offset.x, depth / 2)
   }
+})
+
+test('the bound album and the shelved block occupy the same seat', () => {
+  // The handover is only invisible if the two are the same size in the same
+  // place. Both hinge on the spine with their body running backwards, rather
+  // than straddling their own origin.
+  const sheetCount = 9
+  const COVER_BOARD_ = 0.022
+  const depth = sheetCount * PAGE_DEPTH_ + COVER_BOARD_ * 2
+  const SEAT = -(PAGE_WIDTH * 1.02) / 2
+
+  const album = new Group()
+  const block = new Group()
+  block.position.set(depth / 2, 0, 0)
+  album.add(block)
+  for (let n = 0; n < sheetCount; n++) {
+    const g = new Group()
+    g.rotation.y = Math.PI / 2
+    const m = new Object3D()
+    m.position.z = -n * PAGE_DEPTH_
+    g.add(m)
+    block.add(g)
+  }
+  album.updateMatrixWorld(true)
+
+  const bounds = new Box3()
+  block.traverse((o) => {
+    if (o.type !== 'Object3D') return
+    for (const [x, y] of [[0, -0.855], [PAGE_WIDTH, -0.855], [0, 0.855], [PAGE_WIDTH, 0.855]]) {
+      bounds.expandByPoint(new Vector3(x, y, 0).applyMatrix4(o.matrixWorld))
+    }
+  })
+
+  const boxMin = SEAT - (PAGE_WIDTH * 1.02) / 2
+  const boxMax = SEAT + (PAGE_WIDTH * 1.02) / 2
+
+  assert.ok(Math.abs(bounds.max.z - boxMax) < 0.02, `spine edges differ: ${bounds.max.z} vs ${boxMax}`)
+  assert.ok(Math.abs(bounds.min.z - boxMin) < 0.05, `fore edges differ: ${bounds.min.z} vs ${boxMin}`)
+  assert.ok(Math.abs(bounds.max.x - depth / 2) < 0.02, `thickness off centre: ${bounds.max.x}`)
+})
+
+test('settled leaves never touch, so none sinks into the one below', () => {
+  // The gap at the end of a turn: at the full spacing two settled leaves are
+  // exactly touching, and near the spine, where they converge, they overlap.
+  const LEAF_THICKNESS = PAGE_DEPTH_ * 0.45
+  assert.ok(LEAF_THICKNESS < PAGE_DEPTH_, 'a leaf must be thinner than the gap between leaves')
+  const clearance = PAGE_DEPTH_ - LEAF_THICKNESS
+  assert.ok(clearance > PAGE_DEPTH_ * 0.4, `only ${clearance} of clearance between leaves`)
 })
