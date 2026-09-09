@@ -126,8 +126,8 @@ The brief left gaps; these are the calls being made. Flagged so they are easy to
 ## 5. Progress
 
 - [x] Phase 0 — Research
-- [ ] Phase 1 — Asset pipeline
-- [ ] Phase 2 — Layout compiler
+- [x] Phase 1 — Asset pipeline *(428 images, 295 MB of derivatives, ~75 s cold / instant cached)*
+- [x] Phase 2 — Layout compiler *(5 tests, 100% image coverage verified)*
 - [ ] Phase 3 — Scene shell & perf floor
 - [ ] Phase 4 — Shelf & spines
 - [ ] Phase 5 — Cover reveal

@@ -1,0 +1,152 @@
+[
+ {
+  "id": "highlights",
+  "kind": "highlights",
+  "title": {
+   "en": "Highlights",
+   "no": "Høydepunkter"
+  },
+  "description": {
+   "en": "The frames worth keeping — pulled from every roll, every trip, every walk home. Shot mostly on film, developed slowly, chosen even more slowly.",
+   "no": "Bildene som var verdt å beholde — hentet fra hver filmrull, hver reise, hver tur hjem. Stort sett skutt på film, fremkalt sakte, og valgt ut enda saktere."
+  },
+  "dates": null,
+  "camera": null,
+  "cover": {
+   "src": "portfolio/photography/highlights/04854BAB-216D-4D0E-9ACF-ABD079B4F364.jpeg",
+   "variants": {
+    "thumb": "derived/thumb/4e7bd4cae00be861.webp",
+    "page": "derived/page/4e7bd4cae00be861.webp",
+    "zoom": "derived/zoom/4e7bd4cae00be861.webp"
+   },
+   "color": "#b4b2b3",
+   "aspect": 1.4916
+  },
+  "sheetCount": 47,
+  "faceCount": 93
+ },
+ {
+  "id": "alpine-winter-2025",
+  "kind": "story",
+  "title": {
+   "en": "Alpine Winter 2025",
+   "no": "Alpevinter 2025"
+  },
+  "description": {
+   "en": "Fog, mountains, and a life lived in transit. From a quiet Bavarian valley to Milan’s warm evenings, and finally the stillness of lakes tucked between the Alps.",
+   "no": "Tåke, fjell og et liv i bevegelse. Fra en stille dal i Bayern til varme kvelder i Milano, og videre til innsjøer som ligger som speil mellom Alpene."
+  },
+  "dates": {
+   "start": "2025-11",
+   "end": "2025-12"
+  },
+  "camera": {
+   "en": "Pentax KX · Kodak Ultramax 400",
+   "no": "Pentax KX · Kodak Ultramax 400"
+  },
+  "cover": {
+   "src": "portfolio/photography/Alpine winter 2025/Thumbnail.JPG",
+   "variants": {
+    "thumb": "derived/thumb/eed5cbbd8197f446.webp",
+    "page": "derived/page/eed5cbbd8197f446.webp",
+    "zoom": "derived/zoom/eed5cbbd8197f446.webp"
+   },
+   "color": "#82938f",
+   "aspect": 1
+  },
+  "sheetCount": 12,
+  "faceCount": 24
+ },
+ {
+  "id": "stavern-sommer-2025",
+  "kind": "story",
+  "title": {
+   "en": "Stavern Summer 2025",
+   "no": "Stavern sommer 2025"
+  },
+  "description": {
+   "en": "Long Norwegian summer days with late sunsets, coastal walks, festival celebrations, and quiet moments in nature.",
+   "no": "Lange norske sommerdager med sene solnedganger, kystturer, festivalglade og stille øyeblikk i naturen."
+  },
+  "dates": {
+   "start": "2025-07-02",
+   "end": "2025-07-06"
+  },
+  "camera": {
+   "en": "Fujifilm X-T30",
+   "no": "Fujifilm X-T30"
+  },
+  "cover": {
+   "src": "portfolio/photography/Stavern sommer 2025/Thumbnail.jpeg",
+   "variants": {
+    "thumb": "derived/thumb/fd6f73d78d4c8b50.webp"
+   },
+   "color": "#836a58",
+   "aspect": 1
+  },
+  "sheetCount": 11,
+  "faceCount": 22
+ },
+ {
+  "id": "portugal-2025",
+  "kind": "story",
+  "title": {
+   "en": "Portugal 2025",
+   "no": "Portugal 2025"
+  },
+  "description": {
+   "en": "Surf camp, city days in Lisbon, long dinners, and quiet sunset walks.",
+   "no": "Surfecamp, byliv i Lisboa, lange middager og stille kveldsturer."
+  },
+  "dates": {
+   "start": "2025-06-03",
+   "end": "2025-06-12"
+  },
+  "camera": {
+   "en": "Pentax KX · Kodak Ultramax 400",
+   "no": "Pentax KX · Kodak Ultramax 400"
+  },
+  "cover": {
+   "src": "portfolio/photography/Portugal 2025/Thumbnail.JPG",
+   "variants": {
+    "thumb": "derived/thumb/458cf383900a3ea0.webp",
+    "page": "derived/page/458cf383900a3ea0.webp",
+    "zoom": "derived/zoom/458cf383900a3ea0.webp"
+   },
+   "color": "#8b8486",
+   "aspect": 1
+  },
+  "sheetCount": 9,
+  "faceCount": 18
+ },
+ {
+  "id": "semester-in-berlin",
+  "kind": "story",
+  "title": {
+   "en": "Semester in Berlin",
+   "no": "Berlinsemesteret"
+  },
+  "description": {
+   "en": "From autobahn escapes to canal-side bike commutes, candlelit bars, dance floors, and an abandoned ferris wheel still whispering stories.",
+   "no": "Fra autobahn og flyttelass til sykkelturer langs kanalene, barer i stearinlys, klubbnetter og et forlatt pariserhjul som fortsatt hvisker historier."
+  },
+  "dates": {
+   "start": "2024-09",
+   "end": "2025-03"
+  },
+  "camera": {
+   "en": "Pentax KX · Kodak Ultramax 400 & Ilford HP5 Plus 400 · iPhone 13 pro",
+   "no": "Pentax KX · Kodak Ultramax 400 og Ilford HP5 Plus 400 · iPhone 13 pro"
+  },
+  "cover": {
+   "src": "portfolio/photography/Semester in Berlin/Thumbnail.jpg",
+   "variants": {
+    "thumb": "derived/thumb/41327f294953dde1.webp"
+   },
+   "color": "#9c9998",
+   "aspect": 1
+  },
+  "sheetCount": 12,
+  "faceCount": 24
+ }
+]

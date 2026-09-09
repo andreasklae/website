@@ -6,6 +6,12 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "blender": {
+      "command": "/Users/andreas/.local/bin/uvx",
+      "args": [
+        "blender-mcp"
+      ]
     }
   }
 }
