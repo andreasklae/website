@@ -2,33 +2,34 @@ import { useEffect, useMemo } from 'react'
 import { CanvasTexture, LinearFilter, SRGBColorSpace } from 'three'
 import { paintSpine } from './spineCanvas'
 import { ensureFonts } from './fonts'
+import { PAGE_HEIGHT } from '../components/Page'
 
 /**
  * The spine label, shared by the shelved block and the bound album, so the two
  * are indistinguishable at the moment one takes over from the other.
  */
-export function useSpineTexture(album, language, index = 0) {
+export function useSpineTexture(album, language, index = 0, depth = 0.3) {
   const spine = useMemo(() => {
     const canvas = document.createElement('canvas')
-    paintSpine(canvas, album, { language, index })
+    paintSpine(canvas, album, { language, index, aspect: depth / PAGE_HEIGHT })
     const texture = new CanvasTexture(canvas)
     texture.colorSpace = SRGBColorSpace
     texture.minFilter = texture.magFilter = LinearFilter
     texture.generateMipmaps = false
     texture.anisotropy = 4
     return { canvas, texture }
-  }, [album, index])
+  }, [album, index, depth])
 
   // Webfonts land after the first paint; redo it once they have.
   useEffect(() => {
     let cancelled = false
     ensureFonts().then(() => {
       if (cancelled) return
-      paintSpine(spine.canvas, album, { language, index })
+      paintSpine(spine.canvas, album, { language, index, aspect: depth / PAGE_HEIGHT })
       spine.texture.needsUpdate = true
     })
     return () => { cancelled = true }
-  }, [spine, album, language, index])
+  }, [spine, album, language, index, depth])
 
   useEffect(() => () => {
     spine.texture.dispose()

@@ -4,11 +4,13 @@
 import { HAND, HAND_INK } from './fonts'
 
 
-export const SPINE_W = 256
 export const SPINE_H = 1024
 
+/** Nominal width; the real one follows the album's own proportions. */
+export const SPINE_W = 256
+
 import { clothFor } from './cloth'
-import { paintCloth, seedFrom, shade } from './material'
+import { paintCloth, paintPaper, seedFrom, shade } from './material'
 import { BOARD_SHADE } from './faceCanvas'
 
 const pick = (value, language) => {
@@ -17,8 +19,11 @@ const pick = (value, language) => {
   return value[language] ?? value.en ?? ''
 }
 
-export function paintSpine(canvas, album, { language = 'en', index = 0 } = {}) {
+export function paintSpine(canvas, album, { language = 'en', index = 0, aspect = 0.25 } = {}) {
   const ctx = canvas.getContext('2d')
+  // Painted at the spine's own width-to-height ratio, so the label and the
+  // lettering are not stretched to fit a shape they were not drawn for.
+  const SPINE_W = Math.max(96, Math.round(SPINE_H * aspect))
   canvas.width = SPINE_W
   canvas.height = SPINE_H
 
@@ -58,11 +63,27 @@ export function paintSpine(canvas, album, { language = 'en', index = 0 } = {}) {
   ctx.fillRect(holder.x, holder.y, holder.w, holder.h)
   ctx.restore()
 
-  // The card sitting inside the holder.
+  // The card sitting inside the holder — a slip of the same paper the album is
+  // made of, so it ages like the rest of it rather than sitting there as a
+  // flat rectangle.
   const card = { x: holder.x + 9, y: holder.y + 9, w: holder.w - 18, h: holder.h - 18 }
-  ctx.fillStyle = '#f6f1e3'
-  ctx.fillRect(card.x, card.y, card.w, card.h)
-  ctx.strokeStyle = 'rgba(0,0,0,0.12)'
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(card.x, card.y, card.w, card.h)
+  ctx.clip()
+  ctx.translate(card.x, card.y)
+  paintPaper(ctx, card.w, card.h, '#f6f1e3', seedFrom(String(album.id) + 'label'))
+  // Settled a little further into the holder at the top than the bottom.
+  const settle = ctx.createLinearGradient(0, 0, 0, card.h)
+  settle.addColorStop(0, 'rgba(0,0,0,0.16)')
+  settle.addColorStop(0.14, 'rgba(0,0,0,0)')
+  settle.addColorStop(0.86, 'rgba(0,0,0,0)')
+  settle.addColorStop(1, 'rgba(0,0,0,0.1)')
+  ctx.fillStyle = settle
+  ctx.fillRect(0, 0, card.w, card.h)
+  ctx.restore()
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.14)'
   ctx.lineWidth = 1
   ctx.strokeRect(card.x + 0.5, card.y + 0.5, card.w - 1, card.h - 1)
 

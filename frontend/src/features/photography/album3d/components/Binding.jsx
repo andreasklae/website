@@ -7,6 +7,9 @@ import { BOARD_SHADE } from '../lib/faceCanvas'
 const geometry = new BoxGeometry(1, 1, 1)
 const DEFAULT_CLOTH = '#332e27'
 
+/** Deep enough to fill the gutter, shallow enough to stay level with the edge. */
+const SPINE_THICKNESS = 0.026
+
 /** The binding is the same material as the boards, so it takes the same shade. */
 const boardColour = (cloth) => shade(cloth || DEFAULT_CLOTH, BOARD_SHADE)
 
@@ -23,7 +26,7 @@ const boardColour = (cloth) => shade(cloth || DEFAULT_CLOTH, BOARD_SHADE)
  * lies on z = 0. That is not where reasoning about it in world terms lands
  * you — the placement below is the one geometry.test.mjs verifies.
  */
-export default function Binding({ depth, cloth, spineTexture }) {
+export default function Binding({ depth, offsetX = 0, cloth, spineTexture }) {
 
   const materials = useMemo(() => {
     const make = () => new MeshStandardMaterial({ color: new Color(boardColour(cloth)), roughness: 0.88 })
@@ -47,9 +50,7 @@ export default function Binding({ depth, cloth, spineTexture }) {
       // local z — sitting a little proud on the bound side so it reads as a
       // spine when the album is shut.
       position={[-depth / 2, 0, 0.004]}
-      // Never taller than the leaves: standing proud shows as a raised strip
-      // down the crease, and along the spine edge of a shut cover.
-      scale={[depth, PAGE_HEIGHT, 0.024]}
+          scale={[depth, PAGE_HEIGHT, 0.024]}
     />
   )
 }

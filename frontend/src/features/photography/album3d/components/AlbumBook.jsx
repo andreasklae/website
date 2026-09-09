@@ -8,7 +8,7 @@ import { ensureFonts } from '../lib/fonts'
 import { imageCache } from '../lib/textures'
 import { useSpineTexture } from '../lib/useSpineTexture'
 import { MODES, useAlbumStore } from '../lib/store'
-import { depthFor, pageDepthFor } from '../lib/albumDepth'
+import { depthFor, pageDepthFor, LEAF_FRACTION } from '../lib/albumDepth'
 import { clothFor } from '../lib/cloth'
 import { easing } from 'maath'
 
@@ -81,7 +81,7 @@ const COVER_SCALE = 0.62
  * turns rather than appearing once something touches it. The same call makes
  * the back board, which is otherwise bare paper on a shelved album.
  */
-function useBoardTexture(album, language, kind) {
+function useBoardTexture(album, language, kind, colours) {
   const [texture, setTexture] = useState(null)
 
   useEffect(() => {
@@ -95,8 +95,11 @@ function useBoardTexture(album, language, kind) {
 
     // The same face description the album's own page 0 is built from, so the
     // board and the first leaf are the same image.
+    // The album's own cloth has to travel with the face description, or every
+    // board paints in the fallback colour and the covers all come out alike
+    // however varied the spines are.
     const face = kind === 'back-cover'
-      ? { role: 'back-cover', slots: [{ kind: 'back-cover', title: album.title }] }
+      ? { role: 'back-cover', slots: [{ kind: 'back-cover', title: album.title, ...colours }] }
       : {
           role: 'cover',
           slots: [{
@@ -105,6 +108,7 @@ function useBoardTexture(album, language, kind) {
             subtitle: album.camera,
             dates: album.dates,
             photo: album.cover,
+            ...colours,
           }],
         }
 
@@ -121,7 +125,7 @@ function useBoardTexture(album, language, kind) {
 
     setTexture(tex)
     return () => { cancelled = true; tex.dispose(); canvas.width = canvas.height = 1 }
-  }, [album, language, kind])
+  }, [album, language, kind, colours])
 
   return texture
 }
@@ -135,16 +139,26 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   const leaves = full ? full.sheets.length : album.sheetCount
   const depth = depthFor(album.id)
   const pageDepth = pageDepthFor(leaves, depth)
-  const { cloth } = clothFor(index)
+  // Where the top of the block ends up once the album has turned: half its own
+  // thickness in front of its origin, less half a leaf. Thicker albums sit
+  // further forward, so this travels with the album rather than being fixed.
+  const blockCentre = depth / 2 - (pageDepth * LEAF_FRACTION) / 2
+  const pagePlaneZ = READING_PLANE_Z + blockCentre
+
+  const colours = clothFor(index)
+  const { cloth } = colours
+
+  const coverTexture = useBoardTexture(album, language, 'cover', colours)
+  const backCoverTexture = useBoardTexture(album, language, 'back-cover', colours)
   const group = useRef()
   const mode = useAlbumStore((s) => s.mode)
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
+  const setPlaneZ = useAlbumStore((s) => s.setPlaneZ)
   const selectAlbum = useAlbumStore((s) => s.selectAlbum)
 
-  const coverTexture = useBoardTexture(album, language, 'cover')
-  const backCoverTexture = useBoardTexture(album, language, 'back-cover')
-  const spineTexture = useSpineTexture(album, language, index)
+
+  const spineTexture = useSpineTexture(album, language, index, depth)
 
   const reading = active && (mode === MODES.OPEN || mode === MODES.ZOOM)
   const hovered = hoveredAlbum === album.id && !active && mode !== MODES.OPEN && mode !== MODES.ZOOM
@@ -154,6 +168,9 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   // channels drift apart and the reverse never quite matches. The hover lift
   // is eased separately because it is not part of that movement.
   const motion = useRef({ out: 0, lift: 0, part: 0 }).current
+
+  // Tell the camera which plane this album's pages sit on.
+  useEffect(() => { if (active) setPlaneZ(pagePlaneZ) }, [active, pagePlaneZ, setPlaneZ])
 
   useFrame((_, delta) => {
     const g = group.current
@@ -192,7 +209,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
       }}
     >
       <Album
-        planeZ={READING_PLANE_Z}
+        planeZ={pagePlaneZ}
         hingeX={TURNED_X}
         full={active ? full : null}
         sheetCount={album.sheetCount}

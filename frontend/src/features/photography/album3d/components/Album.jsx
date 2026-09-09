@@ -241,7 +241,10 @@ export default function Album({
   return (
     <group ref={group}>
      <group position={[blockCentre, 0, 0]}>
-      <Binding depth={depth} cloth={cloth} spineTexture={spineTexture} />
+      {/* Centred on the album's own origin, which is where the leaves are
+          centred too — the block group's offset would otherwise carry the
+          binding half a leaf out of line with them. */}
+      <Binding depth={depth} offsetX={-blockCentre} cloth={cloth} spineTexture={spineTexture} />
 
       {Array.from({ length: leaves }, (_, sheetIndex) => {
         const front = manager?.entries.get(sheetIndex * 2)

@@ -38,6 +38,13 @@ export const useAlbumStore = create((set, get) => ({
 
   hoveredAlbum: null,
   hoveredSlot: null,
+  /**
+   * Depth of the page you are actually looking at. Albums differ in thickness,
+   * and the top of the block sits half a thickness in front of the album's
+   * own origin, so this cannot be a constant — the camera would frame and
+   * anchor against a plane the pages are not on.
+   */
+  planeZ: 0,
   /** A single photograph, enlarged over the page. */
   zoomed: null,
   /**
@@ -52,6 +59,7 @@ export const useAlbumStore = create((set, get) => ({
   setHoveredAlbum: (hoveredAlbum) => set({ hoveredAlbum }),
   setHoveredSlot: (hoveredSlot) => set({ hoveredSlot }),
   setNarrow: (narrow) => set({ narrow }),
+  setPlaneZ: (planeZ) => set({ planeZ }),
 
   /** Choosing an album, including swapping directly to another one. */
   selectAlbum: (id) => {

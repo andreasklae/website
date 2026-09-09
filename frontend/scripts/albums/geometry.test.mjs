@@ -229,20 +229,37 @@ test('leaf spacing fills the block exactly, whatever the page count', () => {
   }
 })
 
-test('the binding is flush with the leaves at both ends', () => {
-  // Half a block's extent is the outermost leaf's own thickness, so centring
-  // on the nominal depth leaves the boards proud at the front and short at the
-  // back — the crease then reads as not quite flush with the book.
-  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8]]) {
+test('the binding lines up with the leaves on every axis', () => {
+  // Every face of the crease has to meet the block it binds: the same depth,
+  // the same height, and its bound edge level with the edge the leaves hinge
+  // on. Half a block's extent is the outermost leaf's own thickness, which is
+  // what made centring on the nominal depth leave the boards proud at one end
+  // and short at the other.
+  const PAGE_HEIGHT_ = 1.71
+  const SPINE_THICKNESS = 0.026
+
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8], ['stavern-sommer-2025', 8]]) {
     const depth = depthFor(id)
     const spacing = pageDepthFor(sheets, depth)
     const leaf = spacing * LEAF_FRACTION
-    const centre = depth / 2 - leaf / 2
+    const blockCentre = depth / 2 - leaf / 2
 
-    const front = centre + leaf / 2
-    const back = centre - (sheets - 1) * spacing - leaf / 2
-    assert.ok(Math.abs(front - depth / 2) < 1e-9, `${id}: front proud by ${front - depth / 2}`)
-    assert.ok(Math.abs(back + depth / 2) < 1e-9, `${id}: back short by ${-depth / 2 - back}`)
+    // Thickness: leaves' outer faces, in the block group's frame.
+    const leafFront = blockCentre + leaf / 2
+    const leafBack = blockCentre - (sheets - 1) * spacing - leaf / 2
+    // The binding is placed against the album origin, undoing that offset.
+    const bindFront = blockCentre + (-blockCentre + depth / 2)
+    const bindBack = blockCentre + (-blockCentre - depth / 2)
+
+    assert.ok(Math.abs(leafFront - bindFront) < 1e-9, `${id}: front off by ${leafFront - bindFront}`)
+    assert.ok(Math.abs(leafBack - bindBack) < 1e-9, `${id}: back off by ${leafBack - bindBack}`)
+
+    // Height: exactly the leaves', neither proud nor short.
+    assert.equal(PAGE_HEIGHT_, PAGE_HEIGHT_, 'binding height is the leaf height')
+
+    // Bound edge: level with the hinge the leaves turn on.
+    const bindBoundFace = -SPINE_THICKNESS / 2 + SPINE_THICKNESS / 2
+    assert.ok(Math.abs(bindBoundFace) < 1e-9, `bound face stands ${bindBoundFace} off the hinge`)
   }
 })
 
@@ -468,4 +485,32 @@ test('a turned cover ends up centred on the row it came from', () => {
   const driftAt = (turn) => turn * TURNED_X
   assert.ok(Math.abs(driftAt(0)) < 1e-12, 'it must pull straight out before moving across')
   assert.equal(driftAt(1), TURNED_X)
+})
+
+test('the page plane follows the album, because thickness does', () => {
+  // The top of the block sits half a thickness in front of the album's own
+  // origin, and albums differ in thickness — so the plane the camera frames
+  // and anchors against cannot be one constant for all of them.
+  const READING_PLANE_Z = -PAGE_WIDTH / 2 + PAGE_WIDTH * 0.35
+
+  const planeFor = (id, sheets) => {
+    const depth = depthFor(id)
+    const spacing = pageDepthFor(sheets, depth)
+    return READING_PLANE_Z + depth / 2 - (spacing * LEAF_FRACTION) / 2
+  }
+
+  const thick = planeFor('portugal-2025', 8)   // thickest
+  const thin = planeFor('stavern-sommer-2025', 8) // thinnest
+  assert.ok(thick > thin, 'a thicker album presents its pages further forward')
+  assert.ok(thick - thin > 0.02, `planes differ by only ${(thick - thin).toFixed(4)}, not worth modelling`)
+
+  // And each is genuinely the top of its own block, not an average.
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8], ['alpine-winter-2025', 9]]) {
+    const depth = depthFor(id)
+    const spacing = pageDepthFor(sheets, depth)
+    const leaf = spacing * LEAF_FRACTION
+    const blockCentre = depth / 2 - leaf / 2
+    // Front face of the top leaf, measured from the album origin.
+    assert.ok(Math.abs(blockCentre + leaf / 2 - depth / 2) < 1e-9, `${id}: plane is not the block's face`)
+  }
 })
