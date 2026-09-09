@@ -31,28 +31,7 @@ export function useShelfLayout(shelf) {
   }, [shelf])
 }
 
-/**
- * How far each album steps aside for whichever one has turned to face us.
- *
- * Two things make this bigger than it first looks. An OPEN album is two pages
- * wide (~2.6 units), not one, so room sized for the closed cover leaves the
- * neighbours standing inside the book. And the active album sits closer to the
- * camera, so perspective magnifies it relative to the row behind — geometric
- * clearance alone still overlaps on screen. Hence the generous margins.
- */
-export function partingOffsets(layout, activeId, spread) {
-  const active = layout.findIndex((a) => a.id === activeId)
-  if (active < 0) return layout.map(() => 0)
-  // A SHUT album lies wholly to one side of its binding, so it reaches a full
-  // page width even before it opens — sizing this for half a cover, as it once
-  // was, puts the neighbour inside the book. One room for every reading state
-  // keeps the row still while the album turns and opens.
-  const room = PAGE_WIDTH * 1.32
-  return layout.map((_, i) => (i < active ? -room : i > active ? room : 0))
-}
-
-export default function Shelf({ layout, language, activeId, full, spread }) {
-  const offsets = partingOffsets(layout, activeId, spread)
+export default function Shelf({ layout, language, activeId, full }) {
 
   return (
     <group>
@@ -63,7 +42,6 @@ export default function Shelf({ layout, language, activeId, full, spread }) {
             full={full?.id === album.id ? full : null}
             index={i}
             language={language}
-            offsetX={offsets[i]}
             active={album.id === activeId}
           />
         </group>

@@ -291,31 +291,41 @@ test('the bend trails the turn and never runs past where the leaf settles', () =
   }
 })
 
-test('albums stay clear of one another once one is chosen', () => {
-  // A shut album lies wholly to one side of its binding, so it reaches a full
-  // page width before it even opens. Sizing the parting for half a cover puts
-  // the neighbour inside the book.
-  const GAP = 0.055
+test('a chosen album is drawn clear of the row rather than pushing into it', () => {
+  // The row no longer makes space. A book is pulled forward until it is past
+  // its neighbours' boards, and only then turns — so it has to clear the
+  // deepest album in the row, not merely its own.
   const COVER_BOARD_ = 0.022
+  const FORWARD_Z = PAGE_WIDTH * 0.62
+  const SPINE_SEAT = -PAGE_WIDTH / 2
   const thickness = (n) => n * PAGE_DEPTH_ + COVER_BOARD_ * 2
-  const sheets = [26, 9, 8, 8, 9]
-  const items = sheets.map((n) => ({ t: thickness(n) }))
-  const total = items.reduce((a, b) => a + b.t, 0) + GAP * (items.length - 1)
-  let x = -total / 2
-  for (const it of items) { it.x = x + it.t / 2; x += it.t + GAP }
+  const deepest = thickness(26)
 
-  const room = PAGE_WIDTH * 1.32
-  const active = 2
+  // Shelved: seated on the spine with the body running back from it.
+  const shelvedFront = SPINE_SEAT
 
-  for (const [state, lo, hi] of [['shut', 0, PAGE_WIDTH], ['open', -PAGE_WIDTH, PAGE_WIDTH]]) {
-    for (const side of [-1, 1]) {
-      const n = items[active + side]
-      const inner = side > 0
-        ? n.x - items[active].x + room - n.t / 2
-        : n.x - items[active].x - room + n.t / 2
-      const edge = side > 0 ? hi : lo
-      const gap = side > 0 ? inner - edge : edge - inner
-      assert.ok(gap > 0.1, `${state}, side ${side}: only ${gap.toFixed(3)} of clearance`)
-    }
+  // Chosen and turned: the block's thickness now runs along the view axis.
+  const chosenBack = SPINE_SEAT + FORWARD_Z - deepest / 2
+
+  assert.ok(
+    chosenBack > shelvedFront + 0.05,
+    `a chosen album reaches back to ${chosenBack.toFixed(3)}, the row front is ${shelvedFront.toFixed(3)}`
+  )
+})
+
+test('the pull finishes before the turn starts', () => {
+  // Turning while still between its neighbours is what made a book shoulder
+  // them aside; drawn clear first, it can turn in front of them instead.
+  const TURN_BEGINS_AT = 0.4
+  const turnAt = (out) => Math.min(1, Math.max(0, (out - TURN_BEGINS_AT) / (1 - TURN_BEGINS_AT)))
+
+  assert.equal(turnAt(0), 0, 'a book still in the row must not have turned at all')
+  assert.equal(turnAt(TURN_BEGINS_AT), 0, 'no turn until it is clear')
+  assert.ok(turnAt(0.7) > 0 && turnAt(0.7) < 1, 'and it turns on the way out')
+  assert.equal(turnAt(1), 1, 'fully out is fully turned')
+
+  // One eased number drives both, so putting it back retraces the same path.
+  for (const out of [0, 0.25, 0.4, 0.6, 0.85, 1]) {
+    assert.equal(turnAt(out), turnAt(out), 'the mapping must be a pure function of extension')
   }
 })

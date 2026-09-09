@@ -30,10 +30,14 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  * without it the leaves render as blank paper with the cover on the front.
  */
 export default function Album({
-  full, sheetCount, active, language, coverTexture = null, spineTexture = null,
+  full, sheetCount, active, language,
+  coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
-  const page = useAlbumStore((s) => s.page)
+  // The reading state belongs to whichever album is in your hands. Every album
+  // reads from the same store, so an unchosen one has to be pinned shut or
+  // they all open together.
+  const page = useAlbumStore((s) => (active ? s.page : 0))
   const heldStack = useAlbumStore((s) => s.heldStack)
   const setHoveredSlot = useAlbumStore((s) => s.setHoveredSlot)
   const zoom = useAlbumStore((s) => s.zoom)
@@ -230,6 +234,9 @@ export default function Album({
       {Array.from({ length: leaves }, (_, sheetIndex) => {
         const front = manager?.entries.get(sheetIndex * 2)
         const back = manager?.entries.get(sheetIndex * 2 + 1)
+        // The outermost leaves are the boards: stiff, and printed on the
+        // outside even when the album's own pages have not been loaded.
+        const isBoard = sheetIndex === 0 || sheetIndex === leaves - 1
         return (
           <Page
             key={sheetIndex}
@@ -238,8 +245,9 @@ export default function Album({
             sheetCount={leaves}
             opened={delayedPage > sheetIndex}
             bookClosed={bookClosed}
+            rigid={isBoard}
             frontTexture={front?.texture || (sheetIndex === 0 ? coverTexture : null)}
-            backTexture={back?.texture}
+            backTexture={back?.texture || (sheetIndex === leaves - 1 ? backCoverTexture : null)}
             onPointerMove={active ? (e) => handlePointerMove(e, sheetIndex) : undefined}
             onPointerOut={active ? handlePointerOut : undefined}
             onClick={active ? (e) => handleClick(e, sheetIndex) : undefined}

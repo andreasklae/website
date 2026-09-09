@@ -16,8 +16,19 @@ import { easing } from 'maath'
 export const SHELF_ROTATION = 0
 export const READING_ROTATION = -Math.PI / 2
 
-/** Where the chosen album stands, clear of the row. */
-export const FORWARD_Z = PAGE_WIDTH * 0.3
+/**
+ * How far forward the chosen album is drawn. Far enough that it clears the
+ * deepest album's boards, so a book pulled out never touches the row it came
+ * from — the row does not have to make space for it.
+ */
+export const FORWARD_Z = PAGE_WIDTH * 0.62
+
+/**
+ * Fraction of the way out before the album starts to turn. A book is drawn
+ * clear of its neighbours first and turned in front of them, rather than
+ * pivoting between them and shouldering them aside.
+ */
+const TURN_BEGINS_AT = 0.4
 
 /** Shared by the turn out and the turn back, so one is the reverse of the other. */
 export const TURN_SMOOTHING = 0.42
@@ -33,10 +44,11 @@ const SPINE_SEAT = -PAGE_WIDTH / 2
 const COVER_SCALE = 0.62
 
 /**
- * Paints the front board on mount, so an album's cover is already there the
- * moment it turns rather than appearing once something touches it.
+ * Paints a board on mount, so an album's cover is already there the moment it
+ * turns rather than appearing once something touches it. The same call makes
+ * the back board, which is otherwise bare paper on a shelved album.
  */
-function useCoverTexture(album, language) {
+function useBoardTexture(album, language, kind) {
   const [texture, setTexture] = useState(null)
 
   useEffect(() => {
@@ -50,16 +62,18 @@ function useCoverTexture(album, language) {
 
     // The same face description the album's own page 0 is built from, so the
     // board and the first leaf are the same image.
-    const face = {
-      role: 'cover',
-      slots: [{
-        kind: 'cover',
-        title: album.title,
-        subtitle: album.camera,
-        dates: album.dates,
-        photo: album.cover,
-      }],
-    }
+    const face = kind === 'back-cover'
+      ? { role: 'back-cover', slots: [{ kind: 'back-cover', title: album.title }] }
+      : {
+          role: 'cover',
+          slots: [{
+            kind: 'cover',
+            title: album.title,
+            subtitle: album.camera,
+            dates: album.dates,
+            photo: album.cover,
+          }],
+        }
 
     const paint = () => {
       if (cancelled) return
@@ -69,12 +83,12 @@ function useCoverTexture(album, language) {
 
     ensureFonts().then(() => {
       paint()
-      if (album.cover) imageCache.load(album.cover, 'page').then(paint)
+      if (kind !== 'back-cover' && album.cover) imageCache.load(album.cover, 'page').then(paint)
     })
 
     setTexture(tex)
     return () => { cancelled = true; tex.dispose(); canvas.width = canvas.height = 1 }
-  }, [album, language])
+  }, [album, language, kind])
 
   return texture
 }
@@ -84,34 +98,38 @@ function useCoverTexture(album, language) {
  * chosen. Choosing it turns it and starts painting its faces; it never swaps
  * for a different object, because there is no other object.
  */
-export default function AlbumBook({ album, full, index, language, offsetX, active }) {
+export default function AlbumBook({ album, full, index, language, active }) {
   const group = useRef()
   const mode = useAlbumStore((s) => s.mode)
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
   const selectAlbum = useAlbumStore((s) => s.selectAlbum)
 
-  const coverTexture = useCoverTexture(album, language)
+  const coverTexture = useBoardTexture(album, language, 'cover')
+  const backCoverTexture = useBoardTexture(album, language, 'back-cover')
   const spineTexture = useSpineTexture(album, language, index)
 
   const reading = active && (mode === MODES.OPEN || mode === MODES.ZOOM)
   const hovered = hoveredAlbum === album.id && !active && mode !== MODES.OPEN && mode !== MODES.ZOOM
 
+  // One eased number drives both the pull and the turn, so putting the album
+  // back is the exact reverse of taking it out — two separately damped
+  // channels drift apart and the reverse never quite matches.
+  const extension = useRef({ value: 0 }).current
+
   useFrame((_, delta) => {
     const g = group.current
     if (!g) return
-    // The same smoothing whichever way it is going, so turning back is the
-    // exact reverse of turning out.
-    easing.dampAngle(g.rotation, 'y', active ? READING_ROTATION : SHELF_ROTATION, TURN_SMOOTHING, delta)
-    easing.damp3(
-      g.position,
-      [
-        offsetX,
-        hovered ? 0.055 : 0,
-        SPINE_SEAT + (active ? FORWARD_Z : hovered ? 0.07 : 0),
-      ],
-      TURN_SMOOTHING,
-      delta
+
+    easing.damp(extension, 'value', active ? 1 : 0, TURN_SMOOTHING, delta)
+    const out = extension.value
+    const turn = Math.min(1, Math.max(0, (out - TURN_BEGINS_AT) / (1 - TURN_BEGINS_AT)))
+
+    g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn
+    g.position.set(
+      0,
+      hovered ? 0.055 : 0,
+      SPINE_SEAT + out * FORWARD_Z + (hovered ? 0.07 : 0)
     )
   })
 
@@ -144,6 +162,7 @@ export default function AlbumBook({ album, full, index, language, offsetX, activ
         active={active}
         language={language}
         coverTexture={coverTexture}
+        backCoverTexture={backCoverTexture}
         spineTexture={spineTexture}
       />
     </group>

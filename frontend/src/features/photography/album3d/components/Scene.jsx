@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { easing } from 'maath'
 import Shelf, { useShelfLayout } from './Shelf'
 import CameraRig from './CameraRig'
-import { MODES, useAlbumStore } from '../lib/store'
+import { useAlbumStore } from '../lib/store'
 
 /**
  * Slides the whole row so the chosen album ends up dead centre. Panning the
@@ -22,7 +22,6 @@ export default function Scene({ shelf, album, language }) {
   const layout = useShelfLayout(shelf)
   const shelfWidth = layout.reduce((n, a) => n + a.thickness, 0) + 0.055 * Math.max(0, layout.length - 1)
   const activeId = useAlbumStore((s) => s.activeId)
-  const mode = useAlbumStore((s) => s.mode)
   const slot = layout.find((a) => a.id === activeId)
 
   return (
@@ -45,7 +44,6 @@ export default function Scene({ shelf, album, language }) {
             language={language}
             activeId={activeId}
             full={album}
-            spread={mode === MODES.OPEN || mode === MODES.ZOOM}
           />
         </ShelfPan>
       </Suspense>

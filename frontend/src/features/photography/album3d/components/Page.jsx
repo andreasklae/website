@@ -23,11 +23,14 @@ const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS
 
 // Larger is slower. A leaf sweeps 180 degrees, so it wants a good deal more
 // time than a small move would.
-const easingFactor = 1.0
-const easingFactorFold = 0.5
-const insideCurveStrength = 0.18
-const outsideCurveStrength = 0.05
-const turningCurveStrength = 0.09
+const easingFactor = 0.78
+const easingFactorFold = 0.4
+
+// How much a leaf bows as it turns. The reference is tuned for a paperback;
+// album leaves are card and barely flex, so these are a fraction of it.
+const insideCurveStrength = 0.06
+const outsideCurveStrength = 0.018
+const turningCurveStrength = 0.035
 
 /** One geometry, shared by every page in every album. */
 // Deliberately thinner than the spacing between leaves. At the full spacing
@@ -67,7 +70,7 @@ const edgeMaterials = [
 ]
 
 export default function Page({
-  number, page, opened, bookClosed, sheetCount, frontTexture, backTexture,
+  number, page, opened, bookClosed, sheetCount, rigid, frontTexture, backTexture,
   onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
@@ -161,7 +164,9 @@ export default function Page({
       // leaf's own angle — past where it is going to settle — and then comes
       // back as the bend unwinds. One direction only, never overshooting.
       const trailing = -Math.sign(remaining)
-      const curl = bookClosed
+      // Boards are stiff. A cover that flexes open like a sheet of paper is
+      // the single thing that stops a book reading as a book.
+      const curl = bookClosed || rigid
         ? 0
         : (insideCurveStrength * insideCurve -
             outsideCurveStrength * outsideCurve +
@@ -173,7 +178,7 @@ export default function Page({
       easing.dampAngle(bones[i].rotation, 'y', curl, easingFactorFold, delta)
 
       const foldIntensity = i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turning : 0
-      const fold = bookClosed ? 0 : degToRad(trailing * 2) * foldIntensity
+      const fold = bookClosed || rigid ? 0 : degToRad(trailing * 2) * foldIntensity
       easing.dampAngle(bones[i].rotation, 'x', fold, easingFactorFold, delta)
     }
   })
