@@ -22,6 +22,9 @@ import { PAGE_HEIGHT } from './dimensions.js'
  */
 export const SPINE_PROUD = 0.02
 
+/** How far the binding is tucked inside the boards, to avoid coplanar faces. */
+export const TUCK = 0.0035
+
 /**
  * How far it reaches back behind the hinge, under the leaves that have not
  * been turned yet.
@@ -51,7 +54,11 @@ export const blockCentre = (depth, pageDepth) => depth / 2 - (pageDepth * LEAF_F
  */
 export const bindingPose = (depth, pageDepth) => ({
   position: [-blockCentre(depth, pageDepth), 0, (SPINE_PROUD - SPINE_BEHIND) / 2],
-  scale: [depth, PAGE_HEIGHT, SPINE_THICKNESS],
+  // A shade narrower and shorter than the block. Exactly flush puts the
+  // binding's sides in the same plane as the boards and its top in the same
+  // plane as their edges, and coplanar faces fight for depth — which shows as
+  // the binding flickering through the cover along the join.
+  scale: [depth - TUCK * 2, PAGE_HEIGHT - TUCK * 2, SPINE_THICKNESS],
 })
 
 /** Outer faces of the leaf block, measured from the album's origin. */
@@ -61,9 +68,17 @@ export const leafSpan = (depth, pageDepth, leaves) => {
   return { front: centre + leaf / 2, back: centre - (leaves - 1) * pageDepth - leaf / 2 }
 }
 
-/** Outer faces of the binding, measured from the album's origin. */
+/**
+ * Outer faces of the binding, measured from the album's origin.
+ *
+ * Taken from the pose the mesh actually uses rather than from `depth`, or this
+ * reports where the binding was meant to be instead of where it is.
+ */
 export const bindingSpan = (depth, pageDepth) => {
   const centre = blockCentre(depth, pageDepth)
-  const { position } = bindingPose(depth, pageDepth)
-  return { front: centre + position[0] + depth / 2, back: centre + position[0] - depth / 2 }
+  const { position, scale } = bindingPose(depth, pageDepth)
+  return {
+    front: centre + position[0] + scale[0] / 2,
+    back: centre + position[0] - scale[0] / 2,
+  }
 }

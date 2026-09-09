@@ -73,6 +73,9 @@ function getPageGeometry(thickness) {
   return geometry
 }
 
+/** How much of a page's brightness comes from its own image, not the room. */
+const PAGE_SELF_LIT = 0.62
+
 const PAPER = new Color('#efeae0')
 const EDGE = new Color('#d9d2c4')
 
@@ -105,8 +108,19 @@ export default function Page({
     const skeleton = new Skeleton(bones)
 
     // Matte paper: no clearcoat, no shadows. The curl reads from geometry and
-    // a single directional light, which is far cheaper than a shadow map.
-    const faceMaterial = () => new MeshStandardMaterial({ color: PAPER, roughness: 0.88, metalness: 0 })
+    // the room's lamp, which is far cheaper than a shadow map.
+    //
+    // A page is also part self-lit. Under a warm lamp a fully-lit photograph
+    // takes the lamp's colour, and a photograph that has gone orange is no
+    // longer the photograph — so most of a page's brightness comes from its
+    // own image and only the rest from the room.
+    const faceMaterial = () => new MeshStandardMaterial({
+      color: PAPER,
+      roughness: 0.88,
+      metalness: 0,
+      emissive: new Color('#ffffff'),
+      emissiveIntensity: 0,
+    })
     const materials = [...edgeMaterials, faceMaterial(), faceMaterial()]
 
     const skinned = new SkinnedMesh(getPageGeometry(pageDepth * LEAF_FRACTION), materials)
@@ -120,12 +134,18 @@ export default function Page({
 
   // Swap textures without rebuilding the mesh, so page turns never hitch.
   useEffect(() => {
-    const [front, back] = [mesh.material[4], mesh.material[5]]
-    front.map = frontTexture || null
-    back.map = backTexture || null
-    front.color.set(frontTexture ? '#ffffff' : PAPER)
-    back.color.set(backTexture ? '#ffffff' : PAPER)
-    front.needsUpdate = back.needsUpdate = true
+    const pair = [
+      [mesh.material[4], frontTexture],
+      [mesh.material[5], backTexture],
+    ]
+    for (const [material, texture] of pair) {
+      material.map = texture || null
+      material.color.set(texture ? '#ffffff' : PAPER)
+      // Self-lit from its own image, so the photograph keeps its colour.
+      material.emissiveMap = texture || null
+      material.emissiveIntensity = texture ? PAGE_SELF_LIT : 0
+      material.needsUpdate = true
+    }
   }, [mesh, frontTexture, backTexture])
 
   useEffect(() => () => { mesh.material[4].dispose(); mesh.material[5].dispose() }, [mesh])

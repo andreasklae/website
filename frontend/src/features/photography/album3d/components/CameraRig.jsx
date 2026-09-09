@@ -28,7 +28,7 @@ function fitDistance(fov, aspect, [w, h], pad) {
  * photographs are unreadable. Narrow viewports therefore frame a single page
  * and step through them one at a time.
  */
-function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ }) {
+function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX }) {
   // Leaning in on a hovered photograph. Padded well past the photo's own edges
   // so this reads as moving closer to the page, not as replacing it.
   switch (mode) {
@@ -39,7 +39,7 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ }) {
         // middle is half a page off the hinge. The camera moves to meet it
         // rather than the book sliding to meet the camera.
         // The cover's own middle: half a page along from the hinge.
-        target: [TURNED_X + PAGE_WIDTH / 2, 0, planeZ],
+        target: [activeX + TURNED_X + PAGE_WIDTH / 2, 0, planeZ],
         height: 0.02,
         pad: 1.16,
       }
@@ -49,7 +49,7 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ }) {
       if (closedSide) {
         return {
           box: [PAGE_WIDTH * 1.14, PAGE_HEIGHT * 1.1],
-          target: [TURNED_X + closedSide * (PAGE_WIDTH / 2), 0, planeZ],
+          target: [activeX + TURNED_X + closedSide * (PAGE_WIDTH / 2), 0, planeZ],
           height: 0.02,
           pad: 1.16,
         }
@@ -58,14 +58,14 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ }) {
         const x = TURNED_X + (side === SIDES.RIGHT ? PAGE_WIDTH / 2 : -PAGE_WIDTH / 2)
         return {
           box: [PAGE_WIDTH * 1.1, PAGE_HEIGHT * 1.06],
-          target: [x, -0.02, planeZ],
+          target: [activeX + x, -0.02, planeZ],
           height: 0.18,
           pad: 1.1,
         }
       }
       return {
         box: [PAGE_WIDTH * 2.12, PAGE_HEIGHT * 1.06],
-        target: [TURNED_X, -0.05, planeZ],
+        target: [activeX + TURNED_X, -0.05, planeZ],
         // Below the spread looking slightly up: from above, an open album
         // reads as being looked down on rather than held.
         height: mode === MODES.ZOOM ? -0.16 : -0.34,
@@ -110,6 +110,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const focus = useAlbumStore((s) => s.focus)
   const page = useAlbumStore((s) => s.page)
   const planeZ = useAlbumStore((s) => s.planeZ)
+  const activeX = useAlbumStore((s) => s.activeX)
   const { camera, size, pointer } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.
@@ -121,7 +122,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
     // never closes against its own back board — and treating the last spread
     // as "shut" put the camera on the left-hand page instead of the middle.
     const closedSide = page === 0 ? 1 : 0
-    const shot = shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ })
+    const shot = shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX })
     const aspect = size.width / Math.max(size.height, 1)
     const leaning = focus && (mode === MODES.OPEN || mode === MODES.ZOOM)
 

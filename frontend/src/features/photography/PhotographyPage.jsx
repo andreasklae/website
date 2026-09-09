@@ -22,35 +22,38 @@ export default function PhotographyPage() {
   if (!webgl) return <LegacyPhotographyPage />
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#14110e] text-[#f2e7d6] animate-page-enter font-serif">
-      <header className="mx-auto w-full max-w-6xl shrink-0 select-none px-6 pt-24 lg:pt-28">
-        <div className="border-y border-[#e9dcc7]/35 py-3 text-center">
-          <h1
-            className="px-2 text-2xl font-extrabold tracking-tight sm:text-4xl md:text-5xl"
-            style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif' }}
-          >
-            {getText({ en: 'Photography', no: 'Foto' }).toUpperCase()}
-          </h1>
-        </div>
-        <p className="pt-3 text-center text-sm italic md:text-base" style={{ fontFamily: 'Georgia, serif' }}>
+    // The room is the page: it fills the viewport and everything else floats
+    // over it, so the title reads as something in the room rather than a
+    // banner sitting above a picture of one.
+    <div className="relative h-screen w-full overflow-hidden bg-[#14110e] text-[#f2e7d6] animate-page-enter font-serif">
+      <Suspense
+        fallback={<div className="absolute inset-0 bg-[#14110e]" />}
+      >
+        <AlbumPortfolio language={language} getText={getText} />
+      </Suspense>
+
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-24 text-center lg:pt-28">
+        <h1
+          className="text-2xl font-extrabold tracking-[0.18em] text-[#f4e6cd] sm:text-3xl md:text-4xl"
+          style={{
+            fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif',
+            // Lit from the lamp's side, and sitting on its own shadow so it
+            // stays legible over whatever is behind it.
+            textShadow: '0 2px 18px rgba(0,0,0,0.85), 0 0 46px rgba(255,180,110,0.28)',
+          }}
+        >
+          {getText({ en: 'Photography', no: 'Foto' }).toUpperCase()}
+        </h1>
+        <p
+          className="pt-2 text-sm italic text-[#e9dcc7]/65 md:text-base"
+          style={{ fontFamily: 'Georgia, serif', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}
+        >
           {getText({
             en: 'Journals and highlights, kept as photo albums.',
             no: 'Journaler og høydepunkter, samlet som fotoalbum.',
           })}
         </p>
       </header>
-
-      <Suspense
-        fallback={
-          <div className="flex min-h-0 flex-1 items-center justify-center">
-            <p className="text-sm italic tracking-wide text-black/40">
-              {getText({ en: 'Opening the shelf…', no: 'Åpner hyllen…' })}
-            </p>
-          </div>
-        }
-      >
-        <AlbumPortfolio language={language} getText={getText} />
-      </Suspense>
     </div>
   )
 }

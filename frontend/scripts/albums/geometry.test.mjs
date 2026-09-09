@@ -11,7 +11,7 @@ import { Box3, Group, Object3D, Vector3 } from 'three'
 // Imported, not restated: a test that mirrors the maths passes happily when an
 // edit fails to land in the component. That is exactly how the binding came to
 // sit half a leaf to the left of both boards with a green test suite.
-import { SPINE_PROUD, bindingPose, bindingSpan, blockCentre, leafSpan } from '../../src/features/photography/album3d/lib/blockLayout.js'
+import { SPINE_PROUD, TUCK, bindingPose, bindingSpan, blockCentre, leafSpan } from '../../src/features/photography/album3d/lib/blockLayout.js'
 import { depthFor, pageDepthFor, LEAF_FRACTION as LEAF_F } from '../../src/features/photography/album3d/lib/albumDepth.js'
 
 const PAGE_WIDTH = 1.28
@@ -230,10 +230,13 @@ test('the binding lines up with the leaves on every axis', () => {
     const spacing = pageDepthFor(sheets, depth)
     const leaves = leafSpan(depth, spacing, sheets)
     const bind = bindingSpan(depth, spacing)
-    assert.ok(Math.abs(leaves.front - bind.front) < 1e-9,
+    // Tucked just inside the boards rather than flush with them: coplanar
+    // faces fight for depth and flicker along the join.
+    assert.ok(Math.abs(leaves.front - bind.front - TUCK) < 1e-9,
       `${id}: binding front off the boards by ${(leaves.front - bind.front).toFixed(5)}`)
-    assert.ok(Math.abs(leaves.back - bind.back) < 1e-9,
+    assert.ok(Math.abs(leaves.back - bind.back + TUCK) < 1e-9,
       `${id}: binding back off the boards by ${(leaves.back - bind.back).toFixed(5)}`)
+    assert.ok(TUCK > 0 && TUCK < 0.01, 'the tuck must be invisible but non-zero')
     // And the block itself straddles the album's origin.
     assert.ok(Math.abs(leaves.front + leaves.back) < 1e-9, `${id}: block off centre`)
 

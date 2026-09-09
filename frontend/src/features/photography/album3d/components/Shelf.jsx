@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import AlbumBook from './AlbumBook'
-import { PAGE_WIDTH, PAGE_HEIGHT } from './Page'
 import { depthFor } from '../lib/albumDepth'
 
 // Albums stand shoulder to shoulder. The only gap on the shelf is the one
@@ -55,20 +54,13 @@ export default function Shelf({ layout, language, activeId, hoveredId, full }) {
             index={i}
             language={language}
             partX={parted >= 0 && i > parted ? HOVER_PART : 0}
+            shelfX={album.x}
+            isLast={i === layout.length - 1}
             active={album.id === activeId}
           />
         </group>
       ))}
 
-      {/* The shelf board itself. Flat colour, no shadow map. */}
-      <mesh position={[0, -PAGE_HEIGHT * 0.545, -PAGE_WIDTH * 0.08]}>
-        <boxGeometry args={[
-          layout.reduce((n, a) => n + a.thickness, 0) + SHELF_GAP * layout.length + 0.35,
-          0.032,
-          PAGE_WIDTH * 1.06,
-        ]} />
-        <meshStandardMaterial color="#5b4c3d" roughness={0.92} />
-      </mesh>
     </group>
   )
 }

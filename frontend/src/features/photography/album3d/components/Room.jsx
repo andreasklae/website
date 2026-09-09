@@ -16,7 +16,8 @@ const BOOK_BACK_Z = SPINE_Z - PAGE_WIDTH
 export const SLIDE_ROOM = 1.15
 
 const BOARD = 0.075
-const INTERIOR_H = PAGE_HEIGHT * 1.24
+// Headroom enough for an album to be lifted and turned inside the bay.
+const INTERIOR_H = PAGE_HEIGHT * 1.42
 const FRONT_Z = SPINE_Z + 0.16
 const BACK_Z = BOOK_BACK_Z - 0.1
 

@@ -45,6 +45,10 @@ export const useAlbumStore = create((set, get) => ({
    * anchor against a plane the pages are not on.
    */
   planeZ: 0,
+  /** Where along the shelf the chosen album stands, so the camera can go to it. */
+  activeX: 0,
+  /** The room's lamp. Off when the page opens; it comes on by itself shortly after. */
+  lampOn: false,
   /** A single photograph, enlarged over the page. */
   zoomed: null,
   /**
@@ -60,6 +64,9 @@ export const useAlbumStore = create((set, get) => ({
   setHoveredSlot: (hoveredSlot) => set({ hoveredSlot }),
   setNarrow: (narrow) => set({ narrow }),
   setPlaneZ: (planeZ) => set({ planeZ }),
+  setActiveX: (activeX) => set({ activeX }),
+  setLamp: (lampOn) => set({ lampOn }),
+  toggleLamp: () => set((s) => ({ lampOn: !s.lampOn })),
 
   /** Choosing an album, including swapping directly to another one. */
   selectAlbum: (id) => {

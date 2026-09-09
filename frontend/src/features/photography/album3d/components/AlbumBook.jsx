@@ -27,10 +27,10 @@ const PULL_PHASE = 0.42
 
 // Hovering: lifted off the shelf, eased forward and turned enough to read the
 // board. The turn is what needs the room the neighbours make to its right.
-const HOVER_LIFT = 0.16
-const HOVER_FORWARD = 0.2
-const HOVER_SHIFT_X = 0.06
-const HOVER_TURN = -0.5
+const HOVER_LIFT = 0.34
+const HOVER_FORWARD = 0.22
+const HOVER_SHIFT_X = 0.05
+const HOVER_TURN = -0.3
 
 /**
  * Where the album's hinge sits, and how far it has turned, for one eased
@@ -140,7 +140,7 @@ function useBoardTexture(album, language, kind, colours) {
  * chosen. Choosing it turns it and starts painting its faces; it never swaps
  * for a different object, because there is no other object.
  */
-export default function AlbumBook({ album, full, index, language, active, partX = 0 }) {
+export default function AlbumBook({ album, full, index, language, active, partX = 0, shelfX = 0, isLast = false }) {
   const leaves = full ? full.sheets.length : album.sheetCount
   const depth = depthFor(album.id)
   const pageDepth = pageDepthFor(leaves, depth)
@@ -159,6 +159,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
   const setPlaneZ = useAlbumStore((s) => s.setPlaneZ)
+  const setActiveX = useAlbumStore((s) => s.setActiveX)
   const selectAlbum = useAlbumStore((s) => s.selectAlbum)
 
 
@@ -174,7 +175,11 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   const motion = useRef({ out: 0, lift: 0, part: 0 }).current
 
   // Tell the camera which plane this album's pages sit on.
-  useEffect(() => { if (active) setPlaneZ(pagePlaneZ) }, [active, pagePlaneZ, setPlaneZ])
+  useEffect(() => {
+    if (!active) return
+    setPlaneZ(pagePlaneZ)
+    setActiveX(shelfX)
+  }, [active, pagePlaneZ, shelfX, setPlaneZ, setActiveX])
 
   useFrame((_, delta) => {
     const g = group.current
@@ -187,11 +192,15 @@ export default function AlbumBook({ album, full, index, language, active, partX 
     const { turn, z } = poseFor(motion.out, FORWARD_Z)
     // Hovering tips the album up and turns it partway, far enough to read the
     // front board without committing to picking it up.
+    // The lift is what carries a turning album clear of the one beside it, so
+    // the last album on the shelf — which has nothing to its right — does not
+    // need as much of it.
     const peek = motion.lift * (1 - turn)
+    const lift = peek * (isLast ? HOVER_LIFT * 0.45 : HOVER_LIFT)
     g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn + peek * HOVER_TURN
     g.position.set(
       motion.part + turn * TURNED_X + peek * HOVER_SHIFT_X,
-      peek * HOVER_LIFT,
+      lift,
       SPINE_SEAT + z + peek * HOVER_FORWARD
     )
   })
@@ -221,7 +230,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
     >
       <Album
         planeZ={pagePlaneZ}
-        hingeX={TURNED_X}
+        hingeX={shelfX + TURNED_X}
         full={active ? full : null}
         sheetCount={album.sheetCount}
         depth={depth}

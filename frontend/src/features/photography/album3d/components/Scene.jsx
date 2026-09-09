@@ -1,24 +1,9 @@
-import { Suspense, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { easing } from 'maath'
+import { Suspense } from 'react'
 import Shelf, { useShelfLayout } from './Shelf'
 import Room, { SLIDE_ROOM } from './Room'
 import Lamp from './Lamp'
 import CameraRig from './CameraRig'
 import { useAlbumStore } from '../lib/store'
-
-/**
- * Slides the whole row so the chosen album ends up dead centre. Panning the
- * shelf rather than the camera keeps framing identical whichever album is
- * picked — which matters most on a phone, where there is no room to spare.
- */
-function ShelfPan({ targetX, children }) {
-  const group = useRef()
-  useFrame((_, delta) => {
-    if (group.current) easing.damp(group.current.position, 'x', targetX, 0.4, delta)
-  })
-  return <group ref={group}>{children}</group>
-}
 
 export default function Scene({ shelf, album, language }) {
   const layout = useShelfLayout(shelf)
@@ -43,19 +28,23 @@ export default function Scene({ shelf, album, language }) {
       */}
       <ambientLight intensity={0.1} color="#8294ad" />
       <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.14]} />
-      <Lamp x={booksRight + SLIDE_ROOM * 0.72} />
+      <Lamp x={booksRight + SLIDE_ROOM * 0.55} />
 
       <Suspense fallback={null}>
         <Room booksLeft={booksLeft} booksRight={booksRight} />
-        <ShelfPan targetX={slot ? -slot.x : 0}>
-          <Shelf
+        {/*
+          The row does not move. Sliding the shelf to bring an album to the
+          middle also slid it relative to the bookcase it is standing in, which
+          reads as the whole case shifting; the camera goes to the album
+          instead.
+        */}
+        <Shelf
             layout={layout}
             language={language}
             activeId={activeId}
             hoveredId={hoveredId}
             full={album}
           />
-        </ShelfPan>
       </Suspense>
     </>
   )

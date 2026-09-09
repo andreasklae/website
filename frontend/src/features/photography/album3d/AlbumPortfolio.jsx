@@ -40,7 +40,7 @@ export default function AlbumPortfolio({ language = 'en', getText = (t) => t.en 
   const dpr = useMemo(() => [1, prefersReducedMotion() ? 1.25 : 2], [])
 
   return (
-    <div className="relative min-h-0 w-full flex-1 touch-pan-y">
+    <div className="absolute inset-0 touch-pan-y">
       <Canvas
         dpr={dpr}
         gl={{ antialias: true, powerPreference: 'high-performance', alpha: false }}
