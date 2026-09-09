@@ -25,6 +25,13 @@ export const FORWARD_Z = PAGE_WIDTH * 0.35
 /** Fraction of the movement spent drawing the album straight out. */
 const PULL_PHASE = 0.42
 
+// Hovering: lifted off the shelf, eased forward and turned enough to read the
+// board. The turn is what needs the room the neighbours make to its right.
+const HOVER_LIFT = 0.16
+const HOVER_FORWARD = 0.2
+const HOVER_SHIFT_X = 0.06
+const HOVER_TURN = -0.5
+
 /**
  * Where the album's hinge sits, and how far it has turned, for one eased
  * number running 0 (shelved) to 1 (facing you).
@@ -174,12 +181,19 @@ export default function AlbumBook({ album, full, index, language, active, partX 
     if (!g) return
 
     easing.damp(motion, 'out', active ? 1 : 0, TURN_SMOOTHING, delta)
-    easing.damp(motion, 'lift', hovered ? 1 : 0, 0.22, delta)
-    easing.damp(motion, 'part', partX, 0.28, delta)
+    easing.damp(motion, 'lift', hovered ? 1 : 0, 0.24, delta)
+    easing.damp(motion, 'part', partX, 0.3, delta)
 
     const { turn, z } = poseFor(motion.out, FORWARD_Z)
-    g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn
-    g.position.set(motion.part + turn * TURNED_X, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
+    // Hovering tips the album up and turns it partway, far enough to read the
+    // front board without committing to picking it up.
+    const peek = motion.lift * (1 - turn)
+    g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn + peek * HOVER_TURN
+    g.position.set(
+      motion.part + turn * TURNED_X + peek * HOVER_SHIFT_X,
+      peek * HOVER_LIFT,
+      SPINE_SEAT + z + peek * HOVER_FORWARD
+    )
   })
 
   return (

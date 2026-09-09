@@ -18,13 +18,13 @@ export default function PhotographyPage() {
 
   useEffect(() => { setWebgl(supportsWebGL()) }, [])
 
-  if (webgl === null) return <div className="min-h-screen bg-[#f7f4ee]" />
+  if (webgl === null) return <div className="min-h-screen bg-[#14110e]" />
   if (!webgl) return <LegacyPhotographyPage />
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#f7f4ee] text-black animate-page-enter font-serif">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#14110e] text-[#f2e7d6] animate-page-enter font-serif">
       <header className="mx-auto w-full max-w-6xl shrink-0 select-none px-6 pt-24 lg:pt-28">
-        <div className="border-y border-black/80 py-3 text-center">
+        <div className="border-y border-[#e9dcc7]/35 py-3 text-center">
           <h1
             className="px-2 text-2xl font-extrabold tracking-tight sm:text-4xl md:text-5xl"
             style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif' }}

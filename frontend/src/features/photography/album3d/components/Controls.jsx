@@ -3,14 +3,14 @@ import { MODES, lastSpread, useAlbumStore } from '../lib/store'
 
 // Touch targets are >=44px tall; the shelf is usable with a thumb.
 const btn =
-  'pointer-events-auto select-none rounded-full border border-black/15 bg-[#f6f2e9]/95 ' +
-  'px-5 py-3 text-sm tracking-wide text-black/75 shadow-sm backdrop-blur transition ' +
-  'hover:bg-white hover:text-black active:scale-95 disabled:cursor-not-allowed disabled:opacity-35'
+  'pointer-events-auto select-none rounded-full border border-white/20 bg-black/40 ' +
+  'px-5 py-3 text-sm tracking-wide text-[#f2e7d6] shadow-sm backdrop-blur transition ' +
+  'hover:bg-black/65 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-35'
 
 const primary =
-  'pointer-events-auto select-none rounded-full border border-black/70 bg-[#2b2721] ' +
-  'px-6 py-3 text-sm tracking-wide text-[#f6f2e9] shadow-md transition ' +
-  'hover:bg-black active:scale-95'
+  'pointer-events-auto select-none rounded-full border border-[#ffc78e]/50 bg-[#ffc78e]/90 ' +
+  'px-6 py-3 text-sm tracking-wide text-[#2b2117] shadow-md transition ' +
+  'hover:bg-[#ffd6a8] active:scale-95'
 
 export default function Controls({ getText }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -44,14 +44,14 @@ export default function Controls({ getText }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 flex flex-col items-center gap-3 px-4 sm:bottom-8">
       {mode === MODES.SHELF && (
-        <p className="text-sm italic tracking-wide text-black/45">
+        <p className="text-sm italic tracking-wide text-[#e9dcc7]/70">
           {getText({ en: 'Pick an album from the shelf', no: 'Velg et album fra hyllen' })}
         </p>
       )}
 
       {mode === MODES.COVER && (
         <>
-          <p className="text-center text-xs italic tracking-wide text-black/40">
+          <p className="text-center text-xs italic tracking-wide text-[#e9dcc7]/55">
             {getText({
               en: 'Or pick another album from the shelf',
               no: 'Eller velg et annet album fra hyllen',
@@ -71,11 +71,11 @@ export default function Controls({ getText }) {
       {reading && (
         <>
           {sheets > 0 && (
-            <div className="flex items-center gap-3 text-xs tracking-widest text-black/40">
+            <div className="flex items-center gap-3 text-xs tracking-widest text-[#e9dcc7]/55">
               <span>{String(page).padStart(2, '0')}</span>
               <span className="block h-px w-20 bg-black/15 sm:w-24">
                 <span
-                  className="block h-px bg-black/45 transition-all"
+                  className="block h-px bg-[#ffc78e]/80 transition-all"
                   style={{ width: `${(page / sheets) * 100}%` }}
                 />
               </span>

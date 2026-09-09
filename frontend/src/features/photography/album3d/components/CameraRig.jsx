@@ -74,10 +74,13 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ }) {
     }
     default:
       return {
-        box: [shelfWidth + 0.35, PAGE_HEIGHT * 1.14],
-        target: [0, -0.02, 0],
-        height: 0.1,
-        pad: 1.18,
+        box: [shelfWidth + 0.35, PAGE_HEIGHT * 1.42],
+        target: [SHELF_VIEW.lookX, 0.02, 0],
+        // Near enough level with the books: from above you look down onto the
+        // shelf board rather than along the row.
+        height: -0.02,
+        pad: 1.08,
+        offsetX: SHELF_VIEW.offsetX,
       }
   }
 }
@@ -91,6 +94,14 @@ function leanDistance(shot, focus, fov, aspect) {
 
 /** How far the shelf drifts with the pointer, as a share of what is on screen. */
 const SHELF_PARALLAX = { x: 0.3, y: 0.12 }
+
+/**
+ * How far to the right of the shelf the camera stands, and how far the row is
+ * off the middle of the bay. Straight on you see nothing but spines; from the
+ * side the front board of whichever album has turned to look at you is
+ * readable, which is the point of the hover.
+ */
+const SHELF_VIEW = { offsetX: 2.35, lookX: 0.02 }
 
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -139,7 +150,11 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
 
       easing.damp3(
         camera.position,
-        [shot.target[0] + drift[0], shot.height + drift[1], distance + shot.target[2]],
+        [
+          shot.target[0] + (shot.offsetX ?? 0) + drift[0],
+          shot.height + drift[1],
+          distance + shot.target[2],
+        ],
         0.45,
         delta
       )

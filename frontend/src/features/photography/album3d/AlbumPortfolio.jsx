@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
-import { ACESFilmicToneMapping } from 'three'
+import { ACESFilmicToneMapping, Color } from 'three'
 import Scene from './components/Scene'
 import Controls from './components/Controls'
 import PhotoOverlay from './components/PhotoOverlay'
@@ -43,9 +43,14 @@ export default function AlbumPortfolio({ language = 'en', getText = (t) => t.en 
     <div className="relative min-h-0 w-full flex-1 touch-pan-y">
       <Canvas
         dpr={dpr}
-        gl={{ antialias: true, powerPreference: 'high-performance', alpha: true }}
+        gl={{ antialias: true, powerPreference: 'high-performance', alpha: false }}
         camera={{ fov: 30, position: [0, 0.10, 3.35], near: 0.1, far: 40 }}
-        onCreated={({ gl }) => { gl.toneMapping = ACESFilmicToneMapping; gl.toneMappingExposure = 1.05 }}
+        onCreated={({ gl, scene }) => {
+          gl.toneMapping = ACESFilmicToneMapping
+          gl.toneMappingExposure = 1.15
+          // An unlit room, not the page showing through the canvas.
+          scene.background = new Color('#0b0a09')
+        }}
       >
         <Scene shelf={shelf} album={album} language={language} />
       </Canvas>

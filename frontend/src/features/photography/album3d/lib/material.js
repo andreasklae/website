@@ -175,3 +175,100 @@ export function paintPaper(ctx, w, h, base, seed = 1) {
   }
   ctx.restore()
 }
+
+/**
+ * Sawn timber: growth rings running the length of the board, darker latewood
+ * bands, the odd knot, and a little wear where hands and books have been.
+ */
+export function paintWood(ctx, w, h, base, seed = 1) {
+  const rnd = seeded(seed)
+
+  ctx.fillStyle = base
+  ctx.fillRect(0, 0, w, h)
+
+  // Growth rings, drifting as they run so the grain is never mechanical.
+  const rings = Math.round(h / 7)
+  for (let i = 0; i < rings; i++) {
+    const y0 = rnd() * h
+    const drift = (rnd() - 0.5) * h * 0.12
+    const weight = 0.6 + rnd() * 2.6
+    ctx.globalAlpha = 0.03 + rnd() * 0.07
+    ctx.strokeStyle = rnd() > 0.35 ? '#3a2312' : '#c39a68'
+    ctx.lineWidth = weight
+    ctx.beginPath()
+    ctx.moveTo(0, y0)
+    // Two arcs give a plausible cathedral figure without any real cost.
+    ctx.bezierCurveTo(w * 0.3, y0 + drift, w * 0.7, y0 - drift, w, y0 + drift * 0.4)
+    ctx.stroke()
+  }
+  ctx.globalAlpha = 1
+
+  // Latewood: broader, darker bands between the rings.
+  for (let i = 0; i < Math.round(h / 90); i++) {
+    const y0 = rnd() * h
+    const g = ctx.createLinearGradient(0, y0 - 14, 0, y0 + 14)
+    g.addColorStop(0, 'rgba(0,0,0,0)')
+    g.addColorStop(0.5, 'rgba(58,35,18,0.13)')
+    g.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, y0 - 14, w, 28)
+  }
+
+  // A knot or two, with the grain sweeping around them.
+  for (let i = 0; i < (rnd() > 0.5 ? 1 : 2); i++) {
+    const cx = rnd() * w
+    const cy = rnd() * h
+    const r = 6 + rnd() * 14
+    for (let k = 0; k < 7; k++) {
+      ctx.globalAlpha = 0.1 - k * 0.012
+      ctx.strokeStyle = '#3a2312'
+      ctx.lineWidth = 1.5
+      ctx.beginPath()
+      ctx.ellipse(cx, cy, r + k * 3.5, r * 0.6 + k * 2, rnd() * 0.4, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+    ctx.globalAlpha = 0.22
+    ctx.fillStyle = '#2c1a0d'
+    ctx.beginPath()
+    ctx.ellipse(cx, cy, r * 0.55, r * 0.34, 0, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  ctx.globalAlpha = 1
+
+  // Wear: lighter where things have been slid across it.
+  for (let i = 0; i < 10; i++) {
+    const cx = rnd() * w
+    const cy = rnd() * h
+    const r = (0.08 + rnd() * 0.22) * Math.max(w, h)
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    g.addColorStop(0, rnd() > 0.5 ? 'rgba(255,240,215,0.05)' : 'rgba(0,0,0,0.05)')
+    g.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, w, h)
+  }
+}
+
+/** Painted plaster: flat, with just enough unevenness to catch a lamp. */
+export function paintPlaster(ctx, w, h, base, seed = 1) {
+  const rnd = seeded(seed)
+  ctx.fillStyle = base
+  ctx.fillRect(0, 0, w, h)
+
+  for (let i = 0; i < 40; i++) {
+    const cx = rnd() * w
+    const cy = rnd() * h
+    const r = (0.1 + rnd() * 0.35) * Math.max(w, h)
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    g.addColorStop(0, rnd() > 0.5 ? 'rgba(255,255,255,0.035)' : 'rgba(0,0,0,0.03)')
+    g.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, w, h)
+  }
+
+  ctx.globalAlpha = 0.025
+  for (let i = 0; i < (w * h) / 1400; i++) {
+    ctx.fillStyle = rnd() > 0.5 ? '#ffffff' : '#000000'
+    ctx.fillRect(rnd() * w, rnd() * h, 2, 2)
+  }
+  ctx.globalAlpha = 1
+}

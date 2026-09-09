@@ -7,8 +7,14 @@ import { depthFor } from '../lib/albumDepth'
 // that opens around whichever album is in play.
 export const SHELF_GAP = 0.004
 
-/** How far the row eases apart either side of the album under the pointer. */
-export const HOVER_PART = 0.045
+/**
+ * How far the books to the RIGHT of the pointer slide over.
+ *
+ * Only the right-hand side moves: the row stands against the left upright of
+ * the bookcase, so there is nowhere for the left-hand books to go. Wide enough
+ * that the hovered album can turn far enough to show its cover.
+ */
+export const HOVER_PART = 0.52
 
 /**
  * A shelved album is exactly as thick as its leaves, so the block you see
@@ -48,7 +54,7 @@ export default function Shelf({ layout, language, activeId, hoveredId, full }) {
             full={full?.id === album.id ? full : null}
             index={i}
             language={language}
-            partX={parted < 0 || i === parted ? 0 : (i < parted ? -HOVER_PART : HOVER_PART)}
+            partX={parted >= 0 && i > parted ? HOVER_PART : 0}
             active={album.id === activeId}
           />
         </group>
