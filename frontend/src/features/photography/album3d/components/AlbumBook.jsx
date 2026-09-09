@@ -8,7 +8,8 @@ import { ensureFonts } from '../lib/fonts'
 import { imageCache } from '../lib/textures'
 import { useSpineTexture } from '../lib/useSpineTexture'
 import { MODES, useAlbumStore } from '../lib/store'
-import { depthFor, pageDepthFor, LEAF_FRACTION } from '../lib/albumDepth'
+import { depthFor, pageDepthFor } from '../lib/albumDepth'
+import { blockCentre } from '../lib/blockLayout'
 import { clothFor } from '../lib/cloth'
 import { easing } from 'maath'
 
@@ -142,8 +143,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
   // Where the top of the block ends up once the album has turned: half its own
   // thickness in front of its origin, less half a leaf. Thicker albums sit
   // further forward, so this travels with the album rather than being fixed.
-  const blockCentre = depth / 2 - (pageDepth * LEAF_FRACTION) / 2
-  const pagePlaneZ = READING_PLANE_Z + blockCentre
+  const pagePlaneZ = READING_PLANE_Z + blockCentre(depth, pageDepth)
 
   const colours = clothFor(index)
   const { cloth } = colours

@@ -2,6 +2,7 @@ import { useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT } from './Page'
 import Binding from './Binding'
+import { blockCentre } from '../lib/blockLayout'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
@@ -236,15 +237,12 @@ export default function Album({
   // the outermost leaf's own thickness, so centring on the nominal depth
   // instead leaves the boards proud at the front and short at the back — the
   // binding then reads as not quite flush with the book it binds.
-  const blockCentre = depth / 2 - (pageDepth * 0.45) / 2
+  const centre = blockCentre(depth, pageDepth)
 
   return (
     <group ref={group}>
-     <group position={[blockCentre, 0, 0]}>
-      {/* Centred on the album's own origin, which is where the leaves are
-          centred too — the block group's offset would otherwise carry the
-          binding half a leaf out of line with them. */}
-      <Binding depth={depth} offsetX={-blockCentre} cloth={cloth} spineTexture={spineTexture} />
+     <group position={[centre, 0, 0]}>
+      <Binding depth={depth} pageDepth={pageDepth} cloth={cloth} spineTexture={spineTexture} />
 
       {Array.from({ length: leaves }, (_, sheetIndex) => {
         const front = manager?.entries.get(sheetIndex * 2)

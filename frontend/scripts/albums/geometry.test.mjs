@@ -8,6 +8,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { Box3, Group, Object3D, Vector3 } from 'three'
+// Imported, not restated: a test that mirrors the maths passes happily when an
+// edit fails to land in the component. That is exactly how the binding came to
+// sit half a leaf to the left of both boards with a green test suite.
+import { SPINE_PROUD, bindingPose, bindingSpan, blockCentre, leafSpan } from '../../src/features/photography/album3d/lib/blockLayout.js'
+import { depthFor, pageDepthFor, LEAF_FRACTION as LEAF_F } from '../../src/features/photography/album3d/lib/albumDepth.js'
 
 const PAGE_WIDTH = 1.28
 const PAGE_DEPTH = 0.012
@@ -190,18 +195,7 @@ test('the block occupies the same volume however the album is opened', () => {
   }
 })
 
-const TARGET_DEPTH = 0.33
-const LEAF_FRACTION = 0.45
-const hash01 = (id) => {
-  let h = 2166136261
-  for (let i = 0; i < String(id).length; i++) {
-    h ^= String(id).charCodeAt(i)
-    h = Math.imul(h, 16777619)
-  }
-  return ((h >>> 0) % 1000) / 1000
-}
-const depthFor = (id) => TARGET_DEPTH * (0.86 + hash01(id) * 0.28)
-const pageDepthFor = (n, depth) => depth / Math.max(1, n - 1 + LEAF_FRACTION)
+const LEAF_FRACTION = LEAF_F
 
 test('albums are all about as thick as one another, but not identical', () => {
   // A shelf should look like a shelf, not a bar chart of how many photographs
@@ -230,6 +224,31 @@ test('leaf spacing fills the block exactly, whatever the page count', () => {
 })
 
 test('the binding lines up with the leaves on every axis', () => {
+  // Measured against the placement the scene actually uses.
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8], ['stavern-sommer-2025', 8], ['alpine-winter-2025', 9]]) {
+    const depth = depthFor(id)
+    const spacing = pageDepthFor(sheets, depth)
+    const leaves = leafSpan(depth, spacing, sheets)
+    const bind = bindingSpan(depth, spacing)
+    assert.ok(Math.abs(leaves.front - bind.front) < 1e-9,
+      `${id}: binding front off the boards by ${(leaves.front - bind.front).toFixed(5)}`)
+    assert.ok(Math.abs(leaves.back - bind.back) < 1e-9,
+      `${id}: binding back off the boards by ${(leaves.back - bind.back).toFixed(5)}`)
+    // And the block itself straddles the album's origin.
+    assert.ok(Math.abs(leaves.front + leaves.back) < 1e-9, `${id}: block off centre`)
+
+    // Along the hinge it stands slightly proud instead. Every leaf presents a
+    // face on that line, so a binding ending exactly there is coplanar with
+    // all of them and they fight for depth — the leaves stripe through the
+    // spine. Proud of them, their edges are buried inside it.
+    const { position, scale } = bindingPose(depth, spacing)
+    const boundFace = position[2] + scale[2] / 2
+    assert.ok(boundFace > 0, `${id}: bound face is coplanar with the leaf edges`)
+    assert.ok(boundFace < 0.02, `${id}: spine stands ${boundFace} proud, which will read as a slab`)
+  }
+})
+
+test('the binding placement is the one the scene uses (legacy checks)', () => {
   // Every face of the crease has to meet the block it binds: the same depth,
   // the same height, and its bound edge level with the edge the leaves hinge
   // on. Half a block's extent is the outermost leaf's own thickness, which is
