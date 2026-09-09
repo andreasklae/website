@@ -21,7 +21,9 @@ function spineDate(album) {
   const from = album.dates?.start?.slice(0, 4)
   const to = album.dates?.end?.slice(0, 4)
   if (!from) return ''
-  return to && to !== from ? `${from}\u2013${to}` : from
+  // Spaced either side of the dash: at this size a tight en dash reads as
+  // one long number rather than two years.
+  return to && to !== from ? `${from}\u2009\u2013\u2009${to}` : from
 }
 
 const pick = (value, language) => {

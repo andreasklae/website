@@ -11,4 +11,5 @@ export const CLOTHS = [
   { cloth: '#4e4a44', ink: '#f1efea' }, // warm grey
 ]
 
-export const clothFor = (index) => CLOTHS[((index % CLOTHS.length) + CLOTHS.length) % CLOTHS.length]
+export const clothFor = (index) =>
+  CLOTHS[((Number(index) || 0) % CLOTHS.length + CLOTHS.length) % CLOTHS.length]

@@ -149,9 +149,23 @@ function drawPrintAt(ctx, image, fit, { tilt = 0, border = 0.045, color = '#ddd'
   return fit
 }
 
+/**
+ * A landscape print fills the width of its row, which next to a portrait pair
+ * makes it read as oversized. Held back a little so the two sit comparably on
+ * the page.
+ */
+const LANDSCAPE_INSET = 0.9
+
 /** Fits the print inside `box` by aspect, then draws it. */
 function printedPhoto(ctx, image, box, aspect, opts = {}) {
-  return drawPrintAt(ctx, image, contain(box, aspect), opts)
+  const scale = aspect > 1.02 ? LANDSCAPE_INSET : 1
+  const inset = {
+    x: box.x + (box.w * (1 - scale)) / 2,
+    y: box.y + (box.h * (1 - scale)) / 2,
+    w: box.w * scale,
+    h: box.h * scale,
+  }
+  return drawPrintAt(ctx, image, contain(inset, aspect), opts)
 }
 
 /** Word-wraps text and returns the number of lines drawn. */
@@ -348,10 +362,12 @@ function fitLines(ctx, text, maxWidth) {
  */
 export const BOARD_SHADE = 0.12
 
-function coverFace(ctx, slot, language, images, seed) {
+const DEFAULT_CLOTH = '#3d3730'
+const DEFAULT_INK = '#f2ece0'
+
+function coverFace(ctx, slot, language, images, seed, cloth, ink) {
   // Cloth-bound board, in the album's own colour so the board and the spine
   // you picked it out by are the same material.
-  const cloth = slot.cloth || '#3d3730'
   paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
 
   // A board catches the light unevenly across its width.
@@ -373,7 +389,7 @@ function coverFace(ctx, slot, language, images, seed) {
   const maxWidth = CONTENT.w - 40
 
   // Title: shrink to fit rather than run off the board.
-  ctx.fillStyle = slot.ink || '#f2ece0'
+  ctx.fillStyle = ink
   let titleSize = 92
   const title = pick(slot.title, language)
   ctx.font = `700 ${titleSize}px ${HAND}`
@@ -395,18 +411,17 @@ function coverFace(ctx, slot, language, images, seed) {
   const subTop = bottom - (subLines.length - 1) * subLineHeight
 
   ctx.globalAlpha = 0.62
-  ctx.fillStyle = slot.ink || '#f2ece0'
+  ctx.fillStyle = ink
   subLines.forEach((line, i) => ctx.fillText(line, FACE_W / 2, subTop + i * subLineHeight))
 
   ctx.globalAlpha = 1
-  ctx.fillStyle = slot.ink || '#f2ece0'
+  ctx.fillStyle = ink
   ctx.font = `700 ${titleSize}px ${HAND}`
   ctx.fillText(title, FACE_W / 2, subTop - 62)
   ctx.restore()
 }
 
-function backCoverFace(ctx, slot, language, seed) {
-  const cloth = slot.cloth || '#3d3730'
+function backCoverFace(ctx, slot, language, seed, cloth, ink) {
   paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
   const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
   g.addColorStop(0, 'rgba(0,0,0,0.12)')
@@ -417,7 +432,7 @@ function backCoverFace(ctx, slot, language, seed) {
   ctx.textAlign = 'center'
   ctx.font = `40px ${HAND_INK}`
   ctx.globalAlpha = 0.34
-  ctx.fillStyle = slot.ink || '#f2ece0'
+  ctx.fillStyle = ink
   ctx.fillText(pick(slot.title, language), FACE_W / 2, FACE_H - 120)
   ctx.restore()
 }
@@ -430,7 +445,13 @@ function backCoverFace(ctx, slot, language, seed) {
 export function paintFace(
   canvas,
   face,
-  { language = 'en', images = new Map(), stackOffsets = {}, scale = 1 } = {}
+  {
+    language = 'en', images = new Map(), stackOffsets = {}, scale = 1,
+    // The album's binding cloth. A board painted without it comes out in the
+    // fallback colour, which is how every cover ended up the same shade
+    // however varied the spines were.
+    cloth = DEFAULT_CLOTH, ink = DEFAULT_INK,
+  } = {}
 ) {
   const ctx = canvas.getContext('2d')
   // Everything below draws in the same coordinate system whatever the scale,
@@ -445,8 +466,8 @@ export function paintFace(
   const seed = seedFrom(face.role + (face.slots?.[0]?.src || face.slots?.[0]?.kind || '') + (face.slots?.length ?? 0))
 
   const first = face.slots?.[0]
-  if (first?.kind === 'cover') { coverFace(ctx, first, language, images, seed); return [] }
-  if (first?.kind === 'back-cover') { backCoverFace(ctx, first, language, seed); return [] }
+  if (first?.kind === 'cover') { coverFace(ctx, first, language, images, seed, cloth, ink); return [] }
+  if (first?.kind === 'back-cover') { backCoverFace(ctx, first, language, seed, cloth, ink); return [] }
 
   paper(ctx, seed)
 

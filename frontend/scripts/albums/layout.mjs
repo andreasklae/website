@@ -167,15 +167,51 @@ function compileChapter(chapter, index, opts = {}) {
 }
 
 /** Compiles the highlights run that opens every album, led by a memo. */
-function compileHighlights(sources, index, memo) {
-  const pages = [newPage('highlights')]
+/** Moves the last item onto a page of its own, adding exactly one page. */
+function splitLastPage(pages) {
+  const last = pages[pages.length - 1]
+  if (last.slots.length < 2) return false
+  const moved = last.slots.pop()
+  last.used -= unitsFor(moved)
+  const page = newPage(last.role)
+  page.slots.push(moved)
+  page.used = unitsFor(moved)
+  pages.push(page)
+  return true
+}
+
+/**
+ * The highlights run that opens an album, led by a memo.
+ *
+ * `variant` asks for the same content across one more page, which is how the
+ * chapters after it are brought onto a left-hand page without inserting a
+ * blank anywhere. Giving the memo a title page of its own is the tidiest way
+ * to spend that page, but it only changes the count when the run is odd — so
+ * failing that, the last item takes a page instead.
+ */
+function compileHighlights(sources, index, memo, variant = 0) {
   const MAX = 64 // generous ceiling; highlights runs are short in practice
-  if (memo) place(pages, cardSlot('memo', memo), MAX, 'highlights')
-  for (const src of sources) {
-    const slot = photoSlot(src, index)
-    if (slot) place(pages, slot, MAX, 'highlights')
+  const build = (memoAlone) => {
+    const pages = [newPage('highlights')]
+    if (memo) {
+      place(pages, cardSlot('memo', memo), MAX, 'highlights')
+      if (memoAlone) pages.push(newPage('highlights'))
+    }
+    for (const src of sources) {
+      const slot = photoSlot(src, index)
+      if (slot) place(pages, slot, MAX, 'highlights')
+    }
+    return pages
   }
-  return pages
+
+  const plain = build(false)
+  if (variant === 0) return plain
+
+  const titled = build(true)
+  if (titled.length > plain.length) return titled
+
+  splitLastPage(titled)
+  return titled
 }
 
 const blankFace = (role = 'blank') => ({ role, slots: [], used: 0 })
@@ -183,12 +219,15 @@ const blankFace = (role = 'blank') => ({ role, slots: [], used: 0 })
 /**
  * When the book is open you see the BACK of one sheet on the left and the
  * FRONT of the next on the right, so a visual spread is the face pair
- * (1,2), (3,4), (5,6)... Sections that should read as one spread therefore
- * have to begin on an odd face index; pad with a blank when they do not.
+ * (1,2), (3,4), (5,6)... A chapter reads best beginning on the left-hand page,
+ * which means an odd face index.
+ *
+ * Padding to get there costs a blank page, which is worse than the thing it
+ * fixes — so nothing is padded. Instead the run of highlights before the
+ * chapters is nudged by one face, by giving its opening memo a page of its own
+ * or not, and whichever parity that lands on is what the chapters get.
  */
-const alignToSpread = (faces) => {
-  if (faces.length % 2 === 0) faces.push(blankFace('spacer'))
-}
+const startsLeft = (faceIndex) => faceIndex % 2 === 1
 
 /**
  * Pairs page faces into the {front, back} sheets the renderer flips, padding
@@ -204,10 +243,9 @@ function toSheets(faces) {
   return sheets
 }
 
-/** Compiles a journal story into a full album. */
-export function compileStoryAlbum(story, index) {
+/** Builds a story's faces; `variant` 1 spends one more page on the highlights. */
+function storyFaces(story, index, title, variant) {
   const faces = []
-  const title = stripYear(story.title)
 
   faces.push({
     role: 'cover',
@@ -221,20 +259,32 @@ export function compileStoryAlbum(story, index) {
     used: PAGE_UNITS,
   })
 
-  alignToSpread(faces)
   faces.push(...compileHighlights(story.highlights || [], index, {
     title,
     text: story.description,
     meta: { dates: story.dates, camera: story.camera },
-  }))
+  }, variant))
 
+  const chapterStart = faces.length
   for (const chapter of story.chapters || []) {
-    // Each chapter is one spread, so it must open on the left-hand page.
-    alignToSpread(faces)
     faces.push(...compileChapter(chapter, index))
   }
 
-  faces.push({ role: 'back-cover', slots: [{ kind: 'back-cover', title: story.title }], used: PAGE_UNITS })
+  faces.push({ role: 'back-cover', slots: [{ kind: 'back-cover', title }], used: PAGE_UNITS })
+  return { faces, chapterStart }
+}
+
+/** Compiles a journal story into a full album. */
+export function compileStoryAlbum(story, index) {
+  const title = stripYear(story.title)
+
+  // A chapter reads best opening on the left-hand page. Padding to get there
+  // costs a blank page, which is worse than the thing it fixes — so instead
+  // the run of highlights before the chapters is nudged by one face, by giving
+  // its opening memo a page of its own or not. If neither parity works out,
+  // the chapters simply start on the right.
+  const options = [0, 1].map((variant) => storyFaces(story, index, title, variant))
+  const chosen = options.find((o) => startsLeft(o.chapterStart)) || options[0]
 
   return {
     id: story.id,
@@ -244,8 +294,8 @@ export function compileStoryAlbum(story, index) {
     dates: story.dates,
     camera: story.camera,
     cover: photoSlot(story.thumbnail, index),
-    sheets: toSheets(faces),
-    faceCount: faces.length,
+    sheets: toSheets(chosen.faces),
+    faceCount: chosen.faces.length,
   }
 }
 
@@ -263,11 +313,9 @@ export function compileHighlightsAlbum({ id, title, description, dates, globalHi
     used: PAGE_UNITS,
   })
 
-  alignToSpread(faces)
   faces.push(...compileHighlights(globalHighlights || [], index, { title, text: description }))
 
   for (const story of stories || []) {
-    alignToSpread(faces)
     faces.push(...compileHighlights(story.highlights || [], index, {
       title: stripYear(story.title),
       text: story.description,
@@ -289,4 +337,4 @@ export function compileHighlightsAlbum({ id, title, description, dates, globalHi
   }
 }
 
-export const __test = { compileChapter, compileHighlights, toSheets, freeUnits, unitsFor, alignToSpread, placeInLastFreeSlot }
+export const __test = { compileChapter, compileHighlights, toSheets, freeUnits, unitsFor, startsLeft, placeInLastFreeSlot }

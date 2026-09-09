@@ -95,12 +95,10 @@ function useBoardTexture(album, language, kind, colours) {
     tex.anisotropy = 4
 
     // The same face description the album's own page 0 is built from, so the
-    // board and the first leaf are the same image.
-    // The album's own cloth has to travel with the face description, or every
-    // board paints in the fallback colour and the covers all come out alike
-    // however varied the spines are.
+    // board and the first leaf are the same image. The cloth is passed to the
+    // painter rather than smuggled through the slot.
     const face = kind === 'back-cover'
-      ? { role: 'back-cover', slots: [{ kind: 'back-cover', title: album.title, ...colours }] }
+      ? { role: 'back-cover', slots: [{ kind: 'back-cover', title: album.title }] }
       : {
           role: 'cover',
           slots: [{
@@ -109,13 +107,12 @@ function useBoardTexture(album, language, kind, colours) {
             subtitle: album.camera,
             dates: album.dates,
             photo: album.cover,
-            ...colours,
           }],
         }
 
     const paint = () => {
       if (cancelled) return
-      paintFace(canvas, face, { language, images: imageCache.map, scale: COVER_SCALE })
+      paintFace(canvas, face, { language, images: imageCache.map, scale: COVER_SCALE, ...colours })
       tex.needsUpdate = true
     }
 
@@ -216,6 +213,7 @@ export default function AlbumBook({ album, full, index, language, active, partX 
         depth={depth}
         pageDepth={pageDepth}
         cloth={cloth}
+        albumId={album.id}
         active={active}
         language={language}
         coverTexture={coverTexture}

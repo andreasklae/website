@@ -84,14 +84,26 @@ function ZoomView({ slot, onClose, getText }) {
   )
 }
 
+/** Where a print sits once it has been thrown clear of the pile. */
+const flungPose = (direction, box) => ({
+  x: direction * (box.w + 220),
+  y: -40,
+  rotate: direction * 18,
+  opacity: 0.9,
+})
+
+const RESTING = { x: 0, y: 0, rotate: 0, opacity: 1 }
+
 /**
- * One card in the held stack. Only the front card is draggable.
+ * One print in the pile.
  *
- * `fling` lets the buttons throw the card the same way a drag does, so
- * pressing an arrow and swiping produce the same motion rather than one
- * animating and the other cutting.
+ * Three states, because a print is doing one of three things: sitting in the
+ * pile, being dragged off the top of it, or travelling. Only the top print
+ * carries the drag motion values — leaving them on a print that is travelling
+ * pins it where the pointer left it, which is what made a thrown print fly out
+ * and then simply vanish instead of landing at the back.
  */
-function StackCard({ index, isFront, box, fling, onSendToBack, children }) {
+function StackCard({ index, isFront, box, thrown, entering, direction, onSendToBack, children }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useTransform(y, [-200, 200], [STACK.tiltStrength, -STACK.tiltStrength])
@@ -105,25 +117,29 @@ function StackCard({ index, isFront, box, fling, onSendToBack, children }) {
     else { x.set(0); y.set(0) }
   }
 
-  const thrown = isFront && fling
+  const draggable = isFront && !thrown && !entering
+
   return (
     <motion.div
-      className={`absolute ${isFront ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
+      className={`absolute ${draggable ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
       style={{
         width: box.w,
         height: box.h,
-        x: isFront && !thrown ? x : 0,
-        y: isFront && !thrown ? y : 0,
-        rotateX: isFront && !thrown ? rotateX : 0,
-        rotateY: isFront && !thrown ? rotateY : 0,
         zIndex: 100 - index,
+        ...(draggable ? { x, y, rotateX, rotateY } : null),
       }}
-      animate={thrown ? { x: fling * (box.w + 220), y: -40, rotate: fling * 18, opacity: 0.85 } : {}}
-      drag={isFront && !thrown}
+      animate={thrown || entering === 'out' ? flungPose(direction, box) : draggable ? undefined : RESTING}
+      // An arriving print is placed at the throw position with no animation and
+      // then eased home: the same movement as a throw, run backwards.
+      transition={
+        entering === 'out'
+          ? { duration: 0 }
+          : { type: 'spring', stiffness: STACK.springStiffness, damping: STACK.springDamping }
+      }
+      drag={draggable}
       dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
       dragElastic={0.55}
       onDragEnd={handleDragEnd}
-      transition={{ type: 'spring', stiffness: STACK.springStiffness, damping: STACK.springDamping }}
     >
       <motion.div
         className="h-full w-full"
@@ -204,40 +220,53 @@ function StackPrint({ photo, box }) {
  */
 function StackView({ slot, onClose, getText }) {
   const [order, setOrder] = useState(() => slot.photos.map((_, i) => i))
-  const [fling, setFling] = useState(0)
+  /**
+   * Whichever print is travelling, and which way.
+   *
+   * Forward and back are the same movement in opposite senses: forward throws
+   * the top print clear and it lands at the back; back takes the print at the
+   * back and runs that same throw in reverse to bring it to the front. Playing
+   * the forward animation for "back" looks like taking a photograph off the
+   * front of the pile to reach one that was behind it, which is not what
+   * happened.
+   */
+  const [travel, setTravel] = useState(null)
 
   useEffect(() => {
     setOrder(slot.photos.map((_, i) => i))
-    setFling(0)
+    setTravel(null)
   }, [slot])
 
   const box = useMemo(printSize, [])
   const front = slot.photos[order[0]]
-
-  // Turning the pile is what makes the front print upright: its image is
-  // already rotated on the paper, so this cancels it out.
   const pileRotation = isLandscape(front) ? -90 : 0
 
-  const settle = useCallback((nextOrder) => {
-    setOrder(nextOrder)
-    setFling(0)
-  }, [])
+  const forward = useCallback(() => {
+    if (travel) return
+    const leaving = order[0]
+    setTravel({ id: leaving, phase: 'throwing', direction: 1 })
+    setTimeout(() => {
+      setOrder((o) => [...o.slice(1), o[0]])
+      setTravel(null) // now at the back, and eases home from where it was thrown
+    }, 200)
+  }, [travel, order])
+
+  const back = useCallback(() => {
+    if (travel) return
+    const arriving = order[order.length - 1]
+    setOrder((o) => [o[o.length - 1], ...o.slice(0, -1)])
+    // Placed where a thrown print ends up, then eased in: the throw, reversed.
+    setTravel({ id: arriving, phase: 'out', direction: 1 })
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setTravel({ id: arriving, phase: 'in', direction: 1 }))
+    )
+    setTimeout(() => setTravel(null), 420)
+  }, [travel, order])
 
   const sendToBack = useCallback(() => {
-    settle([...order.slice(1), order[0]])
-  }, [order, settle])
-
-  const advance = useCallback((direction) => {
-    if (fling) return
-    setFling(direction)
-    const current = order
-    // Let the throw play out before the pile re-forms behind it.
-    setTimeout(() => {
-      settle(direction > 0
-        ? [...current.slice(1), current[0]]
-        : [current[current.length - 1], ...current.slice(0, -1)])
-    }, 220)
-  }, [fling, order, settle])
+    setOrder((o) => [...o.slice(1), o[0]])
+    setTravel(null)
+  }, [])
 
   const visible = order.slice(0, 5)
   // Square frame so the row below does not shift as the pile turns.
@@ -270,7 +299,9 @@ function StackView({ slot, onClose, getText }) {
             index={i}
             isFront={i === 0}
             box={box}
-            fling={i === 0 ? fling : 0}
+            thrown={travel?.id === photoIndex && travel.phase === 'throwing'}
+            entering={travel?.id === photoIndex && travel.phase !== 'throwing' ? travel.phase : null}
+            direction={travel?.direction ?? 1}
             onSendToBack={sendToBack}
           >
             <StackPrint photo={slot.photos[photoIndex]} box={box} />
@@ -284,7 +315,7 @@ function StackView({ slot, onClose, getText }) {
         </p>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => advance(-1)}
+            onClick={back}
             aria-label={getText({ en: 'Previous photo', no: 'Forrige bilde' })}
             className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25
                        bg-black/45 text-white/90 backdrop-blur transition hover:bg-black/70 active:scale-95"
@@ -293,7 +324,7 @@ function StackView({ slot, onClose, getText }) {
           </button>
           <CloseButton onClick={onClose} label={getText({ en: 'Put back', no: 'Legg tilbake' })} />
           <button
-            onClick={() => advance(1)}
+            onClick={forward}
             aria-label={getText({ en: 'Next photo', no: 'Neste bilde' })}
             className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25
                        bg-black/45 text-white/90 backdrop-blur transition hover:bg-black/70 active:scale-95"

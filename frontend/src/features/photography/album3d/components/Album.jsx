@@ -32,7 +32,7 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  */
 export default function Album({
   full, sheetCount, active, language, planeZ = 0, hingeX = 0,
-  depth, pageDepth, cloth,
+  depth, pageDepth, cloth, albumId,
   coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -148,9 +148,8 @@ export default function Album({
 
     if (!sameSlot) setHoveredSlot({ faceIndex, ...hit })
 
-    // Photographs and stacks are worth leaning in on; postcards and memos are
-    // already legible at spread distance.
-    const leanable = hit.slot.kind === 'photo' || hit.slot.kind === 'stack'
+    // Anything with something to read or look at closely.
+    const leanable = hit.slot.kind !== 'cover' && hit.slot.kind !== 'back-cover'
     if (!sameSlot) document.body.style.cursor = 'pointer'
 
     if (!leanable) { setFocus(null); return }
@@ -242,7 +241,13 @@ export default function Album({
   return (
     <group ref={group}>
      <group position={[centre, 0, 0]}>
-      <Binding depth={depth} pageDepth={pageDepth} cloth={cloth} spineTexture={spineTexture} />
+      <Binding
+        depth={depth}
+        pageDepth={pageDepth}
+        cloth={cloth}
+        albumId={albumId}
+        spineTexture={spineTexture}
+      />
 
       {Array.from({ length: leaves }, (_, sheetIndex) => {
         const front = manager?.entries.get(sheetIndex * 2)
