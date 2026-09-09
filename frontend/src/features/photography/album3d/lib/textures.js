@@ -7,11 +7,7 @@
 import { CanvasTexture, LinearFilter, SRGBColorSpace } from 'three'
 import { paintFace, faceSources, FACE_W, FACE_H } from './faceCanvas'
 import { ensureFonts } from './fonts'
-
-const assetUrl = (rel) => {
-  const base = (import.meta?.env?.BASE_URL) || '/'
-  return `${base}${String(rel).replace(/^\.?\//, '').split('/').map(encodeURIComponent).join('/')}`
-}
+import { assetUrl } from './assetUrl'
 
 /** Shared, size-capped cache of decoded images keyed by source path. */
 class ImageCache {
@@ -185,4 +181,4 @@ export class FaceTextureManager {
   }
 }
 
-export { FACE_W, FACE_H, assetUrl }
+export { FACE_W, FACE_H }

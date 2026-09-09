@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { ACESFilmicToneMapping } from 'three'
 import Scene from './components/Scene'
 import Controls from './components/Controls'
+import PhotoOverlay from './components/PhotoOverlay'
 import { useAlbumData } from './lib/useAlbumData'
 import { ensureFonts } from './lib/fonts'
 import { MODES, useAlbumStore } from './lib/store'
@@ -50,6 +51,7 @@ export default function AlbumPortfolio({ language = 'en', getText = (t) => t.en 
       </Canvas>
 
       <Controls getText={getText} />
+      <PhotoOverlay getText={getText} />
 
       {shelf.length === 0 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

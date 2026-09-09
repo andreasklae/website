@@ -9,8 +9,10 @@ import { HAND, HAND_INK } from './fonts'
 
 export const FACE_W = 1024
 export const FACE_H = 1367 // 0.749 — matches the page mesh aspect
-const MARGIN = 62
-const GAP = 26
+// Generous margins on purpose: prints that reach the page edge, or sit tight
+// against each other, read as a contact sheet rather than an album page.
+const MARGIN = 88
+const GAP = 52
 
 const PAPER = '#f4f1ea'
 const PAPER_EDGE = '#e6e0d4'
@@ -50,9 +52,9 @@ export function slotRects(face) {
 
   if (columns) {
     // Tighter gutter than the row split: side-by-side portraits need the width.
-    const w = (CONTENT.w - GAP * 0.6) / 2
+    const w = (CONTENT.w - GAP) / 2
     return slots.slice(0, 2).map((slot, i) => ({
-      slot, x: CONTENT.x + i * (w + GAP * 0.6), y: CONTENT.y, w, h: CONTENT.h,
+      slot, x: CONTENT.x + i * (w + GAP), y: CONTENT.y, w, h: CONTENT.h,
     }))
   }
 
@@ -114,7 +116,7 @@ function drawCover(ctx, image, rect) {
  * Draws a print at an explicit rect: white border, soft shadow, and a degree
  * or two of rotation so the page never looks like a CSS grid.
  */
-function drawPrintAt(ctx, image, fit, { tilt = 0, border = 0.035, color = '#ddd', cover = false } = {}) {
+function drawPrintAt(ctx, image, fit, { tilt = 0, border = 0.045, color = '#ddd', cover = false } = {}) {
   const pad = Math.min(fit.w, fit.h) * border
   const cx = fit.x + fit.w / 2
   const cy = fit.y + fit.h / 2
@@ -282,6 +284,9 @@ function memo(ctx, box, slot, language) {
   return card
 }
 
+/** How many prints of a stack are drawn on the page. */
+export const STACK_VISIBLE = 4
+
 /**
  * A stack of photographs. Every sibling is drawn in the SAME frame as the top
  * print — only nudged and rotated — so their corners show past it and the pile
@@ -290,7 +295,7 @@ function memo(ctx, box, slot, language) {
  */
 function photoStack(ctx, box, slot, images, { offset = 0 } = {}) {
   const count = slot.photos.length
-  const visible = Math.min(count, 4)
+  const visible = Math.min(count, STACK_VISIBLE)
   const top = slot.photos[offset % count]
 
   // Leave room around the frame for the siblings to peek out of.
@@ -316,7 +321,7 @@ function photoStack(ctx, box, slot, images, { offset = 0 } = {}) {
   ctx.font = `32px ${HAND}`
   ctx.fillStyle = 'rgba(43,39,33,0.55)'
   ctx.textAlign = 'right'
-  ctx.fillText(`${(offset % count) + 1} / ${count}`, frame.x + frame.w + 6, frame.y + frame.h + 52)
+  ctx.fillText(`${count} photos —`, frame.x + frame.w + 6, frame.y + frame.h + 54)
   ctx.restore()
 
   return frame
@@ -398,7 +403,7 @@ export function paintFace(canvas, face, { language = 'en', images = new Map(), s
     let drawn
     if (slot.kind === 'photo') {
       drawn = printedPhoto(ctx, images.get(slot.src), box, slot.aspect, {
-        tilt: (i % 2 ? 1 : -1) * 0.009, color: slot.color,
+        tilt: (i % 2 ? 1 : -1) * 0.008, color: slot.color,
       })
     } else if (slot.kind === 'postcard') {
       drawn = postcard(ctx, box, slot, language, (i % 2 ? 1 : -1) * 0.012)
@@ -419,7 +424,7 @@ export function faceSources(face) {
   for (const slot of face.slots || []) {
     if (slot.kind === 'photo') out.push(slot)
     else if (slot.kind === 'cover' && slot.photo) out.push(slot.photo)
-    else if (slot.kind === 'stack') out.push(...slot.photos.slice(0, 5))
+    else if (slot.kind === 'stack') out.push(...slot.photos.slice(0, STACK_VISIBLE))
   }
   return out
 }
