@@ -49,7 +49,7 @@ export default function Scene({ shelf, album, language }) {
           />
           {slot && (mode === MODES.OPEN || mode === MODES.ZOOM) && (
             <group position={[slot.x, 0, 0]}>
-              <ActiveAlbum album={album} language={language} />
+              <ActiveAlbum album={album} language={language} thickness={slot.thickness} />
             </group>
           )}
         </ShelfPan>

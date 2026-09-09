@@ -24,6 +24,9 @@ export const READING_ROTATION = -Math.PI / 2
 /** Both the closed book and the open one sit here, so opening never jumps. */
 export const FORWARD_Z = PAGE_WIDTH * 0.3
 
+/** Shared by the turn out and the turn back, so one is the reverse of the other. */
+const TURN_SMOOTHING = 0.42
+
 const boxGeometry = new BoxGeometry(1, 1, 1)
 const BOARD = new Color('#3a342c')
 const PAGES_EDGE = new Color('#e6dfd0')
@@ -135,26 +138,33 @@ export default function AlbumBook({ album, index, language, offsetX, active }) {
   useFrame((_, delta) => {
     const m = mesh.current
     if (!m) return
-    easing.dampAngle(m.rotation, 'y', active ? READING_ROTATION : SHELF_ROTATION, 0.42, delta)
+    // One smoothing constant for both axes, and the same one whichever way the
+    // album is going. Turning out and turning back are then the exact reverse
+    // of each other — with different constants the book slid home faster than
+    // it rotated, which is what made putting it back feel wrong.
+    easing.dampAngle(m.rotation, 'y', active ? READING_ROTATION : SHELF_ROTATION, TURN_SMOOTHING, delta)
     easing.damp3(
       m.position,
       [offsetX, hovered ? 0.055 : 0, active ? FORWARD_Z : hovered ? 0.07 : 0],
-      active ? 0.42 : 0.24,
+      TURN_SMOOTHING,
       delta
     )
   })
 
-  // Once the album is open, its pages are the album; the block steps aside.
-  if (active && (mode === MODES.OPEN || mode === MODES.ZOOM)) return null
+  // While the album is open its pages ARE the album, so the block hides — but
+  // stays mounted, keeping its rotation, so closing rewinds from where it is
+  // instead of snapping back to spine-on.
+  const openedOut = active && (mode === MODES.OPEN || mode === MODES.ZOOM)
 
   return (
     <mesh
       ref={mesh}
+      visible={!openedOut}
       geometry={boxGeometry}
       material={materials}
       scale={[album.thickness, PAGE_HEIGHT * 1.05, PAGE_WIDTH * 1.02]}
       onPointerOver={(e) => {
-        if (mode === MODES.OPEN || mode === MODES.ZOOM) return
+        if (openedOut || mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()
         setHoveredAlbum(album.id)
         document.body.style.cursor = 'pointer'
@@ -165,7 +175,7 @@ export default function AlbumBook({ album, index, language, offsetX, active }) {
         document.body.style.cursor = ''
       }}
       onClick={(e) => {
-        if (mode === MODES.OPEN || mode === MODES.ZOOM) return
+        if (openedOut || mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()
         document.body.style.cursor = ''
         if (active) useAlbumStore.getState().open()

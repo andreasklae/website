@@ -16,49 +16,52 @@ export function worldPointFor(u, v, sheetIndex, page) {
 }
 
 /**
- * How far the view may slide across a photograph, as a fraction of its
- * half-size. This is ALSO the feedback gain of the hover loop — the world
- * point under a stationary cursor moves with the camera one-for-one — so it
- * must stay below 1 for the framing to converge rather than run away.
- */
-export const LEAN_PAN = 0.4
-
-/**
  * How much of the way from the spread to a full-photo close-up the camera
  * actually travels. Fitting a photograph exactly is a ~60% cut in distance,
  * which reads as a jump rather than a lean, so only a fraction of it is taken.
  */
 export const LEAN_DISTANCE = 0.3
 
-/** How far the camera slides toward the photograph it is leaning on. */
-export const LEAN_RECENTRE = 0.62
-
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
 /**
- * Where the camera should look while the cursor rests at `point` inside the
- * photograph `box`. Returns the photograph's own size unchanged — how far to
- * actually move in is CameraRig's decision, via LEAN_DISTANCE.
+ * How much of the pointer's movement becomes pan, once the lean has settled.
  *
- * The camera does NOT centre on the cursor. Centring is divergent: moving the
- * camera moves the world point under a stationary cursor by the same amount,
- * so the target runs away and the photo slides out from under the pointer —
- * which is the oscillation this replaces.
- *
- * Instead the pan is proportional. The cursor's position within the photo,
- * as a fraction, maps onto a pan range of (1 - LEAN_VIEW) of the photo. The
- * loop gain is therefore (1 - LEAN_VIEW) < 1, so it converges on a steady
- * framing instead of drifting, while still letting the pointer reach every
- * corner of the photograph.
+ * Pinning the spot to the pointer one-for-one is exactly right while zooming,
+ * but it also means the photograph follows the pointer forever and you can
+ * never move off it. Below 1, the page drifts against the pointer as you move,
+ * so leaving the photograph still works.
  */
-export function leanTarget(box, point) {
-  const relX = clamp((point.x - box.x) / (box.w / 2 || 1), -1, 1)
-  const relY = clamp((point.y - box.y) / (box.h / 2 || 1), -1, 1)
+export const LEAN_PAN_GAIN = 0.45
+
+/** The camera is never allowed to wander further than the open spread. */
+const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
+
+/**
+ * Where the camera must look for the world point `anchor` to sit under the
+ * pointer, given where the pointer is on screen and how much world the camera
+ * currently spans.
+ *
+ * This is solved, not iterated. `ndc` is the pointer in normalised device
+ * coordinates — pure screen space, owing nothing to where the camera is — so
+ * the answer never feeds back into its own input. That is what makes it
+ * stable, and it is precisely where the earlier attempts went wrong: they
+ * derived the target from a world point picked through the very camera they
+ * were then moving.
+ *
+ * At the pointer position the anchor was captured at, the spot is held
+ * exactly, so zooming keeps it under the cursor. Movement away from that
+ * position pans, damped by LEAN_PAN_GAIN.
+ *
+ * @param halfW,halfH  half the world extent the camera spans at its distance
+ */
+export function anchoredTarget(focus, halfW, halfH) {
+  const { anchor, ndc, ndc0 } = focus
+  const ex = (ndc0.x + (ndc.x - ndc0.x) * LEAN_PAN_GAIN) * halfW
+  const ey = (ndc0.y + (ndc.y - ndc0.y) * LEAN_PAN_GAIN) * halfH
   return {
-    x: box.x + (relX * box.w * LEAN_PAN) / 2,
-    y: box.y + (relY * box.h * LEAN_PAN) / 2,
-    w: box.w,
-    h: box.h,
+    x: clamp(anchor.x - ex, -BOUNDS.x, BOUNDS.x),
+    y: clamp(anchor.y - ey, -BOUNDS.y, BOUNDS.y),
   }
 }
 

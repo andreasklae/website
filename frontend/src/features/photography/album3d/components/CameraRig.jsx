@@ -3,7 +3,7 @@ import { easing } from 'maath'
 import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
 import { MODES, SIDES, useAlbumStore } from '../lib/store'
-import { LEAN_DISTANCE, LEAN_RECENTRE } from '../lib/focus'
+import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 
 // One place decides where the camera is. Each mode names the box it has to
@@ -66,19 +66,11 @@ function shotFor(mode, { narrow, side, shelfWidth }) {
   }
 }
 
-/** Blends the resting shot toward the hovered photograph, by LEAN_DISTANCE. */
-function applyLean(shot, focus, fov, aspect) {
+/** How far in the camera goes when leaning on a photograph. */
+function leanDistance(shot, focus, fov, aspect) {
   const resting = fitDistance(fov, aspect, shot.box, shot.pad)
-  const closeUp = fitDistance(fov, aspect, [focus.w, focus.h], 1.08)
-  return {
-    distance: resting + (closeUp - resting) * LEAN_DISTANCE,
-    target: [
-      shot.target[0] + (focus.x - shot.target[0]) * LEAN_RECENTRE,
-      shot.target[1] + (focus.y - shot.target[1]) * LEAN_RECENTRE,
-      shot.target[2],
-    ],
-    height: shot.height + (focus.y - shot.height) * LEAN_RECENTRE,
-  }
+  const closeUp = fitDistance(fov, aspect, [focus.box.w, focus.box.h], 1.08)
+  return resting + (closeUp - resting) * LEAN_DISTANCE
 }
 
 export default function CameraRig({ shelfWidth = 1.4 }) {
@@ -88,26 +80,34 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const focus = useAlbumStore((s) => s.focus)
   const { camera, size } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
+  // Kept across frames so the lean eases from the resting distance.
+  const dist = useRef({ value: 4 }).current
 
   useFrame((_, delta) => {
     const shot = shotFor(mode, { narrow, side, shelfWidth })
     const aspect = size.width / Math.max(size.height, 1)
-
     const leaning = focus && (mode === MODES.OPEN || mode === MODES.ZOOM)
-    const { distance, target, height } = leaning
-      ? applyLean(shot, focus, camera.fov, aspect)
-      : {
-          distance: fitDistance(camera.fov, aspect, shot.box, shot.pad),
-          target: shot.target,
-          height: shot.height,
-        }
 
-    // Leaning in is quicker than pulling back out, which keeps hovering
-    // responsive without the camera feeling twitchy when the cursor leaves.
-    const smooth = leaning ? 0.3 : 0.45
+    if (leaning) {
+      // Ease the distance, then solve the look-at from wherever it has got to,
+      // so the anchored spot stays under the pointer throughout the move and
+      // not merely once it settles.
+      easing.damp(dist, 'value', leanDistance(shot, focus, camera.fov, aspect), 0.3, delta)
+      const halfH = dist.value * Math.tan(MathUtils.degToRad(camera.fov) / 2)
+      const halfW = halfH * aspect
+      const { x, y } = anchoredTarget(focus, halfW, halfH)
 
-    easing.damp3(camera.position, [target[0], height, distance + target[2]], smooth, delta)
-    easing.damp3(current.current, target, smooth, delta)
+      // Square on to the page while leaning: an anchored zoom only holds if
+      // the camera is looking straight down its own axis.
+      easing.damp3(camera.position, [x, y, focus.z + dist.value], 0.18, delta)
+      easing.damp3(current.current, [x, y, focus.z], 0.18, delta)
+    } else {
+      const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
+      dist.value = distance
+      easing.damp3(camera.position, [shot.target[0], shot.height, distance + shot.target[2]], 0.45, delta)
+      easing.damp3(current.current, shot.target, 0.45, delta)
+    }
+
     lookTarget.copy(current.current)
     camera.lookAt(lookTarget)
   })

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
-import { focusBoxFor, worldPointFor, leanTarget } from '../lib/focus'
+import { focusBoxFor, worldPointFor } from '../lib/focus'
 import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
 
 // Every sheet is a real mesh — the page geometry is shared, so the cost of a
@@ -17,7 +17,7 @@ const WINDOW = 3
 /** Touch devices have no hover, so every hover affordance needs a tap path. */
 const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
 
-export default function Album({ album, language }) {
+export default function Album({ album, language, planeZ = 0 }) {
   const mode = useAlbumStore((s) => s.mode)
   const page = useAlbumStore((s) => s.page)
   const heldStack = useAlbumStore((s) => s.heldStack)
@@ -125,13 +125,26 @@ export default function Album({ album, language }) {
 
     if (!leanable) { setFocus(null); return }
 
-    // Pan with the cursor. leanTarget deliberately does not centre on the
-    // pointer — see the note there — so this updates every move without the
-    // camera chasing itself.
-    const box = focusBoxFor(hit.rect, sheetIndex, delayedPage)
-    const point = worldPointFor(event.uv.x, event.uv.y, sheetIndex, delayedPage)
-    setFocus(leanTarget(box, point))
-  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack])
+    // The anchor — the spot on the page you actually pointed at — is captured
+    // once, when the pointer arrives on a slot. Picking it again every frame
+    // would read it back through the camera that is moving because of it,
+    // which is the feedback that made earlier versions oscillate.
+    const previous = useAlbumStore.getState().focus
+    const keep = sameSlot && previous
+    const ndc = { x: event.pointer.x, y: event.pointer.y }
+
+    setFocus({
+      // Captured once, together with the screen position it was captured at,
+      // so the zoom can hold that exact spot under the pointer.
+      anchor: keep ? previous.anchor : worldPointFor(event.uv.x, event.uv.y, sheetIndex, delayedPage),
+      ndc0: keep ? previous.ndc0 : ndc,
+      // Live pointer, in normalised device coordinates: pure screen space, so
+      // it cannot feed back into the camera that consumes it.
+      ndc,
+      box: focusBoxFor(hit.rect, sheetIndex, delayedPage),
+      z: planeZ,
+    })
+  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, planeZ])
 
   const handlePointerOut = useCallback(() => {
     currentHit.current = null

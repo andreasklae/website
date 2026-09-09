@@ -12,7 +12,7 @@ import { useAlbumStore } from '../lib/store'
  * moment the first page lifts, at the same position and the same rotation, so
  * the handover is invisible.
  */
-export default function ActiveAlbum({ album, language }) {
+export default function ActiveAlbum({ album, language, thickness = 0 }) {
   const group = useRef()
   const page = useAlbumStore((s) => s.page)
 
@@ -26,14 +26,19 @@ export default function ActiveAlbum({ album, language }) {
   const bookClosed = page === 0 || page === sheetCount
   const offsetX = bookClosed ? -PAGE_WIDTH / 2 : 0
 
+  // Sheet 0's front face is the album's cover. The block's front board sits
+  // half a thickness proud of its centre, so the leaves start there — the
+  // cover stays put at the instant one becomes the other.
+  const z = FORWARD_Z + thickness / 2
+
   useFrame((_, delta) => {
     if (!group.current) return
     easing.damp(group.current.position, 'x', offsetX, 0.4, delta)
   })
 
   return (
-    <group ref={group} position={[offsetX, 0, FORWARD_Z]} rotation-y={READING_ROTATION}>
-      {album && <Album album={album} language={language} />}
+    <group ref={group} position={[offsetX, 0, z]} rotation-y={READING_ROTATION}>
+      {album && <Album album={album} language={language} planeZ={z} />}
     </group>
   )
 }

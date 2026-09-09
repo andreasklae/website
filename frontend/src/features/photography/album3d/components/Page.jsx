@@ -14,7 +14,10 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 
 export const PAGE_WIDTH = 1.28
 export const PAGE_HEIGHT = 1.71
-export const PAGE_DEPTH = 0.003
+// Album leaves are card, not paper. This is also what makes the closed book
+// and the open one the same object: the shelved block's thickness is derived
+// from it, so opening does not swap a fat slab for a thin one.
+export const PAGE_DEPTH = 0.012
 const PAGE_SEGMENTS = 26
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS
 

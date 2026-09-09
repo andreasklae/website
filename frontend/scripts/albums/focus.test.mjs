@@ -59,63 +59,100 @@ test('a half-page photo keeps its real proportions in world units', () => {
   close(box.h, (600 / FACE_H) * PAGE_HEIGHT)
 })
 
-// ---- proportional lean-in (mirrors leanTarget in lib/focus.js) -------------
+// ---- anchored zoom (mirrors anchoredTarget in lib/focus.js) ---------------
 
-const LEAN_PAN = 0.4
-const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
+const LEAN_PAN_GAIN = 0.45
+const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
+const clamp2 = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
-function leanTarget(box, point) {
-  const relX = clamp((point.x - box.x) / (box.w / 2 || 1), -1, 1)
-  const relY = clamp((point.y - box.y) / (box.h / 2 || 1), -1, 1)
+function anchoredTarget(focus, halfW, halfH) {
+  const { anchor, ndc, ndc0 } = focus
+  const ex = (ndc0.x + (ndc.x - ndc0.x) * LEAN_PAN_GAIN) * halfW
+  const ey = (ndc0.y + (ndc.y - ndc0.y) * LEAN_PAN_GAIN) * halfH
   return {
-    x: box.x + (relX * box.w * LEAN_PAN) / 2,
-    y: box.y + (relY * box.h * LEAN_PAN) / 2,
-    w: box.w,
-    h: box.h,
+    x: clamp2(anchor.x - ex, -BOUNDS.x, BOUNDS.x),
+    y: clamp2(anchor.y - ey, -BOUNDS.y, BOUNDS.y),
   }
 }
 
-const photo = { x: 0.6, y: 0.2, w: 0.5, h: 0.75 }
+const halfHAt = (d) => d * Math.tan((30 * Math.PI) / 180 / 2)
+const ASPECT = 1.78
+/** Where a world point lands on screen, in NDC, for a camera looking at T. */
+const screenOf = (p, target, halfW, halfH) => ({
+  x: (p.x - target.x) / halfW,
+  y: (p.y - target.y) / halfH,
+})
 
-test('leaning in converges instead of drifting under a still cursor', () => {
-  // The failure this guards against: centring the camera on the cursor moves
-  // the world point under a stationary cursor by the same amount each frame,
-  // so the target runs away and the photo slides out from under the pointer.
-  let camera = { x: photo.x, y: photo.y }
-  const cursorOffset = { x: 0.18, y: -0.12 } // cursor held off-centre
-  const steps = []
-  for (let i = 0; i < 40; i++) {
-    // The world point under a fixed cursor tracks the camera one-for-one.
-    const point = { x: camera.x + cursorOffset.x, y: camera.y + cursorOffset.y }
-    const t = leanTarget(photo, point)
-    steps.push(Math.hypot(t.x - camera.x, t.y - camera.y))
-    camera = { x: t.x, y: t.y }
+test('the spot you pointed at stays exactly under the pointer while zooming', () => {
+  // The property the whole hover interaction is judged on. The anchor is
+  // captured through the resting camera, so it must be constructed that way.
+  const rest = 3.79
+  const ndc0 = { x: 0.31, y: -0.17 }
+  const restingTarget = { x: 0, y: -0.05 }
+  const h0 = halfHAt(rest)
+  const anchor = {
+    x: restingTarget.x + ndc0.x * h0 * ASPECT,
+    y: restingTarget.y + ndc0.y * h0,
   }
-  assert.ok(steps.at(-1) < 1e-6, `still moving by ${steps.at(-1)} after 40 steps`)
-  assert.ok(steps.at(-1) < steps[0], 'steps must shrink, not grow')
-  // And it must settle INSIDE the photograph, not on some far-off point.
-  assert.ok(Math.abs(camera.x - photo.x) <= photo.w / 2, 'settled outside the photo')
-  assert.ok(Math.abs(camera.y - photo.y) <= photo.h / 2, 'settled outside the photo')
+  const focus = { anchor, ndc: ndc0, ndc0 }
+
+  for (const d of [rest, 3.5, 3.2, 3.1]) {
+    const halfH = halfHAt(d)
+    const halfW = halfH * ASPECT
+    const seen = screenOf(anchor, anchoredTarget(focus, halfW, halfH), halfW, halfH)
+    close(seen.x, ndc0.x, 1e-9)
+    close(seen.y, ndc0.y, 1e-9)
+  }
 })
 
-test('the pan slides toward the pointer but stays inside the photograph', () => {
-  const tl = leanTarget(photo, { x: photo.x - photo.w / 2, y: photo.y + photo.h / 2 })
-  const br = leanTarget(photo, { x: photo.x + photo.w / 2, y: photo.y - photo.h / 2 })
-  close(tl.x, photo.x - (photo.w * LEAN_PAN) / 2)
-  close(tl.y, photo.y + (photo.h * LEAN_PAN) / 2)
-  close(br.x, photo.x + (photo.w * LEAN_PAN) / 2)
-  assert.ok(Math.abs(tl.x - photo.x) < photo.w / 2, 'pan must not leave the photo')
-  assert.ok(Math.abs(br.y - photo.y) < photo.h / 2, 'pan must not leave the photo')
+test('leaning in does not jerk the camera at the moment it engages', () => {
+  const rest = 3.79
+  const ndc0 = { x: -0.4, y: 0.22 }
+  const restingTarget = { x: 0, y: -0.05 }
+  const halfH = halfHAt(rest)
+  const halfW = halfH * ASPECT
+  const anchor = { x: restingTarget.x + ndc0.x * halfW, y: restingTarget.y + ndc0.y * halfH }
+  const t = anchoredTarget({ anchor, ndc: ndc0, ndc0 }, halfW, halfH)
+  close(t.x, restingTarget.x, 1e-9)
+  close(t.y, restingTarget.y, 1e-9)
 })
 
-test('LEAN_PAN is the loop gain and must stay below 1', () => {
-  // The oscillation came from an effective gain of 1 (centre-on-cursor).
-  assert.ok(LEAN_PAN > 0 && LEAN_PAN < 1, `gain ${LEAN_PAN} would not converge`)
+test('moving the pointer pans, but by less than one-for-one', () => {
+  const halfH = halfHAt(3.1)
+  const halfW = halfH * ASPECT
+  const ndc0 = { x: 0, y: 0 }
+  const anchor = { x: 0.2, y: 0.1 }
+  const still = anchoredTarget({ anchor, ndc: ndc0, ndc0 }, halfW, halfH)
+  const moved = anchoredTarget({ anchor, ndc: { x: 0.3, y: 0 }, ndc0 }, halfW, halfH)
+  assert.ok(moved.x < still.x, 'pointer moving right must pan the view')
+  const shift = Math.abs(moved.x - still.x)
+  const pinned = 0.3 * halfW
+  assert.ok(shift < pinned, 'a one-for-one pin would trap the pointer on the photo forever')
+  close(shift, pinned * LEAN_PAN_GAIN)
 })
 
-test('a cursor beyond the photo clamps rather than flinging the camera', () => {
-  const far = leanTarget(photo, { x: photo.x + 99, y: photo.y - 99 })
-  const edge = leanTarget(photo, { x: photo.x + photo.w / 2, y: photo.y - photo.h / 2 })
-  close(far.x, edge.x)
-  close(far.y, edge.y)
+test('the camera never wanders off the spread', () => {
+  const halfH = halfHAt(3.1)
+  const halfW = halfH * ASPECT
+  const t = anchoredTarget(
+    { anchor: { x: 1.2, y: 0.5 }, ndc: { x: -1, y: 1 }, ndc0: { x: -1, y: 1 } },
+    halfW, halfH
+  )
+  assert.ok(Math.abs(t.x) <= PAGE_WIDTH + 1e-9, `x ran to ${t.x}`)
+  assert.ok(Math.abs(t.y) <= PAGE_HEIGHT / 2 + 1e-9, `y ran to ${t.y}`)
+})
+
+test('the solution uses no camera-derived input, so it cannot oscillate', () => {
+  // Re-evaluating with the same inputs must give the same answer: neither the
+  // anchor nor the pointer's screen position moves when the camera does. The
+  // earlier versions failed exactly here.
+  const focus = { anchor: { x: 0.62, y: 0.28 }, ndc: { x: 0.25, y: -0.1 }, ndc0: { x: 0.2, y: 0 } }
+  const halfH = halfHAt(3.1)
+  const halfW = halfH * ASPECT
+  const first = anchoredTarget(focus, halfW, halfH)
+  for (let i = 0; i < 25; i++) {
+    const again = anchoredTarget(focus, halfW, halfH)
+    close(again.x, first.x, 1e-12)
+    close(again.y, first.y, 1e-12)
+  }
 })
