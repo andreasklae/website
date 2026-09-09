@@ -10,7 +10,10 @@
    "en": "The frames worth keeping — pulled from every roll, every trip, every walk home. Shot mostly on film, developed slowly, chosen even more slowly.",
    "no": "Bildene som var verdt å beholde — hentet fra hver filmrull, hver reise, hver tur hjem. Stort sett skutt på film, fremkalt sakte, og valgt ut enda saktere."
   },
-  "dates": null,
+  "dates": {
+   "start": "2024",
+   "end": "2025"
+  },
   "camera": null,
   "cover": {
    "src": "portfolio/photography/highlights/04854BAB-216D-4D0E-9ACF-ABD079B4F364.jpeg",
@@ -29,8 +32,8 @@
   "id": "alpine-winter-2025",
   "kind": "story",
   "title": {
-   "en": "Alpine Winter 2025",
-   "no": "Alpevinter 2025"
+   "en": "Alpine Winter",
+   "no": "Alpevinter"
   },
   "description": {
    "en": "Fog, mountains, and a life lived in transit. From a quiet Bavarian valley to Milan’s warm evenings, and finally the stillness of lakes tucked between the Alps.",
@@ -61,8 +64,8 @@
   "id": "stavern-sommer-2025",
   "kind": "story",
   "title": {
-   "en": "Stavern Summer 2025",
-   "no": "Stavern sommer 2025"
+   "en": "Stavern Summer",
+   "no": "Stavern sommer"
   },
   "description": {
    "en": "Long Norwegian summer days with late sunsets, coastal walks, festival celebrations, and quiet moments in nature.",
@@ -91,8 +94,8 @@
   "id": "portugal-2025",
   "kind": "story",
   "title": {
-   "en": "Portugal 2025",
-   "no": "Portugal 2025"
+   "en": "Portugal",
+   "no": "Portugal"
   },
   "description": {
    "en": "Surf camp, city days in Lisbon, long dinners, and quiet sunset walks.",

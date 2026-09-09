@@ -1,7 +1,7 @@
 // node --test frontend/scripts/albums/layout.test.mjs
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { compileStoryAlbum, __test } from './layout.mjs'
+import { compileStoryAlbum, stripYear, __test } from './layout.mjs'
 
 const img = (id, orientation) => ({
   id, src: id, w: orientation === 'portrait' ? 800 : 1200, h: orientation === 'portrait' ? 1200 : 800,
@@ -75,4 +75,28 @@ test('chapters begin on a left-hand page', () => {
       assert.equal(i % 2, 1, `chapter starts at face ${i}, must be odd`)
     }
   })
+})
+
+test('a trailing year is dropped from an album title', () => {
+  // The date is on the spine and the cover already; repeating it in the title
+  // says the same thing twice, and on a narrow spine label it is the year that
+  // squeezes the name.
+  assert.equal(stripYear('Alpine Winter 2025'), 'Alpine Winter')
+  assert.equal(stripYear('Portugal 2025'), 'Portugal')
+  assert.equal(stripYear('Stavern Sommer 2025'), 'Stavern Sommer')
+
+  // Left alone when there is nothing to drop.
+  assert.equal(stripYear('Semester in Berlin'), 'Semester in Berlin')
+  assert.equal(stripYear('Highlights'), 'Highlights')
+
+  // A year INSIDE a title is part of the name, not a suffix.
+  assert.equal(stripYear('1999 Revisited'), '1999 Revisited')
+  // And a title that is only a year keeps it rather than becoming empty.
+  assert.equal(stripYear('2025'), '2025')
+
+  // Both languages at once.
+  assert.deepEqual(
+    stripYear({ en: 'Alpine Winter 2025', no: 'Alpevinter 2025' }),
+    { en: 'Alpine Winter', no: 'Alpevinter' }
+  )
 })

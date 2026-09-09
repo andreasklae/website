@@ -13,6 +13,17 @@ import { clothFor } from './cloth'
 import { paintCloth, paintPaper, seedFrom, shade } from './material'
 import { BOARD_SHADE } from './faceCanvas'
 
+/**
+ * The date as it reads on a spine: a single year for one season's album, and a
+ * span for anything drawn from several.
+ */
+function spineDate(album) {
+  const from = album.dates?.start?.slice(0, 4)
+  const to = album.dates?.end?.slice(0, 4)
+  if (!from) return ''
+  return to && to !== from ? `${from}\u2013${to}` : from
+}
+
 const pick = (value, language) => {
   if (value == null) return ''
   if (typeof value === 'string') return value
@@ -124,17 +135,28 @@ export function paintSpine(canvas, album, { language = 'en', index = 0, aspect =
     }
   }
 
+  // The whole block — title lines and date together — is laid out and centred
+  // ACROSS the card. Placing the date after the last line without measuring
+  // the block is what pushed it off the label on shorter titles.
+  const year = spineDate(album)
+  const dateSize = 28
+  const dateGap = year ? dateSize * 1.35 : 0
+
+  const across = () => (lines.length - 1) * size * 0.92 + dateGap
+  // Shrink until the block fits the card's width as well as its length.
+  while (across() > card.w - 18 && size > 22) size -= 2
+
   ctx.font = `700 ${size}px ${HAND}`
   const lineGap = size * 0.92
-  const startX = -((lines.length - 1) * lineGap) / 2
-  lines.forEach((line, i) => ctx.fillText(line, 0, startX + i * lineGap - 4))
+  const start = -across() / 2
+  lines.forEach((line, i) => ctx.fillText(line, 0, start + i * lineGap))
 
-  const year = album.dates?.start?.slice(0, 4)
   if (year) {
-    ctx.font = `28px ${HAND_INK}`
+    ctx.font = `${dateSize}px ${HAND_INK}`
     ctx.fillStyle = 'rgba(43,39,33,0.55)'
-    ctx.fillText(year, 0, startX + lines.length * lineGap + 14)
+    ctx.fillText(year, 0, start + (lines.length - 1) * lineGap + dateGap)
   }
+
   ctx.restore()
 
   return canvas

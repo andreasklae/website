@@ -21,6 +21,20 @@ const unitsFor = () => 1
 const newPage = (role) => ({ role, slots: [], used: 0 })
 
 /**
+ * Drops a trailing year from a title.
+ *
+ * Albums carry their date on the spine and the cover already, so repeating it
+ * in the title says the same thing twice — and on a spine, where the label is
+ * narrow, the year is what squeezes the name. The source content keeps its
+ * full titles; only the album's own reads short.
+ */
+export const stripYear = (title) => {
+  if (title == null) return title
+  if (typeof title === 'string') return title.replace(/[\s\u2013-]*\b(19|20)\d{2}\b\s*$/, '').trim() || title
+  return Object.fromEntries(Object.entries(title).map(([k, v]) => [k, stripYear(v)]))
+}
+
+/**
  * Free units left across the whole page budget. Must count holes left in
  * earlier pages too: a portrait photo fills the page it opens, which can
  * leave a usable half-slot stranded behind it.
@@ -193,12 +207,13 @@ function toSheets(faces) {
 /** Compiles a journal story into a full album. */
 export function compileStoryAlbum(story, index) {
   const faces = []
+  const title = stripYear(story.title)
 
   faces.push({
     role: 'cover',
     slots: [{
       kind: 'cover',
-      title: story.title,
+      title,
       subtitle: story.camera,
       dates: story.dates,
       photo: photoSlot(story.thumbnail, index),
@@ -208,7 +223,7 @@ export function compileStoryAlbum(story, index) {
 
   alignToSpread(faces)
   faces.push(...compileHighlights(story.highlights || [], index, {
-    title: story.title,
+    title,
     text: story.description,
     meta: { dates: story.dates, camera: story.camera },
   }))
@@ -224,7 +239,7 @@ export function compileStoryAlbum(story, index) {
   return {
     id: story.id,
     kind: 'story',
-    title: story.title,
+    title,
     description: story.description,
     dates: story.dates,
     camera: story.camera,
@@ -239,12 +254,12 @@ export function compileStoryAlbum(story, index) {
  * on the shelf: an overview memo, the global picks, then one memo per story
  * introducing that story's own best frames.
  */
-export function compileHighlightsAlbum({ id, title, description, globalHighlights, stories, index, cover }) {
+export function compileHighlightsAlbum({ id, title, description, dates, globalHighlights, stories, index, cover }) {
   const faces = []
 
   faces.push({
     role: 'cover',
-    slots: [{ kind: 'cover', title, subtitle: null, dates: null, photo: cover }],
+    slots: [{ kind: 'cover', title, subtitle: null, dates, photo: cover }],
     used: PAGE_UNITS,
   })
 
@@ -254,7 +269,7 @@ export function compileHighlightsAlbum({ id, title, description, globalHighlight
   for (const story of stories || []) {
     alignToSpread(faces)
     faces.push(...compileHighlights(story.highlights || [], index, {
-      title: story.title,
+      title: stripYear(story.title),
       text: story.description,
       meta: { dates: story.dates, camera: story.camera, storyId: story.id },
     }))
@@ -267,6 +282,7 @@ export function compileHighlightsAlbum({ id, title, description, globalHighlight
     kind: 'highlights',
     title,
     description,
+    dates,
     cover,
     sheets: toSheets(faces),
     faceCount: faces.length,

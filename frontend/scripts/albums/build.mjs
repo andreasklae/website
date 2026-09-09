@@ -47,8 +47,17 @@ export async function buildAlbums({ root, force = false, log = console.log }) {
   // landscape pick so the printed-photograph cover art is not cropped hard.
   const coverSrc =
     globalHighlights.find((s) => index[s]?.orientation === 'landscape') || globalHighlights[0]
+  // Highlights spans everything the journals do, so its spine reads as a
+  // range rather than borrowing one story's date.
+  const years = stories
+    .flatMap((s) => [s.dates?.start, s.dates?.end])
+    .filter(Boolean)
+    .map((d) => String(d).slice(0, 4))
+    .sort()
+
   const highlightsAlbum = compileHighlightsAlbum({
     ...HIGHLIGHTS_ALBUM,
+    dates: years.length ? { start: years[0], end: years[years.length - 1] } : null,
     globalHighlights,
     stories,
     index,
