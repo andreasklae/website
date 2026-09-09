@@ -329,3 +329,69 @@ test('the pull finishes before the turn starts', () => {
     assert.equal(turnAt(out), turnAt(out), 'the mapping must be a pure function of extension')
   }
 })
+
+// ---- coming off the shelf ---------------------------------------------------
+
+const PULL_PHASE = 0.42
+
+/** Mirrors poseFor in AlbumBook.jsx. */
+function poseFor(out, restZ) {
+  if (out <= PULL_PHASE) {
+    const pulled = PULL_PHASE > 0 ? out / PULL_PHASE : 1
+    return { turn: 0, z: pulled * (restZ + PAGE_WIDTH) }
+  }
+  const turn = (out - PULL_PHASE) / (1 - PULL_PHASE)
+  return { turn, z: restZ + PAGE_WIDTH * Math.cos((turn * Math.PI) / 2) }
+}
+
+test('a book never sweeps back into the row while it turns', () => {
+  // The far edge is a full page from the hinge, so a book that starts turning
+  // before it is right out drags that edge straight through its neighbours.
+  const SPINE_SEAT = -PAGE_WIDTH / 2
+  const FORWARD_Z = PAGE_WIDTH * 0.35
+  const rowFront = SPINE_SEAT // neighbours' near face
+  const halfThickness = ((26 - 1) * PAGE_DEPTH_ + PAGE_DEPTH_ * 0.45) / 2
+
+  // Sitting in the row is fine while it is square on — that is its own slot,
+  // and drawing it straight out passes nothing. The constraint bites the
+  // moment it starts to turn and its far edge begins crossing other slots.
+  let worst = Infinity
+  for (let i = 0; i <= 400; i++) {
+    const out = i / 400
+    const { turn, z } = poseFor(out, FORWARD_Z)
+    if (turn <= 0) continue
+    const angle = (turn * Math.PI) / 2
+    const hinge = SPINE_SEAT + z
+    // The block's near face: the far edge swings round, and the slab's own
+    // thickness leans out perpendicular to it.
+    const farEdge = hinge - PAGE_WIDTH * Math.cos(angle)
+    const near = Math.min(hinge, farEdge) - halfThickness * Math.sin(angle)
+    worst = Math.min(worst, near - rowFront)
+  }
+  assert.ok(worst > 0.1, `book comes within ${worst.toFixed(3)} of the row mid-turn`)
+})
+
+test('the turn only starts once the book is right out', () => {
+  assert.equal(poseFor(0, PAGE_WIDTH * 0.35).turn, 0)
+  assert.equal(poseFor(PULL_PHASE, PAGE_WIDTH * 0.35).turn, 0)
+  assert.ok(poseFor(PULL_PHASE + 0.01, PAGE_WIDTH * 0.35).turn > 0)
+  assert.equal(poseFor(1, PAGE_WIDTH * 0.35).turn, 1)
+})
+
+test('the pull and the turn meet without a jump', () => {
+  const restZ = PAGE_WIDTH * 0.35
+  const before = poseFor(PULL_PHASE - 1e-9, restZ)
+  const after = poseFor(PULL_PHASE + 1e-9, restZ)
+  assert.ok(Math.abs(before.z - after.z) < 1e-6, `depth jumps by ${Math.abs(before.z - after.z)}`)
+})
+
+test('the far edge holds one depth for the whole turn, so it comes back in no faster than it turns', () => {
+  const restZ = PAGE_WIDTH * 0.35
+  const depths = []
+  for (let i = 0; i <= 20; i++) {
+    const out = PULL_PHASE + ((1 - PULL_PHASE) * i) / 20
+    const { turn, z } = poseFor(out, restZ)
+    depths.push(z - PAGE_WIDTH * Math.cos((turn * Math.PI) / 2))
+  }
+  for (const d of depths) assert.ok(Math.abs(d - restZ) < 1e-9, `far edge wandered to ${d}`)
+})

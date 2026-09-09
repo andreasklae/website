@@ -1,12 +1,9 @@
 import { useEffect, useMemo } from 'react'
 import { BoxGeometry, Color, MeshStandardMaterial } from 'three'
-import { PAGE_DEPTH, PAGE_HEIGHT } from './Page'
+import { PAGE_HEIGHT, blockDepth } from './Page'
 
 const geometry = new BoxGeometry(1, 1, 1)
 const CLOTH = new Color('#332e27')
-
-/** Thickness of a board, matching the shelved block's own reckoning. */
-export const COVER_BOARD = 0.022
 
 /**
  * The binding: the album's spine, and the thing that fills the gutter.
@@ -22,7 +19,9 @@ export const COVER_BOARD = 0.022
  * you — the placement below is the one geometry.test.mjs verifies.
  */
 export default function Binding({ sheetCount, spineTexture }) {
-  const depth = sheetCount * PAGE_DEPTH + COVER_BOARD * 2
+  // Exactly the leaves' own extent. Any deeper and the binding stands proud of
+  // the block behind it, so the crease looks thicker than the book it binds.
+  const depth = blockDepth(sheetCount)
 
   const materials = useMemo(() => {
     const cloth = () => new MeshStandardMaterial({ color: CLOTH, roughness: 0.9 })

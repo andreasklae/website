@@ -1,18 +1,14 @@
 import { useMemo } from 'react'
 import AlbumBook from './AlbumBook'
-import { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
+import { PAGE_WIDTH, PAGE_HEIGHT, blockDepth } from './Page'
 
 export const SHELF_GAP = 0.055
 
-/** The two boards, front and back. */
-export const COVER_BOARD = 0.022
-
 /**
- * A shelved album is exactly as thick as its leaves plus its boards, so the
- * block you see edge-on and the pages you turn are the same object measured
- * the same way.
+ * A shelved album is exactly as thick as its leaves, so the block you see
+ * edge-on and the pages you turn are the same object measured the same way.
  */
-export const albumThickness = (sheetCount) => sheetCount * PAGE_DEPTH + COVER_BOARD * 2
+export const albumThickness = blockDepth
 
 /**
  * Positions every album along the shelf and returns each one's centre, so the

@@ -33,11 +33,14 @@ const outsideCurveStrength = 0.018
 const turningCurveStrength = 0.035
 
 /** One geometry, shared by every page in every album. */
+/** How thick the block of `n` leaves actually is, spine to fore-edge. */
+export const blockDepth = (n) => Math.max(1, n - 1) * PAGE_DEPTH + PAGE_DEPTH * 0.45
+
 // Deliberately thinner than the spacing between leaves. At the full spacing
 // two settled leaves are exactly touching, and the pair nearest the spine —
 // where they converge — interpenetrate, so a leaf appears to sink into the one
 // it just landed on at the end of its turn.
-const LEAF_THICKNESS = PAGE_DEPTH * 0.45
+export const LEAF_THICKNESS = PAGE_DEPTH * 0.45
 
 const pageGeometry = new BoxGeometry(PAGE_WIDTH, PAGE_HEIGHT, LEAF_THICKNESS, PAGE_SEGMENTS, 2)
 pageGeometry.translate(PAGE_WIDTH / 2, 0, 0) // hinge at x=0

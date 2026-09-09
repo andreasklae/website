@@ -1,7 +1,7 @@
 import { useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
-import Binding, { COVER_BOARD } from './Binding'
+import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH, blockDepth } from './Page'
+import Binding from './Binding'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
@@ -30,7 +30,7 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  * without it the leaves render as blank paper with the cover on the front.
  */
 export default function Album({
-  full, sheetCount, active, language,
+  full, sheetCount, active, language, planeZ = 0,
   coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -170,8 +170,11 @@ export default function Album({
       // it cannot feed back into the camera that consumes it.
       ndc,
       box: focusBoxFor(hit.rect, sheetIndex, delayedPage),
+      // The plane the anchor lives on. Without it the camera solves against
+      // an undefined depth and the whole rig goes to NaN.
+      z: planeZ,
     })
-  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, manager])
+  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, manager, planeZ])
 
   const handlePointerOut = useCallback(() => {
     currentHit.current = null
@@ -224,7 +227,7 @@ export default function Album({
   //
   // Only the thickness is centred, and that is constant: leaves pile along -x
   // from the hinge, and the binding spans the full depth.
-  const depth = leaves * PAGE_DEPTH + COVER_BOARD * 2
+  const depth = blockDepth(leaves)
 
   return (
     <group ref={group}>

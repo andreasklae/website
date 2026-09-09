@@ -16,19 +16,36 @@ import { easing } from 'maath'
 export const SHELF_ROTATION = 0
 export const READING_ROTATION = -Math.PI / 2
 
-/**
- * How far forward the chosen album is drawn. Far enough that it clears the
- * deepest album's boards, so a book pulled out never touches the row it came
- * from — the row does not have to make space for it.
- */
-export const FORWARD_Z = PAGE_WIDTH * 0.62
+/** Where the chosen album finally sits, turned and clear of the row. */
+export const FORWARD_Z = PAGE_WIDTH * 0.35
+
+/** Fraction of the movement spent drawing the album straight out. */
+const PULL_PHASE = 0.42
 
 /**
- * Fraction of the way out before the album starts to turn. A book is drawn
- * clear of its neighbours first and turned in front of them, rather than
- * pivoting between them and shouldering them aside.
+ * Where the album's hinge sits, and how far it has turned, for one eased
+ * number running 0 (shelved) to 1 (facing you).
+ *
+ * A book comes off a shelf in two moves: out, then round. Turning while still
+ * between its neighbours sweeps its far edge through them — the edge is a full
+ * page from the hinge, so nothing short of drawing it right out will clear.
+ *
+ * During the turn the hinge tracks PAGE_WIDTH * cos(angle), which holds the
+ * far edge at exactly one depth for the whole rotation: the album pivots on
+ * its own outer edge, coming back in only as fast as turning allows. That is
+ * the constraint the "don't pull it back in faster than it turns" rule
+ * describes, solved rather than tuned.
+ *
+ * Being a pure function of `out`, putting the album back retraces it exactly.
  */
-const TURN_BEGINS_AT = 0.4
+export function poseFor(out, restZ) {
+  if (out <= PULL_PHASE) {
+    const pulled = PULL_PHASE > 0 ? out / PULL_PHASE : 1
+    return { turn: 0, z: pulled * (restZ + PAGE_WIDTH) }
+  }
+  const turn = (out - PULL_PHASE) / (1 - PULL_PHASE)
+  return { turn, z: restZ + PAGE_WIDTH * Math.cos((turn * Math.PI) / 2) }
+}
 
 /** Shared by the turn out and the turn back, so one is the reverse of the other. */
 export const TURN_SMOOTHING = 0.42
@@ -38,6 +55,9 @@ export const TURN_SMOOTHING = 0.42
  * so it is seated on that edge rather than straddling its own origin.
  */
 const SPINE_SEAT = -PAGE_WIDTH / 2
+
+/** Depth the chosen album settles at, which is what the camera frames. */
+export const READING_PLANE_Z = -PAGE_WIDTH / 2 + PAGE_WIDTH * 0.35
 
 // Covers are painted at a fraction of page resolution. They are never read
 // like a page, and five full-size boards would cost ~28MB of texture.
@@ -114,23 +134,20 @@ export default function AlbumBook({ album, full, index, language, active }) {
 
   // One eased number drives both the pull and the turn, so putting the album
   // back is the exact reverse of taking it out — two separately damped
-  // channels drift apart and the reverse never quite matches.
-  const extension = useRef({ value: 0 }).current
+  // channels drift apart and the reverse never quite matches. The hover lift
+  // is eased separately because it is not part of that movement.
+  const motion = useRef({ out: 0, lift: 0 }).current
 
   useFrame((_, delta) => {
     const g = group.current
     if (!g) return
 
-    easing.damp(extension, 'value', active ? 1 : 0, TURN_SMOOTHING, delta)
-    const out = extension.value
-    const turn = Math.min(1, Math.max(0, (out - TURN_BEGINS_AT) / (1 - TURN_BEGINS_AT)))
+    easing.damp(motion, 'out', active ? 1 : 0, TURN_SMOOTHING, delta)
+    easing.damp(motion, 'lift', hovered ? 1 : 0, 0.22, delta)
 
+    const { turn, z } = poseFor(motion.out, FORWARD_Z)
     g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn
-    g.position.set(
-      0,
-      hovered ? 0.055 : 0,
-      SPINE_SEAT + out * FORWARD_Z + (hovered ? 0.07 : 0)
-    )
+    g.position.set(0, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
   })
 
   return (
@@ -157,6 +174,7 @@ export default function AlbumBook({ album, full, index, language, active }) {
       }}
     >
       <Album
+        planeZ={READING_PLANE_Z}
         full={active ? full : null}
         sheetCount={album.sheetCount}
         active={active}
