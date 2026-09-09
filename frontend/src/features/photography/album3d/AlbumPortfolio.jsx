@@ -15,8 +15,23 @@ const prefersReducedMotion = () =>
 export default function AlbumPortfolio({ language = 'en', getText = (t) => t.en }) {
   const { shelf, album } = useAlbumData()
   const mode = useAlbumStore((s) => s.mode)
+  const setNarrow = useAlbumStore((s) => s.setNarrow)
 
   useEffect(() => { ensureFonts() }, [])
+
+  // A two-page spread is unreadable below roughly a tablet, so the scene
+  // switches to framing one page at a time. Driven by the canvas box rather
+  // than a device sniff.
+  useEffect(() => {
+    const check = () => setNarrow(window.innerWidth < 820 || window.innerWidth / window.innerHeight < 1.1)
+    check()
+    window.addEventListener('resize', check)
+    window.addEventListener('orientationchange', check)
+    return () => {
+      window.removeEventListener('resize', check)
+      window.removeEventListener('orientationchange', check)
+    }
+  }, [setNarrow])
 
   // Reset the scene when leaving the page so no textures outlive the route.
   useEffect(() => () => useAlbumStore.getState().close(), [])
@@ -24,7 +39,7 @@ export default function AlbumPortfolio({ language = 'en', getText = (t) => t.en 
   const dpr = useMemo(() => [1, prefersReducedMotion() ? 1.25 : 2], [])
 
   return (
-    <div className="relative min-h-0 w-full flex-1">
+    <div className="relative min-h-0 w-full flex-1 touch-pan-y">
       <Canvas
         dpr={dpr}
         gl={{ antialias: true, powerPreference: 'high-performance', alpha: true }}

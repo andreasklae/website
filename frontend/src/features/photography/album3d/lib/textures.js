@@ -63,9 +63,13 @@ export class FaceTextureManager {
     this.budget = budget
     this.onUpdate = onUpdate
     this.faces = album ? album.sheets.flatMap((s) => [s.front, s.back]) : []
-    this.entries = new Map() // faceIndex -> { canvas, texture, hitboxes, generation }
+    this.entries = new Map() // faceIndex -> { canvas, texture, hitboxes }
     this.stackOffsets = new Map() // faceIndex -> { slotIndex: offset }
-    this.disposed = false
+    // Teardown bumps this instead of latching a `disposed` flag. React
+    // StrictMode mounts effects, cleans them up, then mounts again against the
+    // SAME memoised instance — a latch would leave every page textureless for
+    // the rest of the session.
+    this.generation = 0
   }
 
   faceCount() { return this.faces.length }
@@ -76,7 +80,7 @@ export class FaceTextureManager {
    * trigger a repaint, so nothing blocks on the network.
    */
   acquire(index) {
-    if (this.disposed || index < 0 || index >= this.faces.length) return null
+    if (index < 0 || index >= this.faces.length) return null
     let entry = this.entries.get(index)
     if (entry) {
       this.entries.delete(index); this.entries.set(index, entry) // recency
@@ -104,14 +108,18 @@ export class FaceTextureManager {
   async stream(index) {
     const face = this.faces[index]
     if (!face) return
+    // Anything that resolves after a teardown belongs to a past generation and
+    // must not paint into a canvas that has since been released.
+    const generation = this.generation
+    const stale = () => this.generation !== generation || !this.entries.has(index)
+
     await ensureFonts()
-    if (this.disposed || !this.entries.has(index)) return
+    if (stale()) return
     this.repaint(index) // fonts are ready even if images are not
 
-    const slots = faceSources(face)
-    await Promise.all(slots.map(async (slot) => {
+    await Promise.all(faceSources(face).map(async (slot) => {
       await imageCache.load(slot, 'page')
-      if (this.disposed || !this.entries.has(index)) return
+      if (stale()) return
       this.repaint(index)
     }))
   }
@@ -167,8 +175,12 @@ export class FaceTextureManager {
     }
   }
 
+  /**
+   * Releases every texture. The manager stays usable: callers may acquire
+   * again afterwards, which is what StrictMode's remount does.
+   */
   dispose() {
-    this.disposed = true
+    this.generation++
     for (const index of [...this.entries.keys()]) this.release(index)
   }
 }

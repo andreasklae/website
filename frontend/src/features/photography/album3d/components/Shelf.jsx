@@ -34,7 +34,7 @@ export function useShelfLayout(shelf) {
 }
 
 /** One shelved album, seen spine-on. */
-function Spine({ album, index, language, hidden }) {
+function Spine({ album, index, language, hidden, offsetX }) {
   const mesh = useRef()
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
   const setHoveredAlbum = useAlbumStore((s) => s.setHoveredAlbum)
@@ -75,15 +75,18 @@ function Spine({ album, index, language, hidden }) {
     materials.list.forEach((m) => m.dispose())
   }, [materials])
 
-  const hovered = hoveredAlbum === album.id && mode === MODES.SHELF
+  const hovered = hoveredAlbum === album.id && (mode === MODES.SHELF || mode === MODES.COVER)
 
   useFrame((_, delta) => {
     if (!mesh.current) return
     // Hovering eases the album up and forward, the way you'd tip one out.
     easing.damp(mesh.current.position, 'y', hovered ? 0.055 : 0, 0.22, delta)
     easing.damp(mesh.current.position, 'z', hovered ? 0.07 : 0, 0.22, delta)
+    // Sliding aside to clear space for whichever album has turned to face us.
+    easing.damp(mesh.current.position, 'x', offsetX, 0.3, delta)
   })
 
+  // Kept mounted while hidden so it slides back into place on the way out.
   if (hidden) return null
 
   return (
@@ -93,7 +96,7 @@ function Spine({ album, index, language, hidden }) {
       material={materials.list}
       scale={[album.thickness, PAGE_HEIGHT * 1.05, PAGE_WIDTH * 1.02]}
       onPointerOver={(e) => {
-        if (mode !== MODES.SHELF) return
+        if (mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()
         setHoveredAlbum(album.id)
         document.body.style.cursor = 'pointer'
@@ -104,7 +107,7 @@ function Spine({ album, index, language, hidden }) {
         document.body.style.cursor = ''
       }}
       onClick={(e) => {
-        if (mode !== MODES.SHELF) return
+        if (mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()
         document.body.style.cursor = ''
         selectAlbum(album.id)
@@ -113,12 +116,31 @@ function Spine({ album, index, language, hidden }) {
   )
 }
 
+/**
+ * How far each album steps aside so the turned album has room for its full
+ * cover width. Neighbours split the difference left and right.
+ */
+export function partingOffsets(layout, activeId) {
+  const active = layout.findIndex((a) => a.id === activeId)
+  if (active < 0) return layout.map(() => 0)
+  const room = Math.max(0, PAGE_WIDTH * 1.06 - layout[active].thickness) / 2
+  return layout.map((_, i) => (i < active ? -room : i > active ? room : 0))
+}
+
 export default function Shelf({ layout, language, activeId }) {
+  const offsets = partingOffsets(layout, activeId)
+
   return (
     <group>
       {layout.map((album, i) => (
         <group key={album.id} position={[album.x, 0, 0]}>
-          <Spine album={album} index={i} language={language} hidden={album.id === activeId} />
+          <Spine
+            album={album}
+            index={i}
+            language={language}
+            hidden={album.id === activeId}
+            offsetX={offsets[i]}
+          />
         </group>
       ))}
 

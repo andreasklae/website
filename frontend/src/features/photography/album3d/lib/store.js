@@ -4,71 +4,85 @@ import { create } from 'zustand'
  * The scene is a small state machine. Every camera move and animation is
  * derived from `mode`, so nothing animates twice or fights over the camera.
  *
- *   shelf    albums stand side-on, spines readable
- *   pulling  the chosen album slides out of the row
- *   cover    it faces the viewer; the front is held for a beat
- *   open     the album is open, pages turn
- *   zoom     one image is enlarged over the open page
+ *   shelf  albums stand side-on, spines readable
+ *   cover  one album has turned to face you; the rest have parted to make room
+ *   open   that album is open, pages turn
+ *   zoom   one image is enlarged over the open page
+ *
+ * There is no pull-out state: an album turns in place rather than travelling
+ * through its neighbours, which means switching between albums is one click.
  */
-export const MODES = { SHELF: 'shelf', PULLING: 'pulling', COVER: 'cover', OPEN: 'open', ZOOM: 'zoom' }
+export const MODES = { SHELF: 'shelf', COVER: 'cover', OPEN: 'open', ZOOM: 'zoom' }
 
-/** How long the cover is held before the album opens itself. */
-export const COVER_HOLD_MS = 1600
+/** On narrow screens a two-page spread is unreadable, so we frame one page. */
+export const SIDES = { LEFT: 'left', RIGHT: 'right' }
 
 export const useAlbumStore = create((set, get) => ({
   mode: MODES.SHELF,
   shelf: [],
   activeId: null,
   album: null,
-  loading: false,
 
-  /** Index of the sheet being read: 0 = closed, sheets.length = fully open at the back. */
+  /** Index of the sheet being read: 0 = closed, sheets.length = open at the back. */
   page: 0,
+  /** Which half of the spread is framed. Only meaningful when `narrow`. */
+  side: SIDES.LEFT,
+  narrow: false,
+
   hoveredAlbum: null,
   hoveredSlot: null,
   zoomed: null,
-  quality: 'high',
 
   setShelf: (shelf) => set({ shelf }),
   setHoveredAlbum: (hoveredAlbum) => set({ hoveredAlbum }),
   setHoveredSlot: (hoveredSlot) => set({ hoveredSlot }),
-  setQuality: (quality) => set({ quality }),
+  setNarrow: (narrow) => set({ narrow }),
 
+  /** Choosing an album, including swapping directly to another one. */
   selectAlbum: (id) => {
-    if (get().mode !== MODES.SHELF) return
-    set({ activeId: id, mode: MODES.PULLING, loading: true, page: 0 })
+    const { mode, activeId } = get()
+    if (mode === MODES.OPEN || mode === MODES.ZOOM) return
+    if (activeId === id) return
+    set({ activeId: id, mode: MODES.COVER, page: 0, side: SIDES.LEFT, album: null, zoomed: null })
   },
 
-  albumLoaded: (album) => set({ album, loading: false }),
+  albumLoaded: (album) => set({ album }),
 
-  /** Called by the pull-out animation when the album has cleared the shelf. */
-  reachedCover: () => { if (get().mode === MODES.PULLING) set({ mode: MODES.COVER }) },
+  open: () => {
+    const { mode, album } = get()
+    if (mode !== MODES.COVER || !album) return
+    set({ mode: MODES.OPEN, page: 1, side: SIDES.LEFT })
+  },
 
-  open: () => { if (get().mode === MODES.COVER) set({ mode: MODES.OPEN, page: 1 }) },
+  /** Shut the book but keep it facing you, ready to open again or swap. */
+  closeBook: () => {
+    const { mode } = get()
+    if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+    set({ mode: MODES.COVER, page: 0, side: SIDES.LEFT, zoomed: null, hoveredSlot: null })
+  },
 
   next: () => {
-    const { album, page, mode } = get()
-    if (mode !== MODES.OPEN || !album) return
-    set({ page: Math.min(page + 1, album.sheets.length) })
+    const { album, page, mode, narrow, side } = get()
+    if ((mode !== MODES.OPEN && mode !== MODES.ZOOM) || !album) return
+    if (narrow && side === SIDES.LEFT) return set({ side: SIDES.RIGHT, zoomed: null, mode: MODES.OPEN })
+    set({ page: Math.min(page + 1, album.sheets.length), side: SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
   },
 
   prev: () => {
-    const { page, mode } = get()
-    if (mode !== MODES.OPEN) return
-    set({ page: Math.max(page - 1, 0) })
-  },
-
-  goToPage: (n) => {
-    const { album } = get()
-    if (!album) return
-    set({ page: Math.max(0, Math.min(n, album.sheets.length)) })
+    const { page, mode, narrow, side } = get()
+    if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+    if (narrow && side === SIDES.RIGHT) return set({ side: SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
+    set({ page: Math.max(page - 1, 0), side: narrow ? SIDES.RIGHT : SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
   },
 
   zoom: (slot) => { if (get().mode === MODES.OPEN) set({ mode: MODES.ZOOM, zoomed: slot }) },
   unzoom: () => { if (get().mode === MODES.ZOOM) set({ mode: MODES.OPEN, zoomed: null }) },
 
   /** Put the album back on the shelf. */
-  close: () => set({ mode: MODES.SHELF, activeId: null, album: null, page: 0, zoomed: null, hoveredSlot: null }),
+  close: () => set({
+    mode: MODES.SHELF, activeId: null, album: null,
+    page: 0, side: SIDES.LEFT, zoomed: null, hoveredSlot: null,
+  }),
 }))
 
 /** Faces visible right now, plus their neighbours — drives texture residency. */

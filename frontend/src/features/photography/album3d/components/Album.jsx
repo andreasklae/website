@@ -16,7 +16,10 @@ const WINDOW = 3
 const HOVER_ZOOM_DELAY = 260
 const STACK_CYCLE_MS = 750
 
-export default function Album({ album, language }) {
+/** Touch devices have no hover, so every hover affordance needs a tap path. */
+const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
+
+export default function Album({ album, language, onCoverClick }) {
   const mode = useAlbumStore((s) => s.mode)
   const page = useAlbumStore((s) => s.page)
   const zoomed = useAlbumStore((s) => s.zoomed)
@@ -91,6 +94,7 @@ export default function Album({ album, language }) {
   }, [manager])
 
   const handlePointerMove = useCallback((event, sheetIndex) => {
+    if (isTouch(event)) return // a touch "move" is a drag, not a hover
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
     // materialIndex 4 is the +Z face (front of the sheet), 5 is the back.
     const isFront = event.face?.materialIndex === 4
@@ -125,7 +129,10 @@ export default function Album({ album, language }) {
   }, [setHoveredSlot, unzoom])
 
   const handleClick = useCallback((event, sheetIndex) => {
+    // While the album is merely facing you, any click on it means "open".
+    if (onCoverClick) { event.stopPropagation(); onCoverClick(); return }
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+
     const isFront = event.face?.materialIndex === 4
     const faceIndex = sheetIndex * 2 + (isFront ? 0 : 1)
     const hit = hitTest(event, faceIndex)
@@ -135,12 +142,19 @@ export default function Album({ album, language }) {
       manager.cycleStack(faceIndex, hit.index, 1)
       return
     }
-    if (hit?.slot.kind === 'photo') { event.stopPropagation(); return }
+    if (hit?.slot.kind === 'photo') {
+      event.stopPropagation()
+      // Tap is the touch equivalent of hovering a photo to enlarge it.
+      if (useAlbumStore.getState().mode === MODES.ZOOM) unzoom()
+      else zoom({ ...hit.slot, faceIndex })
+      return
+    }
 
     // Clicking bare paper turns the page, in the direction of the click.
     event.stopPropagation()
+    if (useAlbumStore.getState().mode === MODES.ZOOM) { unzoom(); return }
     if (sheetIndex < delayedPage) prev(); else next()
-  }, [mode, hitTest, manager, delayedPage, prev, next])
+  }, [mode, hitTest, manager, delayedPage, prev, next, onCoverClick, zoom, unzoom])
 
   useEffect(() => () => { clearTimers(); document.body.style.cursor = '' }, [])
 

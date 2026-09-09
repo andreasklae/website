@@ -2,42 +2,85 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { easing } from 'maath'
 import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
-import { MODES, useAlbumStore } from '../lib/store'
+import { MODES, SIDES, useAlbumStore } from '../lib/store'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 
 // One place decides where the camera is. Each mode names the box it has to
-// frame and where to look; the distance is then solved from the live canvas
-// aspect, so nothing is ever cropped on a short window or a phone.
-const SHOTS = {
-  [MODES.SHELF]:   { height: 0.10, target: [0, -0.02, 0],   box: null, pad: 1.18 },
-  [MODES.PULLING]: { height: 0.10, target: [0, 0, 0.30],    box: null, pad: 1.18 },
-  [MODES.COVER]:   { height: 0.02, target: [0, 0, 0.55],    box: [PAGE_WIDTH * 1.15, PAGE_HEIGHT * 1.1], pad: 1.16 },
-  [MODES.OPEN]:    { height: 0.75, target: [0, -0.05, 0],   box: [PAGE_WIDTH * 2.1, PAGE_HEIGHT * 1.05], pad: 1.12 },
-  [MODES.ZOOM]:    { height: 0.30, target: [0, 0, 0.30],    box: [PAGE_WIDTH * 1.9, PAGE_HEIGHT * 1.15], pad: 1.10 },
-}
-
+// frame; the distance is then solved from the live canvas aspect, so nothing
+// is ever cropped — on a short desktop window or a tall phone.
 const lookTarget = new Vector3()
 
 /** Distance at which a w x h box exactly fills the frame, with padding. */
-function fitDistance(camera, aspect, [w, h], pad) {
-  const vFov = MathUtils.degToRad(camera.fov)
+function fitDistance(fov, aspect, [w, h], pad) {
+  const vFov = MathUtils.degToRad(fov)
   const forHeight = (h * pad) / 2 / Math.tan(vFov / 2)
   const forWidth = (w * pad) / 2 / (Math.tan(vFov / 2) * aspect)
   return Math.max(forHeight, forWidth)
 }
 
+/**
+ * The box and look-at point for the current mode.
+ *
+ * The open-album case is the one that matters on a phone: a two-page spread is
+ * ~2.7 units wide, which on a portrait screen would be framed so small the
+ * photographs are unreadable. Narrow viewports therefore frame a single page
+ * and step through them one at a time.
+ */
+function shotFor(mode, { narrow, side, shelfWidth }) {
+  switch (mode) {
+    case MODES.COVER:
+      return {
+        box: [PAGE_WIDTH * 1.14, PAGE_HEIGHT * 1.1],
+        target: [0, 0, PAGE_WIDTH * 0.16],
+        height: 0.02,
+        pad: 1.16,
+      }
+    case MODES.OPEN:
+    case MODES.ZOOM: {
+      if (narrow) {
+        const x = side === SIDES.RIGHT ? PAGE_WIDTH / 2 : -PAGE_WIDTH / 2
+        return {
+          box: [PAGE_WIDTH * 1.1, PAGE_HEIGHT * 1.06],
+          target: [x, -0.02, PAGE_WIDTH * 0.5],
+          height: 0.18,
+          pad: 1.1,
+        }
+      }
+      return {
+        box: [PAGE_WIDTH * 2.12, PAGE_HEIGHT * 1.06],
+        target: [0, -0.05, PAGE_WIDTH * 0.5],
+        height: mode === MODES.ZOOM ? 0.3 : 0.7,
+        pad: mode === MODES.ZOOM ? 1.04 : 1.12,
+      }
+    }
+    default:
+      return {
+        box: [shelfWidth + 0.35, PAGE_HEIGHT * 1.14],
+        target: [0, -0.02, 0],
+        height: 0.1,
+        pad: 1.18,
+      }
+  }
+}
+
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
+  const narrow = useAlbumStore((s) => s.narrow)
+  const side = useAlbumStore((s) => s.side)
   const { camera, size } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
 
   useFrame((_, delta) => {
-    const shot = SHOTS[mode] || SHOTS[MODES.SHELF]
+    const shot = shotFor(mode, { narrow, side, shelfWidth })
     const aspect = size.width / Math.max(size.height, 1)
-    const box = shot.box || [shelfWidth + 0.35, PAGE_HEIGHT * 1.14]
-    const distance = fitDistance(camera, aspect, box, shot.pad)
+    const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
 
-    easing.damp3(camera.position, [0, shot.height, distance + shot.target[2]], 0.42, delta)
+    easing.damp3(
+      camera.position,
+      [shot.target[0], shot.height, distance + shot.target[2]],
+      0.42,
+      delta
+    )
     easing.damp3(current.current, shot.target, 0.42, delta)
     lookTarget.copy(current.current)
     camera.lookAt(lookTarget)

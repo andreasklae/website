@@ -93,7 +93,10 @@ export default defineConfig(({ command }) => ({
   server: {
     host: '0.0.0.0',
     port: 3000,
-    open: true
+    open: true,
+    // Tunnels (cloudflared/ngrok) present their own Host header, which Vite
+    // rejects by default. Only relevant to the dev server.
+    allowedHosts: true,
   },
   build: {
     outDir: 'dist',
