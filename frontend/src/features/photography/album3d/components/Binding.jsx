@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react'
 import { BoxGeometry, Color, MeshStandardMaterial } from 'three'
-import { PAGE_HEIGHT, blockDepth } from './Page'
+import { PAGE_HEIGHT } from './Page'
 
 const geometry = new BoxGeometry(1, 1, 1)
-const CLOTH = new Color('#332e27')
+const DEFAULT_CLOTH = '#332e27'
 
 /**
  * The binding: the album's spine, and the thing that fills the gutter.
@@ -18,22 +18,19 @@ const CLOTH = new Color('#332e27')
  * lies on z = 0. That is not where reasoning about it in world terms lands
  * you — the placement below is the one geometry.test.mjs verifies.
  */
-export default function Binding({ sheetCount, spineTexture }) {
-  // Exactly the leaves' own extent. Any deeper and the binding stands proud of
-  // the block behind it, so the crease looks thicker than the book it binds.
-  const depth = blockDepth(sheetCount)
+export default function Binding({ depth, cloth, spineTexture }) {
 
   const materials = useMemo(() => {
-    const cloth = () => new MeshStandardMaterial({ color: CLOTH, roughness: 0.9 })
+    const make = () => new MeshStandardMaterial({ color: new Color(cloth || DEFAULT_CLOTH), roughness: 0.9 })
     // [+X, -X, +Y, -Y, +Z bound edge, -Z]
-    return [cloth(), cloth(), cloth(), cloth(), cloth(), cloth()]
-  }, [])
+    return [make(), make(), make(), make(), make(), make()]
+  }, [cloth])
 
   useEffect(() => {
     materials[4].map = spineTexture || null
-    materials[4].color.set(spineTexture ? '#ffffff' : CLOTH)
+    materials[4].color.set(spineTexture ? '#ffffff' : (cloth || DEFAULT_CLOTH))
     materials[4].needsUpdate = true
-  }, [materials, spineTexture])
+  }, [materials, spineTexture, cloth])
 
   useEffect(() => () => materials.forEach((m) => m.dispose()), [materials])
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { MODES, useAlbumStore } from '../lib/store'
+import { MODES, lastSpread, useAlbumStore } from '../lib/store'
 
 // Touch targets are >=44px tall; the shelf is usable with a thumb.
 const btn =
@@ -25,7 +25,7 @@ export default function Controls({ getText }) {
   const close = useAlbumStore((s) => s.close)
 
   const reading = mode === MODES.OPEN || mode === MODES.ZOOM
-  const sheets = album?.sheets.length ?? 0
+  const sheets = album ? lastSpread(album) : 0
 
   useEffect(() => {
     const onKey = (e) => {

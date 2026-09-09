@@ -22,6 +22,7 @@ export default function Scene({ shelf, album, language }) {
   const layout = useShelfLayout(shelf)
   const shelfWidth = layout.reduce((n, a) => n + a.thickness, 0) + 0.055 * Math.max(0, layout.length - 1)
   const activeId = useAlbumStore((s) => s.activeId)
+  const hoveredId = useAlbumStore((s) => s.hoveredAlbum)
   const slot = layout.find((a) => a.id === activeId)
 
   return (
@@ -43,6 +44,7 @@ export default function Scene({ shelf, album, language }) {
             layout={layout}
             language={language}
             activeId={activeId}
+            hoveredId={hoveredId}
             full={album}
           />
         </ShelfPan>

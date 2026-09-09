@@ -190,13 +190,52 @@ test('the block occupies the same volume however the album is opened', () => {
   }
 })
 
+const TARGET_DEPTH = 0.33
+const LEAF_FRACTION = 0.45
+const hash01 = (id) => {
+  let h = 2166136261
+  for (let i = 0; i < String(id).length; i++) {
+    h ^= String(id).charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return ((h >>> 0) % 1000) / 1000
+}
+const depthFor = (id) => TARGET_DEPTH * (0.86 + hash01(id) * 0.28)
+const pageDepthFor = (n, depth) => depth / Math.max(1, n - 1 + LEAF_FRACTION)
+
+test('albums are all about as thick as one another, but not identical', () => {
+  // A shelf should look like a shelf, not a bar chart of how many photographs
+  // each trip produced.
+  const ids = ['highlights', 'alpine-winter-2025', 'stavern-sommer-2025', 'portugal-2025', 'semester-in-berlin']
+  const depths = ids.map(depthFor)
+  const min = Math.min(...depths)
+  const max = Math.max(...depths)
+
+  assert.ok(max / min < 1.5, `thicknesses vary by ${Math.round((max / min - 1) * 100)}%, too much`)
+  assert.ok(max / min > 1.05, 'they should differ enough to be visible')
+  assert.equal(new Set(depths.map((d) => d.toFixed(4))).size, ids.length, 'each album its own thickness')
+  // Deterministic: an album is the same thickness on every visit.
+  assert.equal(depthFor('highlights'), depthFor('highlights'))
+})
+
+test('leaf spacing fills the block exactly, whatever the page count', () => {
+  // The binding is sized to the block, so any mismatch shows as a crease
+  // thicker or thinner than the book it binds.
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8], ['alpine-winter-2025', 9]]) {
+    const depth = depthFor(id)
+    const spacing = pageDepthFor(sheets, depth)
+    const block = (sheets - 1) * spacing + spacing * LEAF_FRACTION
+    assert.ok(Math.abs(block - depth) < 1e-9, `${id}: block ${block} against depth ${depth}`)
+  }
+})
+
 test('the bound album and the shelved block occupy the same seat', () => {
   // The handover is only invisible if the two are the same size in the same
   // place. Both hinge on the spine with their body running backwards, rather
   // than straddling their own origin.
   const sheetCount = 9
-  const COVER_BOARD_ = 0.022
-  const depth = sheetCount * PAGE_DEPTH_ + COVER_BOARD_ * 2
+  const depth = depthFor('alpine-winter-2025')
+  const spacing = pageDepthFor(sheetCount, depth)
   const SEAT = -PAGE_WIDTH / 2
 
   const album = new Group()
@@ -207,7 +246,7 @@ test('the bound album and the shelved block occupy the same seat', () => {
     const g = new Group()
     g.rotation.y = Math.PI / 2
     const m = new Object3D()
-    m.position.z = -n * PAGE_DEPTH_
+    m.position.z = -n * spacing
     g.add(m)
     block.add(g)
   }
@@ -228,16 +267,20 @@ test('the bound album and the shelved block occupy the same seat', () => {
   // resizing at the moment one takes over from the other.
   assert.ok(Math.abs(bounds.max.z - boxMax) < 1e-9, `spine edges differ: ${bounds.max.z} vs ${boxMax}`)
   assert.ok(Math.abs(bounds.min.z - boxMin) < 1e-9, `fore edges differ: ${bounds.min.z} vs ${boxMin}`)
-  assert.ok(Math.abs(bounds.max.x - depth / 2) < 0.02, `thickness off centre: ${bounds.max.x}`)
+  // The block is centred on its own thickness, so the top leaf sits at half
+  // the depth and the bottom one at minus that.
+  assert.ok(Math.abs(bounds.max.x - depth / 2) < 1e-9, `thickness off centre: ${bounds.max.x} vs ${depth / 2}`)
 })
 
 test('settled leaves never touch, so none sinks into the one below', () => {
   // The gap at the end of a turn: at the full spacing two settled leaves are
   // exactly touching, and near the spine, where they converge, they overlap.
-  const LEAF_THICKNESS = PAGE_DEPTH_ * 0.45
-  assert.ok(LEAF_THICKNESS < PAGE_DEPTH_, 'a leaf must be thinner than the gap between leaves')
-  const clearance = PAGE_DEPTH_ - LEAF_THICKNESS
-  assert.ok(clearance > PAGE_DEPTH_ * 0.4, `only ${clearance} of clearance between leaves`)
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8]]) {
+    const spacing = pageDepthFor(sheets, depthFor(id))
+    const leaf = spacing * LEAF_FRACTION
+    assert.ok(leaf < spacing, 'a leaf must be thinner than the gap between leaves')
+    assert.ok(spacing - leaf > spacing * 0.4, `${id}: only ${spacing - leaf} of clearance`)
+  }
 })
 
 test('a leaf has no bend left in it by the time it lands', () => {
@@ -350,7 +393,7 @@ test('a book never sweeps back into the row while it turns', () => {
   const SPINE_SEAT = -PAGE_WIDTH / 2
   const FORWARD_Z = PAGE_WIDTH * 0.35
   const rowFront = SPINE_SEAT // neighbours' near face
-  const halfThickness = ((26 - 1) * PAGE_DEPTH_ + PAGE_DEPTH_ * 0.45) / 2
+  const halfThickness = Math.max(...['highlights', 'portugal-2025'].map(depthFor)) / 2
 
   // Sitting in the row is fine while it is square on — that is its own slot,
   // and drawing it straight out passes nothing. The constraint bites the

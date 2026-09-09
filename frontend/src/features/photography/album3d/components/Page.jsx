@@ -6,6 +6,7 @@ import {
   Skeleton, SkinnedMesh, Uint16BufferAttribute, Vector3,
 } from 'three'
 import { degToRad } from 'three/src/math/MathUtils.js'
+import { LEAF_FRACTION } from '../lib/albumDepth'
 
 // Page geometry and the bone-driven curl are adapted from
 // github.com/wass08/r3f-animated-book-slider-final — a chain of bones along the
@@ -33,20 +34,28 @@ const outsideCurveStrength = 0.018
 const turningCurveStrength = 0.035
 
 /** One geometry, shared by every page in every album. */
-/** How thick the block of `n` leaves actually is, spine to fore-edge. */
-export const blockDepth = (n) => Math.max(1, n - 1) * PAGE_DEPTH + PAGE_DEPTH * 0.45
+// A leaf is deliberately thinner than the spacing between leaves. At the full
+// spacing two settled leaves are exactly touching, and the pair nearest the
+// spine — where they converge — interpenetrate, so a leaf appears to sink into
+// the one it just landed on at the end of its turn.
+const geometries = new Map()
 
-// Deliberately thinner than the spacing between leaves. At the full spacing
-// two settled leaves are exactly touching, and the pair nearest the spine —
-// where they converge — interpenetrate, so a leaf appears to sink into the one
-// it just landed on at the end of its turn.
-export const LEAF_THICKNESS = PAGE_DEPTH * 0.45
+/**
+ * The leaf mesh for a given thickness.
+ *
+ * Albums use different leaf spacing so they can all be about as thick as one
+ * another, so this is cached per thickness rather than being one shared
+ * geometry. There are only ever a handful. Scaling a single geometry instead
+ * would shear the skinning, since the bones are children of the mesh.
+ */
+function getPageGeometry(thickness) {
+  const key = thickness.toFixed(5)
+  if (geometries.has(key)) return geometries.get(key)
 
-const pageGeometry = new BoxGeometry(PAGE_WIDTH, PAGE_HEIGHT, LEAF_THICKNESS, PAGE_SEGMENTS, 2)
-pageGeometry.translate(PAGE_WIDTH / 2, 0, 0) // hinge at x=0
+  const geometry = new BoxGeometry(PAGE_WIDTH, PAGE_HEIGHT, thickness, PAGE_SEGMENTS, 2)
+  geometry.translate(PAGE_WIDTH / 2, 0, 0) // hinge at x=0
 
-{
-  const position = pageGeometry.attributes.position
+  const position = geometry.attributes.position
   const vertex = new Vector3()
   const skinIndexes = []
   const skinWeights = []
@@ -57,8 +66,11 @@ pageGeometry.translate(PAGE_WIDTH / 2, 0, 0) // hinge at x=0
     skinIndexes.push(skinIndex, skinIndex + 1, 0, 0)
     skinWeights.push(1 - skinWeight, skinWeight, 0, 0)
   }
-  pageGeometry.setAttribute('skinIndex', new Uint16BufferAttribute(skinIndexes, 4))
-  pageGeometry.setAttribute('skinWeight', new Float32BufferAttribute(skinWeights, 4))
+  geometry.setAttribute('skinIndex', new Uint16BufferAttribute(skinIndexes, 4))
+  geometry.setAttribute('skinWeight', new Float32BufferAttribute(skinWeights, 4))
+
+  geometries.set(key, geometry)
+  return geometry
 }
 
 const PAPER = new Color('#efeae0')
@@ -73,8 +85,8 @@ const edgeMaterials = [
 ]
 
 export default function Page({
-  number, page, opened, bookClosed, sheetCount, rigid, frontTexture, backTexture,
-  onPointerMove, onClick, onPointerOut,
+  number, page, opened, bookClosed, sheetCount, rigid, pageDepth = PAGE_DEPTH,
+  frontTexture, backTexture, onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
@@ -97,14 +109,14 @@ export default function Page({
     const faceMaterial = () => new MeshStandardMaterial({ color: PAPER, roughness: 0.88, metalness: 0 })
     const materials = [...edgeMaterials, faceMaterial(), faceMaterial()]
 
-    const skinned = new SkinnedMesh(pageGeometry, materials)
+    const skinned = new SkinnedMesh(getPageGeometry(pageDepth * LEAF_FRACTION), materials)
     skinned.frustumCulled = false
     skinned.castShadow = false
     skinned.receiveShadow = false
     skinned.add(skeleton.bones[0])
     skinned.bind(skeleton)
     return skinned
-  }, [])
+  }, [pageDepth])
 
   // Swap textures without rebuilding the mesh, so page turns never hitch.
   useEffect(() => {
@@ -200,7 +212,7 @@ export default function Page({
         // open spread sit level. Offsetting opened and unopened leaves
         // separately instead — which is what this used to do — steps the two
         // pages apart at the crease by the depth of everything turned so far.
-        position-z={(page - number) * PAGE_DEPTH}
+        position-z={(page - number) * pageDepth}
       />
     </group>
   )

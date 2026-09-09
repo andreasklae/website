@@ -8,6 +8,8 @@ import { ensureFonts } from '../lib/fonts'
 import { imageCache } from '../lib/textures'
 import { useSpineTexture } from '../lib/useSpineTexture'
 import { MODES, useAlbumStore } from '../lib/store'
+import { depthFor, pageDepthFor } from '../lib/albumDepth'
+import { clothFor } from '../lib/cloth'
 import { easing } from 'maath'
 
 // Shelved, an album's spine faces the viewer. A quarter turn brings its front
@@ -129,7 +131,11 @@ function useBoardTexture(album, language, kind) {
  * chosen. Choosing it turns it and starts painting its faces; it never swaps
  * for a different object, because there is no other object.
  */
-export default function AlbumBook({ album, full, index, language, active }) {
+export default function AlbumBook({ album, full, index, language, active, partX = 0 }) {
+  const leaves = full ? full.sheets.length : album.sheetCount
+  const depth = depthFor(album.id)
+  const pageDepth = pageDepthFor(leaves, depth)
+  const { cloth } = clothFor(index)
   const group = useRef()
   const mode = useAlbumStore((s) => s.mode)
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
@@ -147,7 +153,7 @@ export default function AlbumBook({ album, full, index, language, active }) {
   // back is the exact reverse of taking it out — two separately damped
   // channels drift apart and the reverse never quite matches. The hover lift
   // is eased separately because it is not part of that movement.
-  const motion = useRef({ out: 0, lift: 0 }).current
+  const motion = useRef({ out: 0, lift: 0, part: 0 }).current
 
   useFrame((_, delta) => {
     const g = group.current
@@ -155,10 +161,11 @@ export default function AlbumBook({ album, full, index, language, active }) {
 
     easing.damp(motion, 'out', active ? 1 : 0, TURN_SMOOTHING, delta)
     easing.damp(motion, 'lift', hovered ? 1 : 0, 0.22, delta)
+    easing.damp(motion, 'part', partX, 0.28, delta)
 
     const { turn, z } = poseFor(motion.out, FORWARD_Z)
     g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn
-    g.position.set(turn * TURNED_X, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
+    g.position.set(motion.part + turn * TURNED_X, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
   })
 
   return (
@@ -189,6 +196,9 @@ export default function AlbumBook({ album, full, index, language, active }) {
         hingeX={TURNED_X}
         full={active ? full : null}
         sheetCount={album.sheetCount}
+        depth={depth}
+        pageDepth={pageDepth}
+        cloth={cloth}
         active={active}
         language={language}
         coverTexture={coverTexture}

@@ -1,6 +1,6 @@
 import { useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH, blockDepth } from './Page'
+import Page, { PAGE_WIDTH, PAGE_HEIGHT } from './Page'
 import Binding from './Binding'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
@@ -31,6 +31,7 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  */
 export default function Album({
   full, sheetCount, active, language, planeZ = 0, hingeX = 0,
+  depth, pageDepth, cloth,
   coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -229,12 +230,12 @@ export default function Album({
   //
   // Only the thickness is centred, and that is constant: leaves pile along -x
   // from the hinge, and the binding spans the full depth.
-  const depth = blockDepth(leaves)
+
 
   return (
     <group ref={group}>
      <group position={[depth / 2, 0, 0]}>
-      <Binding sheetCount={leaves} spineTexture={spineTexture} />
+      <Binding depth={depth} cloth={cloth} spineTexture={spineTexture} />
 
       {Array.from({ length: leaves }, (_, sheetIndex) => {
         const front = manager?.entries.get(sheetIndex * 2)
@@ -248,6 +249,7 @@ export default function Album({
             number={sheetIndex}
             page={delayedPage}
             sheetCount={leaves}
+            pageDepth={pageDepth}
             opened={delayedPage > sheetIndex}
             bookClosed={bookClosed}
             rigid={isBoard}
@@ -264,4 +266,4 @@ export default function Album({
   )
 }
 
-export { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH }
+export { PAGE_WIDTH, PAGE_HEIGHT }

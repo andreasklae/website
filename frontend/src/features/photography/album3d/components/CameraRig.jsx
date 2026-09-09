@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { easing } from 'maath'
 import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
-import { MODES, SIDES, useAlbumStore } from '../lib/store'
+import { MODES, SIDES, lastSpread, useAlbumStore } from '../lib/store'
 import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 import { READING_PLANE_Z, TURNED_X } from './AlbumBook'
@@ -94,7 +94,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const side = useAlbumStore((s) => s.side)
   const focus = useAlbumStore((s) => s.focus)
   const page = useAlbumStore((s) => s.page)
-  const sheetCount = useAlbumStore((s) => s.album?.sheets.length ?? 0)
+  const sheetCount = useAlbumStore((s) => (s.album ? lastSpread(s.album) : 0))
   const { camera, size } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.

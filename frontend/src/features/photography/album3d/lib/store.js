@@ -17,6 +17,13 @@ export const MODES = { SHELF: 'shelf', COVER: 'cover', OPEN: 'open', ZOOM: 'zoom
 /** On narrow screens a two-page spread is unreadable, so we frame one page. */
 export const SIDES = { LEFT: 'left', RIGHT: 'right' }
 
+/**
+ * The furthest you can read. Turning the final leaf would shut the album
+ * against its back board, which reads as the book closing itself rather than
+ * as the end of it — so the last spread is where it stops.
+ */
+export const lastSpread = (album) => Math.max(1, (album?.sheets.length ?? 1) - 1)
+
 export const useAlbumStore = create((set, get) => ({
   mode: MODES.SHELF,
   shelf: [],
@@ -73,7 +80,7 @@ export const useAlbumStore = create((set, get) => ({
     const { album, page, mode, narrow, side } = get()
     if ((mode !== MODES.OPEN && mode !== MODES.ZOOM) || !album) return
     if (narrow && side === SIDES.LEFT) return set({ side: SIDES.RIGHT, zoomed: null, focus: null, mode: MODES.OPEN })
-    set({ page: Math.min(page + 1, album.sheets.length), side: SIDES.LEFT, zoomed: null, focus: null, mode: MODES.OPEN })
+    set({ page: Math.min(page + 1, lastSpread(album)), side: SIDES.LEFT, zoomed: null, focus: null, mode: MODES.OPEN })
   },
 
   prev: () => {

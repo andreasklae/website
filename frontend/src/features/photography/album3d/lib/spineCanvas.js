@@ -3,10 +3,11 @@
 
 import { HAND, HAND_INK } from './fonts'
 
+
 export const SPINE_W = 256
 export const SPINE_H = 1024
 
-const CLOTHS = ['#3c3730', '#463b2e', '#333a34', '#4a3730', '#2f3238']
+import { clothFor } from './cloth'
 
 const pick = (value, language) => {
   if (value == null) return ''
@@ -19,7 +20,7 @@ export function paintSpine(canvas, album, { language = 'en', index = 0 } = {}) {
   canvas.width = SPINE_W
   canvas.height = SPINE_H
 
-  const cloth = CLOTHS[index % CLOTHS.length]
+  const { cloth } = clothFor(index)
   ctx.fillStyle = cloth
   ctx.fillRect(0, 0, SPINE_W, SPINE_H)
 
