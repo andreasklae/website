@@ -21,8 +21,10 @@ export const PAGE_DEPTH = 0.012
 const PAGE_SEGMENTS = 26
 const SEGMENT_WIDTH = PAGE_WIDTH / PAGE_SEGMENTS
 
-const easingFactor = 0.5
-const easingFactorFold = 0.3
+// Larger is slower. A leaf sweeps 180 degrees, so it wants a good deal more
+// time than a small move would.
+const easingFactor = 1.0
+const easingFactorFold = 0.5
 const insideCurveStrength = 0.18
 const outsideCurveStrength = 0.05
 const turningCurveStrength = 0.09
@@ -70,6 +72,9 @@ export default function Page({
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
+  // Leaves are born flat. Without this they all swing into position on the
+  // first frames, so the shelf visibly unfolds itself when the page loads.
+  const seated = useRef(false)
 
   const mesh = useMemo(() => {
     const bones = []
@@ -124,7 +129,12 @@ export default function Page({
     const base = opened ? -Math.PI / 2 : Math.PI / 2
     const targetRotation = bookClosed ? base : base + (opened ? fan : -fan)
 
-    easing.dampAngle(group.current.rotation, 'y', targetRotation, easingFactor, delta)
+    if (!seated.current) {
+      group.current.rotation.y = targetRotation
+      seated.current = true
+    } else {
+      easing.dampAngle(group.current.rotation, 'y', targetRotation, easingFactor, delta)
+    }
 
     // How far the leaf still has to go, which is what the curl is scaled by.
     //
@@ -145,18 +155,25 @@ export default function Page({
       const outsideCurve = i >= 8 ? Math.cos(i * 0.3 + 0.09) : 0
       const alongLeaf = Math.sin(i * Math.PI * (1 / bones.length))
 
+      // The bend TRAILS the turn: paper lags behind the hand moving it. Scaling
+      // it by targetRotation instead, as the reference does, points the bend
+      // the way the leaf is already going, so the far end runs ahead of the
+      // leaf's own angle — past where it is going to settle — and then comes
+      // back as the bend unwinds. One direction only, never overshooting.
+      const trailing = -Math.sign(remaining)
       const curl = bookClosed
         ? 0
         : (insideCurveStrength * insideCurve -
             outsideCurveStrength * outsideCurve +
             turningCurveStrength * alongLeaf) *
-          targetRotation *
+          (Math.PI / 2) *
+          trailing *
           turning
 
       easing.dampAngle(bones[i].rotation, 'y', curl, easingFactorFold, delta)
 
       const foldIntensity = i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turning : 0
-      const fold = bookClosed ? 0 : degToRad(Math.sign(targetRotation) * 2) * foldIntensity
+      const fold = bookClosed ? 0 : degToRad(trailing * 2) * foldIntensity
       easing.dampAngle(bones[i].rotation, 'x', fold, easingFactorFold, delta)
     }
   })

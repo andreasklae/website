@@ -260,3 +260,62 @@ test('a leaf has no bend left in it by the time it lands', () => {
     previous = value
   }
 })
+
+test('the bend trails the turn and never runs past where the leaf settles', () => {
+  // The overshoot: scaling the bend by the leaf's target angle points it the
+  // way the leaf is already going, so the far end runs PAST the settled angle
+  // and comes back as the bend unwinds. Trailing it — paper lagging behind the
+  // hand — moves in one direction only.
+  const bend = (remaining) => {
+    const turning = Math.sin(Math.abs(remaining))
+    return -Math.sign(remaining) * (Math.PI / 2) * turning
+  }
+
+  // Opening: the leaf still has to travel a negative amount.
+  for (const remaining of [-2.5, -1.5, -0.5, -0.1]) {
+    assert.ok(bend(remaining) > 0, `opening: bend ${bend(remaining)} leads instead of trails`)
+  }
+  // Closing mirrors it.
+  for (const remaining of [2.5, 1.5, 0.5, 0.1]) {
+    assert.ok(bend(remaining) < 0, `closing: bend ${bend(remaining)} leads instead of trails`)
+  }
+  assert.ok(Math.abs(bend(0)) < 1e-12, 'a settled leaf must be flat')
+
+  // The far end therefore always sits BEHIND the root, never beyond the angle
+  // the leaf is heading for.
+  const target = -Math.PI / 2
+  for (const current of [Math.PI / 2, 0.8, 0, -0.8, -1.4]) {
+    const remaining = target - current
+    const tip = current + bend(remaining)
+    assert.ok(tip >= Math.min(current, target) - 1e-9, `tip ${tip} overshot the target ${target}`)
+  }
+})
+
+test('albums stay clear of one another once one is chosen', () => {
+  // A shut album lies wholly to one side of its binding, so it reaches a full
+  // page width before it even opens. Sizing the parting for half a cover puts
+  // the neighbour inside the book.
+  const GAP = 0.055
+  const COVER_BOARD_ = 0.022
+  const thickness = (n) => n * PAGE_DEPTH_ + COVER_BOARD_ * 2
+  const sheets = [26, 9, 8, 8, 9]
+  const items = sheets.map((n) => ({ t: thickness(n) }))
+  const total = items.reduce((a, b) => a + b.t, 0) + GAP * (items.length - 1)
+  let x = -total / 2
+  for (const it of items) { it.x = x + it.t / 2; x += it.t + GAP }
+
+  const room = PAGE_WIDTH * 1.32
+  const active = 2
+
+  for (const [state, lo, hi] of [['shut', 0, PAGE_WIDTH], ['open', -PAGE_WIDTH, PAGE_WIDTH]]) {
+    for (const side of [-1, 1]) {
+      const n = items[active + side]
+      const inner = side > 0
+        ? n.x - items[active].x + room - n.t / 2
+        : n.x - items[active].x - room + n.t / 2
+      const edge = side > 0 ? hi : lo
+      const gap = side > 0 ? inner - edge : edge - inner
+      assert.ok(gap > 0.1, `${state}, side ${side}: only ${gap.toFixed(3)} of clearance`)
+    }
+  }
+})

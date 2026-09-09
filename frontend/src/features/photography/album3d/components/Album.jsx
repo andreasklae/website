@@ -18,7 +18,20 @@ const WINDOW = 3
 /** Touch devices have no hover, so every hover affordance needs a tap path. */
 const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
 
-export default function Album({ album, language, planeZ = 0, spineTexture = null }) {
+/**
+ * The bound album: leaves, binding and boards.
+ *
+ * Rendered for EVERY album on the shelf, selected or not, so choosing one adds
+ * nothing to the scene — it only starts animating and starts painting faces.
+ * Building the leaves at the moment of selection, which is what this used to
+ * do, puts a hitch in the middle of the turn no amount of easing can hide.
+ *
+ * `full` is the album's compiled layout, which only the chosen album needs;
+ * without it the leaves render as blank paper with the cover on the front.
+ */
+export default function Album({
+  full, sheetCount, active, language, coverTexture = null, spineTexture = null,
+}) {
   const mode = useAlbumStore((s) => s.mode)
   const page = useAlbumStore((s) => s.page)
   const heldStack = useAlbumStore((s) => s.heldStack)
@@ -34,20 +47,24 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
   const { invalidate } = useThree()
   const [, forceRepaint] = useState(0)
 
+  // Only the chosen album paints faces; the rest are blank paper, which is all
+  // you can see of a shelved album anyway.
   const manager = useMemo(
-    () => new FaceTextureManager(album, {
-      language,
-      budget: (WINDOW * 2 + 2) * 2,
-      onUpdate: () => { forceRepaint((n) => n + 1); invalidate() },
-    }),
-    [album, invalidate]
+    () => (active && full
+      ? new FaceTextureManager(full, {
+          language,
+          budget: (WINDOW * 2 + 2) * 2,
+          onUpdate: () => { forceRepaint((n) => n + 1); invalidate() },
+        })
+      : null),
+    [active, full, invalidate]
   )
 
-  useEffect(() => () => manager.dispose(), [manager])
-  useEffect(() => { manager.setLanguage(language) }, [manager, language])
+  useEffect(() => () => manager?.dispose(), [manager])
+  useEffect(() => { manager?.setLanguage(language) }, [manager, language])
 
-  const sheets = album.sheets
-  const faceCount = manager.faceCount()
+  const leaves = full ? full.sheets.length : sheetCount
+  const faceCount = manager?.faceCount() ?? 0
 
   // Delay page turns so a multi-page jump cascades instead of snapping.
   const [delayedPage, setDelayedPage] = useState(page)
@@ -66,6 +83,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
 
   // Keep only the textures the current spread and its neighbours need.
   useEffect(() => {
+    if (!manager) return
     const wanted = visibleFaceIndices(delayedPage, faceCount)
     wanted.forEach((i) => manager.acquire(i))
     manager.keepOnly(wanted)
@@ -83,7 +101,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
 
   /** Maps a pointer hit on a page face to the album slot under the cursor. */
   const hitTest = useCallback((event, faceIndex) => {
-    const entry = manager.entries.get(faceIndex)
+    const entry = manager?.entries.get(faceIndex)
     if (!entry || !event.uv) return null
     const x = event.uv.x * FACE_W
     const y = (1 - event.uv.y) * FACE_H
@@ -94,7 +112,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
 
   const handlePointerMove = useCallback((event, sheetIndex) => {
     if (isTouch(event)) return // a touch "move" is a drag, not a hover
-    if (heldStack) return
+    if (!manager || heldStack) return
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
 
     // Claim the event for the NEAREST leaf, hit or miss. Every leaf is
@@ -148,9 +166,8 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
       // it cannot feed back into the camera that consumes it.
       ndc,
       box: focusBoxFor(hit.rect, sheetIndex, delayedPage),
-      z: planeZ,
     })
-  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, planeZ])
+  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, manager])
 
   const handlePointerOut = useCallback(() => {
     currentHit.current = null
@@ -161,7 +178,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
   }, [setHoveredSlot, setFocus])
 
   const handleClick = useCallback((event, sheetIndex) => {
-    if (heldStack) return
+    if (!manager || heldStack) return
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
     event.stopPropagation() // nearest leaf only, as above
 
@@ -187,13 +204,13 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
     event.stopPropagation()
     if (useAlbumStore.getState().mode === MODES.ZOOM) { unzoom(); return }
     if (sheetIndex < delayedPage) prev(); else next()
-  }, [mode, hitTest, delayedPage, prev, next, zoom, unzoom, takeStack, heldStack])
+  }, [mode, hitTest, delayedPage, prev, next, zoom, unzoom, takeStack, heldStack, manager])
 
   useEffect(() => () => { clearTimers(); document.body.style.cursor = '' }, [])
 
   // ---- placement -----------------------------------------------------------
 
-  const bookClosed = delayedPage === 0 || delayedPage === sheets.length
+  const bookClosed = delayedPage === 0 || delayedPage === leaves
 
   // The binding stays put and the leaves move around it — the book never
   // translates, in any state. Centring on the block's bounding box instead,
@@ -203,29 +220,29 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
   //
   // Only the thickness is centred, and that is constant: leaves pile along -x
   // from the hinge, and the binding spans the full depth.
-  const depth = sheets.length * PAGE_DEPTH + COVER_BOARD * 2
+  const depth = leaves * PAGE_DEPTH + COVER_BOARD * 2
 
   return (
     <group ref={group}>
      <group position={[depth / 2, 0, 0]}>
-      <Binding sheetCount={sheets.length} spineTexture={spineTexture} />
+      <Binding sheetCount={leaves} spineTexture={spineTexture} />
 
-      {sheets.map((_, sheetIndex) => {
-        const front = manager.entries.get(sheetIndex * 2)
-        const back = manager.entries.get(sheetIndex * 2 + 1)
+      {Array.from({ length: leaves }, (_, sheetIndex) => {
+        const front = manager?.entries.get(sheetIndex * 2)
+        const back = manager?.entries.get(sheetIndex * 2 + 1)
         return (
           <Page
             key={sheetIndex}
             number={sheetIndex}
             page={delayedPage}
-            sheetCount={sheets.length}
+            sheetCount={leaves}
             opened={delayedPage > sheetIndex}
             bookClosed={bookClosed}
-            frontTexture={front?.texture}
+            frontTexture={front?.texture || (sheetIndex === 0 ? coverTexture : null)}
             backTexture={back?.texture}
-            onPointerMove={(e) => handlePointerMove(e, sheetIndex)}
-            onPointerOut={handlePointerOut}
-            onClick={(e) => handleClick(e, sheetIndex)}
+            onPointerMove={active ? (e) => handlePointerMove(e, sheetIndex) : undefined}
+            onPointerOut={active ? handlePointerOut : undefined}
+            onClick={active ? (e) => handleClick(e, sheetIndex) : undefined}
           />
         )
       })}

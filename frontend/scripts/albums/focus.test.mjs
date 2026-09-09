@@ -61,7 +61,7 @@ test('a half-page photo keeps its real proportions in world units', () => {
 
 // ---- anchored zoom (mirrors anchoredTarget in lib/focus.js) ---------------
 
-const LEAN_PAN_GAIN = 0.45
+const LEAN_PAN_GAIN = 1.7
 const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
 const clamp2 = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
@@ -125,7 +125,10 @@ test('moving the pointer pans, but by less than one-for-one', () => {
   assert.ok(moved.x > still.x, 'panning must follow the pointer, not oppose it')
   const shift = Math.abs(moved.x - still.x)
   const pinned = 0.3 * halfW
-  assert.ok(shift < pinned, 'a one-for-one pin would trap the pointer on the photo forever')
+  // Above one-for-one, so the whole photograph is reachable without taking the
+  // pointer to the edge of the screen — and it never sticks to the pointer.
+  assert.ok(shift > pinned, 'panning should outrun the pointer')
+  assert.notEqual(LEAN_PAN_GAIN, 1, 'at exactly 1 the photo is pinned and cannot be left')
   close(shift, pinned * LEAN_PAN_GAIN)
 })
 

@@ -43,11 +43,15 @@ export function useShelfLayout(shelf) {
 export function partingOffsets(layout, activeId, spread) {
   const active = layout.findIndex((a) => a.id === activeId)
   if (active < 0) return layout.map(() => 0)
-  const room = spread ? PAGE_WIDTH * 1.28 : PAGE_WIDTH * 0.72
+  // A SHUT album lies wholly to one side of its binding, so it reaches a full
+  // page width even before it opens — sizing this for half a cover, as it once
+  // was, puts the neighbour inside the book. One room for every reading state
+  // keeps the row still while the album turns and opens.
+  const room = PAGE_WIDTH * 1.32
   return layout.map((_, i) => (i < active ? -room : i > active ? room : 0))
 }
 
-export default function Shelf({ layout, language, activeId, hiddenId, spread }) {
+export default function Shelf({ layout, language, activeId, full, spread }) {
   const offsets = partingOffsets(layout, activeId, spread)
 
   return (
@@ -56,11 +60,11 @@ export default function Shelf({ layout, language, activeId, hiddenId, spread }) 
         <group key={album.id} position={[album.x, 0, 0]}>
           <AlbumBook
             album={album}
+            full={full?.id === album.id ? full : null}
             index={i}
             language={language}
             offsetX={offsets[i]}
             active={album.id === activeId}
-            hidden={album.id === hiddenId}
           />
         </group>
       ))}

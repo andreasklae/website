@@ -27,13 +27,13 @@ const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 /**
  * How much of the pointer's movement becomes pan, once the lean has settled.
  *
- * Pinning the spot to the pointer one-for-one is exactly right while zooming,
- * but it also means the photograph follows the pointer forever and you can
- * never move off it. Kept just below 1: enough to reach the far edge of a
- * photograph well before the pointer reaches the edge of the screen, while
- * still drifting enough that moving away releases it.
+ * Above 1 the view outruns the pointer, so a small movement crosses the whole
+ * photograph rather than needing the pointer at the edge of the screen — and
+ * the photograph slides out from under the pointer rather than following it
+ * forever, so moving away still releases it. (At exactly 1 it would be pinned
+ * and impossible to leave.)
  */
-export const LEAN_PAN_GAIN = 0.85
+export const LEAN_PAN_GAIN = 1.7
 
 /** The camera is never allowed to wander further than the open spread. */
 const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
