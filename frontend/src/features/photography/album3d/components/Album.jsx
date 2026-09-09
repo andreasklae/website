@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
+import { focusBoxFor } from '../lib/focus'
 import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
 
 // Every sheet is a real mesh — the page geometry is shared, so the cost of a
@@ -12,9 +13,9 @@ import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
 // carry a painted face, the rest render as blank paper.
 const WINDOW = 3
 
-// Long enough that sweeping the cursor across a spread does not fire zooms,
-// short enough that resting on a photograph feels immediate.
-const HOVER_ZOOM_DELAY = 220
+// Long enough that sweeping the cursor across a spread does not drag the
+// camera around, short enough that resting on a photograph feels immediate.
+const HOVER_FOCUS_DELAY = 130
 
 /** Touch devices have no hover, so every hover affordance needs a tap path. */
 const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
@@ -27,7 +28,7 @@ export default function Album({ album, language, onCoverClick }) {
   const zoom = useAlbumStore((s) => s.zoom)
   const takeStack = useAlbumStore((s) => s.takeStack)
   const unzoom = useAlbumStore((s) => s.unzoom)
-  const unzoomIfHovered = useAlbumStore((s) => s.unzoomIfHovered)
+  const setFocus = useAlbumStore((s) => s.setFocus)
   const next = useAlbumStore((s) => s.next)
   const prev = useAlbumStore((s) => s.prev)
 
@@ -107,38 +108,39 @@ export default function Album({ album, language, onCoverClick }) {
     currentHit.current = key
     clearTimers()
 
-    // Left the photograph's own borders: drop the zoom rather than holding it.
+    // Left the photograph's own borders: fall back to the whole spread.
     if (!hit) {
       setHoveredSlot(null)
       document.body.style.cursor = ''
-      unzoomIfHovered()
+      setFocus(null)
       return
     }
     event.stopPropagation()
 
     setHoveredSlot({ faceIndex, ...hit })
-    document.body.style.cursor = 'pointer'
 
-    if (hit.slot.kind === 'photo') {
-      hoverTimer.current = setTimeout(
-        () => zoom({ ...hit.slot, faceIndex }, 'hover'),
-        HOVER_ZOOM_DELAY
-      )
-    } else {
-      // Moved onto a card or a stack: the previous zoom is no longer relevant.
-      unzoomIfHovered()
-    }
-    // Stacks stay still on the page. They are picked up by clicking, not by
-    // hovering — a stack that riffles under the cursor is unreadable.
-  }, [mode, hitTest, setHoveredSlot, zoom, unzoomIfHovered, heldStack])
+    // Photographs and stacks are worth leaning in on; postcards and memos are
+    // already legible at spread distance.
+    const leanable = hit.slot.kind === 'photo' || hit.slot.kind === 'stack'
+    document.body.style.cursor = leanable ? 'zoom-in' : 'pointer'
+
+    if (!leanable) { setFocus(null); return }
+
+    // The camera moving in makes the slot fill more of the screen, so a
+    // stationary cursor stays inside it — the focus is self-stabilising.
+    hoverTimer.current = setTimeout(
+      () => setFocus(focusBoxFor(hit.rect, sheetIndex, delayedPage)),
+      HOVER_FOCUS_DELAY
+    )
+  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack])
 
   const handlePointerOut = useCallback(() => {
     currentHit.current = null
     clearTimers()
     setHoveredSlot(null)
     document.body.style.cursor = ''
-    unzoomIfHovered()
-  }, [setHoveredSlot, unzoomIfHovered])
+    setFocus(null)
+  }, [setHoveredSlot, setFocus])
 
   const handleClick = useCallback((event, sheetIndex) => {
     if (heldStack) return
@@ -157,9 +159,10 @@ export default function Album({ album, language, onCoverClick }) {
     }
     if (hit?.slot.kind === 'photo') {
       event.stopPropagation()
-      // Tap is the touch equivalent of hovering a photo to enlarge it.
+      // Clicking commits to the photograph, at full size and pin-sharp.
+      // On touch, where there is no hover to lean in with, this is the way in.
       if (useAlbumStore.getState().mode === MODES.ZOOM) unzoom()
-      else zoom({ ...hit.slot, faceIndex }, 'tap')
+      else zoom({ ...hit.slot, faceIndex })
       return
     }
 

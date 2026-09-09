@@ -43,27 +43,20 @@ function CloseButton({ onClick, label }) {
 }
 
 /**
- * A single photograph, whole and uncropped.
- *
- * A hover zoom must not take the pointer. This overlay sits on top of the
- * canvas, so capturing pointer events would fire pointerleave on the page
- * beneath, dismiss the zoom, remount the canvas hover and re-open it — a
- * flicker loop. Hover zooms are therefore inert and dismissed by moving off
- * the photograph; tap zooms own the pointer and get a real close button.
+ * A single photograph, whole and uncropped. Only ever opened by a deliberate
+ * click or tap — hovering leans the camera in on the page instead — so this
+ * always owns the pointer and always offers a way out.
  */
-function ZoomView({ slot, source, onClose, getText }) {
-  const byHover = source === 'hover'
+function ZoomView({ slot, onClose, getText }) {
   return (
     <motion.div
       key="zoom"
-      className={`absolute inset-0 z-40 flex flex-col items-center justify-center gap-5 p-4 ${
-        byHover ? 'pointer-events-none' : ''
-      }`}
+      className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-5 p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.18 }}
-      onClick={byHover ? undefined : onClose}
+      onClick={onClose}
     >
       <div className="absolute inset-0 bg-[#171512]/78 backdrop-blur-[3px]" />
       <motion.div
@@ -84,11 +77,9 @@ function ZoomView({ slot, source, onClose, getText }) {
           />
         </PrintFrame>
       </motion.div>
-      {!byHover && (
-        <div className="relative">
-          <CloseButton onClick={onClose} label={getText({ en: 'Close', no: 'Lukk' })} />
-        </div>
-      )}
+      <div className="relative">
+        <CloseButton onClick={onClose} label={getText({ en: 'Close', no: 'Lukk' })} />
+      </div>
     </motion.div>
   )
 }
@@ -257,7 +248,6 @@ function StackView({ slot, onClose, getText }) {
  */
 export default function PhotoOverlay({ getText }) {
   const zoomed = useAlbumStore((s) => s.zoomed)
-  const zoomSource = useAlbumStore((s) => s.zoomSource)
   const heldStack = useAlbumStore((s) => s.heldStack)
   const unzoom = useAlbumStore((s) => s.unzoom)
   const putBackStack = useAlbumStore((s) => s.putBackStack)
@@ -280,9 +270,7 @@ export default function PhotoOverlay({ getText }) {
   return (
     <AnimatePresence>
       {active === 'stack' && <StackView slot={heldStack} onClose={close} getText={getText} />}
-      {active === 'zoom' && (
-        <ZoomView slot={zoomed} source={zoomSource} onClose={close} getText={getText} />
-      )}
+      {active === 'zoom' && <ZoomView slot={zoomed} onClose={close} getText={getText} />}
     </AnimatePresence>
   )
 }

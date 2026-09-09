@@ -26,7 +26,19 @@ function fitDistance(fov, aspect, [w, h], pad) {
  * photographs are unreadable. Narrow viewports therefore frame a single page
  * and step through them one at a time.
  */
-function shotFor(mode, { narrow, side, shelfWidth }) {
+function shotFor(mode, { narrow, side, shelfWidth, focus }) {
+  // Leaning in on a hovered photograph. Padded well past the photo's own edges
+  // so this reads as moving closer to the page, not as replacing it.
+  if (focus && (mode === MODES.OPEN || mode === MODES.ZOOM)) {
+    return {
+      box: [focus.w, focus.h],
+      target: [focus.x, focus.y, PAGE_WIDTH * 0.5],
+      // Level with the photograph, so leaning in also straightens the view.
+      height: focus.y,
+      pad: 1.45,
+    }
+  }
+
   switch (mode) {
     case MODES.COVER:
       return {
@@ -67,21 +79,26 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
   const narrow = useAlbumStore((s) => s.narrow)
   const side = useAlbumStore((s) => s.side)
+  const focus = useAlbumStore((s) => s.focus)
   const { camera, size } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
 
   useFrame((_, delta) => {
-    const shot = shotFor(mode, { narrow, side, shelfWidth })
+    const shot = shotFor(mode, { narrow, side, shelfWidth, focus })
     const aspect = size.width / Math.max(size.height, 1)
     const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
+
+    // Leaning in is quicker than pulling back out, which keeps hovering
+    // responsive without the camera feeling twitchy when the cursor leaves.
+    const smooth = focus ? 0.3 : 0.45
 
     easing.damp3(
       camera.position,
       [shot.target[0], shot.height, distance + shot.target[2]],
-      0.42,
+      smooth,
       delta
     )
-    easing.damp3(current.current, shot.target, 0.42, delta)
+    easing.damp3(current.current, shot.target, smooth, delta)
     lookTarget.copy(current.current)
     camera.lookAt(lookTarget)
   })

@@ -34,11 +34,10 @@ export const useAlbumStore = create((set, get) => ({
   /** A single photograph, enlarged over the page. */
   zoomed: null,
   /**
-   * How the zoom was opened. A hover zoom is dismissed by moving off the
-   * photograph, so its overlay must stay transparent to the pointer; a tap
-   * zoom is dismissed deliberately and owns the pointer.
+   * World-space box the camera should lean in on, set by hovering a
+   * photograph or a stack. Hovering moves the camera; it never opens anything.
    */
-  zoomSource: null,
+  focus: null,
   /** A stack the reader has picked up to sift through. */
   heldStack: null,
 
@@ -52,7 +51,7 @@ export const useAlbumStore = create((set, get) => ({
     const { mode, activeId } = get()
     if (mode === MODES.OPEN || mode === MODES.ZOOM) return
     if (activeId === id) return
-    set({ activeId: id, mode: MODES.COVER, page: 0, side: SIDES.LEFT, album: null, zoomed: null, zoomSource: null, heldStack: null })
+    set({ activeId: id, mode: MODES.COVER, page: 0, side: SIDES.LEFT, album: null, zoomed: null, focus: null, heldStack: null })
   },
 
   albumLoaded: (album) => set({ album }),
@@ -67,54 +66,47 @@ export const useAlbumStore = create((set, get) => ({
   closeBook: () => {
     const { mode } = get()
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
-    set({ mode: MODES.COVER, page: 0, side: SIDES.LEFT, zoomed: null, zoomSource: null, heldStack: null, hoveredSlot: null })
+    set({ mode: MODES.COVER, page: 0, side: SIDES.LEFT, zoomed: null, focus: null, heldStack: null, hoveredSlot: null })
   },
 
   next: () => {
     const { album, page, mode, narrow, side } = get()
     if ((mode !== MODES.OPEN && mode !== MODES.ZOOM) || !album) return
-    if (narrow && side === SIDES.LEFT) return set({ side: SIDES.RIGHT, zoomed: null, mode: MODES.OPEN })
-    set({ page: Math.min(page + 1, album.sheets.length), side: SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
+    if (narrow && side === SIDES.LEFT) return set({ side: SIDES.RIGHT, zoomed: null, focus: null, mode: MODES.OPEN })
+    set({ page: Math.min(page + 1, album.sheets.length), side: SIDES.LEFT, zoomed: null, focus: null, mode: MODES.OPEN })
   },
 
   prev: () => {
     const { page, mode, narrow, side } = get()
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
-    if (narrow && side === SIDES.RIGHT) return set({ side: SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
-    set({ page: Math.max(page - 1, 0), side: narrow ? SIDES.RIGHT : SIDES.LEFT, zoomed: null, mode: MODES.OPEN })
+    if (narrow && side === SIDES.RIGHT) return set({ side: SIDES.LEFT, zoomed: null, focus: null, mode: MODES.OPEN })
+    set({ page: Math.max(page - 1, 0), side: narrow ? SIDES.RIGHT : SIDES.LEFT, zoomed: null, focus: null, mode: MODES.OPEN })
   },
 
-  zoom: (slot, source = 'hover') => {
+  /** Lean the camera in on a photograph or stack under the cursor. */
+  setFocus: (focus) => {
+    if (get().heldStack) return
+    set({ focus })
+  },
+
+  zoom: (slot) => {
     const { mode, heldStack } = get()
     if (heldStack || (mode !== MODES.OPEN && mode !== MODES.ZOOM)) return
-    set({ mode: MODES.ZOOM, zoomed: slot, zoomSource: source })
+    set({ mode: MODES.ZOOM, zoomed: slot })
   },
-  unzoom: () => {
-    if (get().mode === MODES.ZOOM) set({ mode: MODES.OPEN, zoomed: null, zoomSource: null })
-  },
-  /**
-   * Dismissal driven by the pointer leaving the page. Only a hover zoom may be
-   * closed this way: a tap zoom's own overlay steals the pointer from the
-   * canvas, and honouring that leave would close it the instant it opened.
-   */
-  unzoomIfHovered: () => {
-    const { mode, zoomSource } = get()
-    if (mode === MODES.ZOOM && zoomSource === 'hover') {
-      set({ mode: MODES.OPEN, zoomed: null, zoomSource: null })
-    }
-  },
+  unzoom: () => { if (get().mode === MODES.ZOOM) set({ mode: MODES.OPEN, zoomed: null }) },
 
   /** Lift a stack off the page so it can be sifted through. */
   takeStack: (slot) => {
     if (get().mode !== MODES.OPEN && get().mode !== MODES.ZOOM) return
-    set({ heldStack: slot, zoomed: null, zoomSource: null, mode: MODES.OPEN })
+    set({ heldStack: slot, zoomed: null, focus: null, mode: MODES.OPEN })
   },
   putBackStack: () => set({ heldStack: null }),
 
   /** Put the album back on the shelf. */
   close: () => set({
     mode: MODES.SHELF, activeId: null, album: null,
-    page: 0, side: SIDES.LEFT, zoomed: null, zoomSource: null, heldStack: null, hoveredSlot: null,
+    page: 0, side: SIDES.LEFT, zoomed: null, focus: null, heldStack: null, hoveredSlot: null,
   }),
 }))
 
