@@ -232,9 +232,15 @@ export default function Album({
   // from the hinge, and the binding spans the full depth.
 
 
+  // Centre the block on the leaves' own extent. Half a leaf of that extent is
+  // the outermost leaf's own thickness, so centring on the nominal depth
+  // instead leaves the boards proud at the front and short at the back — the
+  // binding then reads as not quite flush with the book it binds.
+  const blockCentre = depth / 2 - (pageDepth * 0.45) / 2
+
   return (
     <group ref={group}>
-     <group position={[depth / 2, 0, 0]}>
+     <group position={[blockCentre, 0, 0]}>
       <Binding depth={depth} cloth={cloth} spineTexture={spineTexture} />
 
       {Array.from({ length: leaves }, (_, sheetIndex) => {

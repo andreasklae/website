@@ -6,6 +6,7 @@
 // hover and zoom without re-deriving the layout.
 
 import { HAND, HAND_INK } from './fonts'
+import { paintCloth, paintPaper, seedFrom, shade } from './material'
 
 export const FACE_W = 1024
 export const FACE_H = 1367 // 0.749 — matches the page mesh aspect
@@ -78,17 +79,8 @@ const contain = (box, aspect) => {
   return { x: box.x + (box.w - w) / 2, y: box.y + (box.h - h) / 2, w, h }
 }
 
-function paper(ctx) {
-  ctx.fillStyle = PAPER
-  ctx.fillRect(0, 0, FACE_W, FACE_H)
-  // Faint fibre so a blank page never reads as flat white.
-  ctx.save()
-  ctx.globalAlpha = 0.035
-  for (let i = 0; i < 900; i++) {
-    ctx.fillStyle = i % 2 ? '#8a8070' : '#ffffff'
-    ctx.fillRect(Math.random() * FACE_W, Math.random() * FACE_H, 1.5, 1.5)
-  }
-  ctx.restore()
+function paper(ctx, seed) {
+  paintPaper(ctx, FACE_W, FACE_H, PAPER, seed)
   const edge = ctx.createLinearGradient(0, 0, FACE_W * 0.18, 0)
   edge.addColorStop(0, 'rgba(0,0,0,0.10)')
   edge.addColorStop(1, 'rgba(0,0,0,0)')
@@ -350,29 +342,25 @@ function fitLines(ctx, text, maxWidth) {
   return lines
 }
 
-/** Darkens a hex colour toward black by `amount`. */
-function shade(hex, amount) {
-  const n = parseInt(hex.slice(1), 16)
-  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * (1 - amount)))
-  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`
-}
+/**
+ * The shade the boards and the binding are both painted, so a book is one
+ * colour whichever face of it you are looking at.
+ */
+export const BOARD_SHADE = 0.12
 
-function coverFace(ctx, slot, language, images) {
-  // Cloth-bound board rather than paper, in the album's own colour so the
-  // board and the spine you picked it out by match.
+function coverFace(ctx, slot, language, images, seed) {
+  // Cloth-bound board, in the album's own colour so the board and the spine
+  // you picked it out by are the same material.
   const cloth = slot.cloth || '#3d3730'
+  paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
+
+  // A board catches the light unevenly across its width.
   const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
-  g.addColorStop(0, shade(cloth, 0.12))
-  g.addColorStop(1, shade(cloth, 0.36))
+  g.addColorStop(0, 'rgba(255,255,255,0.05)')
+  g.addColorStop(0.55, 'rgba(0,0,0,0)')
+  g.addColorStop(1, 'rgba(0,0,0,0.12)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, FACE_W, FACE_H)
-  ctx.save()
-  ctx.globalAlpha = 0.05
-  for (let i = 0; i < 2600; i++) {
-    ctx.fillStyle = i % 2 ? '#fff' : '#000'
-    ctx.fillRect(Math.random() * FACE_W, Math.random() * FACE_H, 2, 1)
-  }
-  ctx.restore()
 
   if (slot.photo) {
     printedPhoto(ctx, images.get(slot.photo.src), {
@@ -417,11 +405,12 @@ function coverFace(ctx, slot, language, images) {
   ctx.restore()
 }
 
-function backCoverFace(ctx, slot, language) {
+function backCoverFace(ctx, slot, language, seed) {
   const cloth = slot.cloth || '#3d3730'
+  paintCloth(ctx, FACE_W, FACE_H, shade(cloth, BOARD_SHADE), seed)
   const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
-  g.addColorStop(0, shade(cloth, 0.36))
-  g.addColorStop(1, shade(cloth, 0.12))
+  g.addColorStop(0, 'rgba(0,0,0,0.12)')
+  g.addColorStop(1, 'rgba(255,255,255,0.04)')
   ctx.fillStyle = g
   ctx.fillRect(0, 0, FACE_W, FACE_H)
   ctx.save()
@@ -452,11 +441,14 @@ export function paintFace(
   ctx.textBaseline = 'alphabetic'
   ctx.textAlign = 'left'
 
-  const first = face.slots?.[0]
-  if (first?.kind === 'cover') { coverFace(ctx, first, language, images); return [] }
-  if (first?.kind === 'back-cover') { backCoverFace(ctx, first, language); return [] }
+  // Seeded from the face itself, so its grain is the same every repaint.
+  const seed = seedFrom(face.role + (face.slots?.[0]?.src || face.slots?.[0]?.kind || '') + (face.slots?.length ?? 0))
 
-  paper(ctx)
+  const first = face.slots?.[0]
+  if (first?.kind === 'cover') { coverFace(ctx, first, language, images, seed); return [] }
+  if (first?.kind === 'back-cover') { backCoverFace(ctx, first, language, seed); return [] }
+
+  paper(ctx, seed)
 
   const rects = slotRects(face)
   const hitboxes = []

@@ -229,6 +229,23 @@ test('leaf spacing fills the block exactly, whatever the page count', () => {
   }
 })
 
+test('the binding is flush with the leaves at both ends', () => {
+  // Half a block's extent is the outermost leaf's own thickness, so centring
+  // on the nominal depth leaves the boards proud at the front and short at the
+  // back — the crease then reads as not quite flush with the book.
+  for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8]]) {
+    const depth = depthFor(id)
+    const spacing = pageDepthFor(sheets, depth)
+    const leaf = spacing * LEAF_FRACTION
+    const centre = depth / 2 - leaf / 2
+
+    const front = centre + leaf / 2
+    const back = centre - (sheets - 1) * spacing - leaf / 2
+    assert.ok(Math.abs(front - depth / 2) < 1e-9, `${id}: front proud by ${front - depth / 2}`)
+    assert.ok(Math.abs(back + depth / 2) < 1e-9, `${id}: back short by ${-depth / 2 - back}`)
+  }
+})
+
 test('the bound album and the shelved block occupy the same seat', () => {
   // The handover is only invisible if the two are the same size in the same
   // place. Both hinge on the spine with their body running backwards, rather
@@ -240,7 +257,7 @@ test('the bound album and the shelved block occupy the same seat', () => {
 
   const album = new Group()
   const block = new Group()
-  block.position.set(depth / 2, 0, 0)
+  block.position.set(depth / 2 - (spacing * LEAF_FRACTION) / 2, 0, 0)
   album.add(block)
   for (let n = 0; n < sheetCount; n++) {
     const g = new Group()
@@ -267,9 +284,10 @@ test('the bound album and the shelved block occupy the same seat', () => {
   // resizing at the moment one takes over from the other.
   assert.ok(Math.abs(bounds.max.z - boxMax) < 1e-9, `spine edges differ: ${bounds.max.z} vs ${boxMax}`)
   assert.ok(Math.abs(bounds.min.z - boxMin) < 1e-9, `fore edges differ: ${bounds.min.z} vs ${boxMin}`)
-  // The block is centred on its own thickness, so the top leaf sits at half
-  // the depth and the bottom one at minus that.
-  assert.ok(Math.abs(bounds.max.x - depth / 2) < 1e-9, `thickness off centre: ${bounds.max.x} vs ${depth / 2}`)
+  // The leaves' own extent — their outer faces, not their centres — has to be
+  // centred, or the binding sits proud at one end and short at the other.
+  const leaf = spacing * LEAF_FRACTION
+  assert.ok(Math.abs(bounds.max.x + leaf / 2 - depth / 2) < 1e-9, `front face off centre: ${bounds.max.x + leaf / 2}`)
 })
 
 test('settled leaves never touch, so none sinks into the one below', () => {

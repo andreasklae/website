@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { easing } from 'maath'
 import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
-import { MODES, SIDES, lastSpread, useAlbumStore } from '../lib/store'
+import { MODES, SIDES, useAlbumStore } from '../lib/store'
 import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 import { READING_PLANE_Z, TURNED_X } from './AlbumBook'
@@ -45,8 +45,7 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide }) {
       }
     case MODES.OPEN:
     case MODES.ZOOM: {
-      // Read right through to the back and the album is shut again, lying on
-      // the other side of its binding.
+      // Still shut: the cover lies wholly to one side of the binding.
       if (closedSide) {
         return {
           box: [PAGE_WIDTH * 1.14, PAGE_HEIGHT * 1.1],
@@ -67,7 +66,9 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide }) {
       return {
         box: [PAGE_WIDTH * 2.12, PAGE_HEIGHT * 1.06],
         target: [TURNED_X, -0.05, READING_PLANE_Z],
-        height: mode === MODES.ZOOM ? 0.3 : 0.7,
+        // Below the spread looking slightly up: from above, an open album
+        // reads as being looked down on rather than held.
+        height: mode === MODES.ZOOM ? -0.16 : -0.34,
         pad: mode === MODES.ZOOM ? 1.04 : 1.12,
       }
     }
@@ -88,21 +89,26 @@ function leanDistance(shot, focus, fov, aspect) {
   return resting + (closeUp - resting) * LEAN_DISTANCE
 }
 
+/** How far the shelf drifts with the pointer, as a share of what is on screen. */
+const SHELF_PARALLAX = { x: 0.3, y: 0.12 }
+
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)
   const narrow = useAlbumStore((s) => s.narrow)
   const side = useAlbumStore((s) => s.side)
   const focus = useAlbumStore((s) => s.focus)
   const page = useAlbumStore((s) => s.page)
-  const sheetCount = useAlbumStore((s) => (s.album ? lastSpread(s.album) : 0))
-  const { camera, size } = useThree()
+  const { camera, size, pointer } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.
   const dist = useRef({ value: 4 }).current
 
   useFrame((_, delta) => {
-    // +1 shut at the front, -1 shut at the back, 0 open somewhere in between.
-    const closedSide = page === 0 ? 1 : sheetCount && page === sheetCount ? -1 : 0
+    // 1 while the album is still shut, 0 once it is open. There is no shut-at-
+    // the-back case any more: reading stops at the last spread, so the album
+    // never closes against its own back board — and treating the last spread
+    // as "shut" put the camera on the left-hand page instead of the middle.
+    const closedSide = page === 0 ? 1 : 0
     const shot = shotFor(mode, { narrow, side, shelfWidth, closedSide })
     const aspect = size.width / Math.max(size.height, 1)
     const leaning = focus && (mode === MODES.OPEN || mode === MODES.ZOOM)
@@ -123,8 +129,20 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
     } else {
       const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
       dist.value = distance
-      easing.damp3(camera.position, [shot.target[0], shot.height, distance + shot.target[2]], 0.45, delta)
-      easing.damp3(current.current, shot.target, 0.45, delta)
+
+      // On the shelf the camera drifts with the pointer, which lets you look
+      // along the row and gives the books some parallax against each other.
+      const drift = mode === MODES.SHELF
+        ? [pointer.x * SHELF_PARALLAX.x, pointer.y * SHELF_PARALLAX.y]
+        : [0, 0]
+
+      easing.damp3(
+        camera.position,
+        [shot.target[0] + drift[0], shot.height + drift[1], distance + shot.target[2]],
+        0.45,
+        delta
+      )
+      easing.damp3(current.current, [shot.target[0] + drift[0] * 0.35, shot.target[1] + drift[1] * 0.35, shot.target[2]], 0.45, delta)
     }
 
     lookTarget.copy(current.current)

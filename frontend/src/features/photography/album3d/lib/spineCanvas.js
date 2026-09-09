@@ -8,6 +8,8 @@ export const SPINE_W = 256
 export const SPINE_H = 1024
 
 import { clothFor } from './cloth'
+import { paintCloth, seedFrom, shade } from './material'
+import { BOARD_SHADE } from './faceCanvas'
 
 const pick = (value, language) => {
   if (value == null) return ''
@@ -21,17 +23,9 @@ export function paintSpine(canvas, album, { language = 'en', index = 0 } = {}) {
   canvas.height = SPINE_H
 
   const { cloth } = clothFor(index)
-  ctx.fillStyle = cloth
-  ctx.fillRect(0, 0, SPINE_W, SPINE_H)
-
-  // Woven texture.
-  ctx.save()
-  ctx.globalAlpha = 0.06
-  for (let i = 0; i < 4200; i++) {
-    ctx.fillStyle = i % 2 ? '#ffffff' : '#000000'
-    ctx.fillRect(Math.random() * SPINE_W, Math.random() * SPINE_H, 2, 1)
-  }
-  ctx.restore()
+  // The same shade the boards are painted, so a book is one colour whichever
+  // face of it you are looking at.
+  paintCloth(ctx, SPINE_W, SPINE_H, shade(cloth, BOARD_SHADE), seedFrom(String(album.id) + 'spine'))
 
   // Rolled edges catch the light.
   const edge = ctx.createLinearGradient(0, 0, SPINE_W, 0)

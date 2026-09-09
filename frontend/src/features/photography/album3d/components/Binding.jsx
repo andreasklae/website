@@ -1,9 +1,14 @@
 import { useEffect, useMemo } from 'react'
 import { BoxGeometry, Color, MeshStandardMaterial } from 'three'
 import { PAGE_HEIGHT } from './Page'
+import { shade } from '../lib/material'
+import { BOARD_SHADE } from '../lib/faceCanvas'
 
 const geometry = new BoxGeometry(1, 1, 1)
 const DEFAULT_CLOTH = '#332e27'
+
+/** The binding is the same material as the boards, so it takes the same shade. */
+const boardColour = (cloth) => shade(cloth || DEFAULT_CLOTH, BOARD_SHADE)
 
 /**
  * The binding: the album's spine, and the thing that fills the gutter.
@@ -21,14 +26,14 @@ const DEFAULT_CLOTH = '#332e27'
 export default function Binding({ depth, cloth, spineTexture }) {
 
   const materials = useMemo(() => {
-    const make = () => new MeshStandardMaterial({ color: new Color(cloth || DEFAULT_CLOTH), roughness: 0.9 })
+    const make = () => new MeshStandardMaterial({ color: new Color(boardColour(cloth)), roughness: 0.88 })
     // [+X, -X, +Y, -Y, +Z bound edge, -Z]
     return [make(), make(), make(), make(), make(), make()]
   }, [cloth])
 
   useEffect(() => {
     materials[4].map = spineTexture || null
-    materials[4].color.set(spineTexture ? '#ffffff' : (cloth || DEFAULT_CLOTH))
+    materials[4].color.set(spineTexture ? '#ffffff' : boardColour(cloth))
     materials[4].needsUpdate = true
   }, [materials, spineTexture, cloth])
 
