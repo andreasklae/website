@@ -96,6 +96,12 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
     if (isTouch(event)) return // a touch "move" is a drag, not a hover
     if (heldStack) return
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+
+    // Claim the event for the NEAREST leaf, hit or miss. Every leaf is
+    // raycastable, so bailing out early without claiming it lets the pointer
+    // fall through bare paper to a leaf behind — which then leans in on a
+    // photograph the pointer is nowhere near.
+    event.stopPropagation()
     // materialIndex 4 is the +Z face (front of the sheet), 5 is the back.
     const isFront = event.face?.materialIndex === 4
     const faceIndex = sheetIndex * 2 + (isFront ? 0 : 1)
@@ -115,14 +121,13 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
       setFocus(null)
       return
     }
-    event.stopPropagation()
 
     if (!sameSlot) setHoveredSlot({ faceIndex, ...hit })
 
     // Photographs and stacks are worth leaning in on; postcards and memos are
     // already legible at spread distance.
     const leanable = hit.slot.kind === 'photo' || hit.slot.kind === 'stack'
-    if (!sameSlot) document.body.style.cursor = leanable ? 'zoom-in' : 'pointer'
+    if (!sameSlot) document.body.style.cursor = 'pointer'
 
     if (!leanable) { setFocus(null); return }
 
@@ -158,6 +163,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
   const handleClick = useCallback((event, sheetIndex) => {
     if (heldStack) return
     if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+    event.stopPropagation() // nearest leaf only, as above
 
     const isFront = event.face?.materialIndex === 4
     const faceIndex = sheetIndex * 2 + (isFront ? 0 : 1)

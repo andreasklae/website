@@ -29,7 +29,7 @@ export const FORWARD_Z = PAGE_WIDTH * 0.3
  * so the block has to be seated the same way rather than straddling its own
  * origin — otherwise the two are half a page apart at the handover.
  */
-const SPINE_SEAT = -(PAGE_WIDTH * 1.02) / 2
+const SPINE_SEAT = -PAGE_WIDTH / 2
 
 /** Shared by the turn out and the turn back, so one is the reverse of the other. */
 export const TURN_SMOOTHING = 0.42
@@ -170,7 +170,10 @@ export default function AlbumBook({ album, index, language, offsetX, active, hid
       geometry={boxGeometry}
       material={materials}
       position={[0, 0, SPINE_SEAT]}
-      scale={[album.thickness, PAGE_HEIGHT * 1.05, PAGE_WIDTH * 1.02]}
+      // Exactly the leaves' own dimensions. Any overhang here — boards proud
+      // of the paper, as on a real album — makes the block a different size
+      // from the bound version, and the handover visibly resizes.
+      scale={[album.thickness, PAGE_HEIGHT, PAGE_WIDTH]}
       onPointerOver={(e) => {
         if (openedOut || mode === MODES.OPEN || mode === MODES.ZOOM) return
         e.stopPropagation()

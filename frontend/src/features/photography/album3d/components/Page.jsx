@@ -70,8 +70,6 @@ export default function Page({
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
-  const turnedAt = useRef(0)
-  const lastOpened = useRef(opened)
 
   const mesh = useMemo(() => {
     const bones = []
@@ -110,15 +108,7 @@ export default function Page({
   useEffect(() => () => { mesh.material[4].dispose(); mesh.material[5].dispose() }, [mesh])
 
   useFrame((_, delta) => {
-    if (!skinnedMeshRef.current) return
-
-    if (lastOpened.current !== opened) {
-      turnedAt.current = performance.now()
-      lastOpened.current = opened
-    }
-    // A half-sine over 400ms: the page bows out mid-turn and flattens again.
-    let turningTime = Math.min(400, performance.now() - turnedAt.current) / 400
-    turningTime = Math.sin(turningTime * Math.PI)
+    if (!skinnedMeshRef.current || !group.current) return
 
     // Fan the block slightly, bounded however many sheets there are. A fixed
     // angle per sheet tilts the outer leaves of a 26-sheet album ~20 degrees
@@ -129,40 +119,43 @@ export default function Page({
     // apart there is no shortest way, so leaves pick a side arbitrarily and
     // some sweep behind the book instead of over the front of it. Fanning the
     // two rest poses TOWARD each other keeps them under 180 apart, which puts
-    // the short way through 0: the leaf stands up toward the reader mid-turn,
-    // which is the way a page actually turns.
+    // the short way through 0: the leaf stands up toward the reader mid-turn.
     const fan = degToRad(1.5 + Math.min(number, 20) * 0.3)
     const base = opened ? -Math.PI / 2 : Math.PI / 2
     const targetRotation = bookClosed ? base : base + (opened ? fan : -fan)
 
-    const bones = skinnedMeshRef.current.skeleton.bones
-    for (let i = 0; i < bones.length; i++) {
-      if (i === 0) {
-        // The leaf's own turn. Taken in full, so a page at rest lies flat.
-        easing.dampAngle(group.current.rotation, 'y', targetRotation, easingFactor, delta)
-        continue
-      }
+    easing.dampAngle(group.current.rotation, 'y', targetRotation, easingFactor, delta)
 
-      // Curl lives entirely in the turn. The reference scales its curve terms
-      // by targetRotation alone, so every leaf keeps a permanent ~80 degree
-      // bend along its length — which looks like a book but buckles a
-      // photograph and lifts part of the leaf over the one in front of it.
+    // How far the leaf still has to go, which is what the curl is scaled by.
+    //
+    // Driving it from a timer instead — as the reference does — decouples the
+    // bend from the leaf's actual position: the bend is still relaxing, one
+    // easing behind, as the leaf arrives, and because the bend rotates the far
+    // end PAST the leaf's own angle it dips through the leaves it is landing
+    // on before settling back out. Tied to the remaining angle it is zero at
+    // the exact moment the leaf is flat.
+    let remaining = (targetRotation - group.current.rotation.y) % (Math.PI * 2)
+    if (remaining > Math.PI) remaining -= Math.PI * 2
+    if (remaining < -Math.PI) remaining += Math.PI * 2
+    const turning = Math.sin(Math.abs(remaining))
+
+    const bones = skinnedMeshRef.current.skeleton.bones
+    for (let i = 1; i < bones.length; i++) {
       const insideCurve = i < 8 ? Math.sin(i * 0.2 + 0.25) : 0
       const outsideCurve = i >= 8 ? Math.cos(i * 0.3 + 0.09) : 0
-      const turning = Math.sin(i * Math.PI * (1 / bones.length))
+      const alongLeaf = Math.sin(i * Math.PI * (1 / bones.length))
 
       const curl = bookClosed
         ? 0
         : (insideCurveStrength * insideCurve -
             outsideCurveStrength * outsideCurve +
-            turningCurveStrength * turning) *
+            turningCurveStrength * alongLeaf) *
           targetRotation *
-          turningTime
+          turning
 
-      easing.dampAngle(bones[i].rotation, 'y', curl, easingFactor, delta)
+      easing.dampAngle(bones[i].rotation, 'y', curl, easingFactorFold, delta)
 
-      const foldIntensity =
-        i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turningTime : 0
+      const foldIntensity = i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turning : 0
       const fold = bookClosed ? 0 : degToRad(Math.sign(targetRotation) * 2) * foldIntensity
       easing.dampAngle(bones[i].rotation, 'x', fold, easingFactorFold, delta)
     }

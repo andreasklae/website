@@ -46,7 +46,9 @@ export default function Binding({ sheetCount, spineTexture }) {
       // local z — sitting a little proud on the bound side so it reads as a
       // spine when the album is shut.
       position={[-depth / 2, 0, 0.004]}
-      scale={[depth, PAGE_HEIGHT * 1.03, 0.024]}
+      // Never taller than the leaves: standing proud shows as a raised strip
+      // down the crease, and along the spine edge of a shut cover.
+      scale={[depth, PAGE_HEIGHT, 0.024]}
     />
   )
 }

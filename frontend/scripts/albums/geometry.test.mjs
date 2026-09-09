@@ -197,7 +197,7 @@ test('the bound album and the shelved block occupy the same seat', () => {
   const sheetCount = 9
   const COVER_BOARD_ = 0.022
   const depth = sheetCount * PAGE_DEPTH_ + COVER_BOARD_ * 2
-  const SEAT = -(PAGE_WIDTH * 1.02) / 2
+  const SEAT = -PAGE_WIDTH / 2
 
   const album = new Group()
   const block = new Group()
@@ -221,11 +221,13 @@ test('the bound album and the shelved block occupy the same seat', () => {
     }
   })
 
-  const boxMin = SEAT - (PAGE_WIDTH * 1.02) / 2
-  const boxMax = SEAT + (PAGE_WIDTH * 1.02) / 2
+  const boxMin = SEAT - PAGE_WIDTH / 2
+  const boxMax = SEAT + PAGE_WIDTH / 2
 
-  assert.ok(Math.abs(bounds.max.z - boxMax) < 0.02, `spine edges differ: ${bounds.max.z} vs ${boxMax}`)
-  assert.ok(Math.abs(bounds.min.z - boxMin) < 0.05, `fore edges differ: ${bounds.min.z} vs ${boxMin}`)
+  // Exactly, not approximately: any difference in size shows as the album
+  // resizing at the moment one takes over from the other.
+  assert.ok(Math.abs(bounds.max.z - boxMax) < 1e-9, `spine edges differ: ${bounds.max.z} vs ${boxMax}`)
+  assert.ok(Math.abs(bounds.min.z - boxMin) < 1e-9, `fore edges differ: ${bounds.min.z} vs ${boxMin}`)
   assert.ok(Math.abs(bounds.max.x - depth / 2) < 0.02, `thickness off centre: ${bounds.max.x}`)
 })
 
@@ -236,4 +238,25 @@ test('settled leaves never touch, so none sinks into the one below', () => {
   assert.ok(LEAF_THICKNESS < PAGE_DEPTH_, 'a leaf must be thinner than the gap between leaves')
   const clearance = PAGE_DEPTH_ - LEAF_THICKNESS
   assert.ok(clearance > PAGE_DEPTH_ * 0.4, `only ${clearance} of clearance between leaves`)
+})
+
+test('a leaf has no bend left in it by the time it lands', () => {
+  // The dip at the end of a turn: driving the bend from a timer leaves it
+  // still relaxing, one easing behind, as the leaf arrives — and because the
+  // bend rotates the far end PAST the leaf's own angle, the leaf dips through
+  // the ones it is landing on before settling back out. Tied to the angle
+  // still to travel, it is zero at the exact moment the leaf is flat.
+  const envelope = (remaining) => Math.sin(Math.abs(remaining))
+
+  assert.equal(envelope(0), 0, 'a settled leaf must be perfectly flat')
+  assert.ok(Math.abs(envelope(Math.PI)) < 1e-12, 'a leaf at rest on the other side is flat too')
+  assert.ok(envelope(Math.PI / 2) > 0.99, 'and it should bow at the midpoint of the turn')
+
+  // Strictly shrinking over the final stretch, so nothing is left to unwind.
+  let previous = Infinity
+  for (const remaining of [0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0]) {
+    const value = envelope(remaining)
+    assert.ok(value < previous, `bend grew as the leaf arrived: ${value} after ${previous}`)
+    previous = value
+  }
 })
