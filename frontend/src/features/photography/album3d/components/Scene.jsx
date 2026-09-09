@@ -23,11 +23,12 @@ export default function Scene({ shelf, album, language }) {
       <CameraRig shelfWidth={shelfWidth} />
 
       {/*
-        Dim enough that the lamp is doing the work. Still no shadow maps —
-        they are what costs frames here, and the room reads without them.
+        Enough moonlight to find the lamp's cord by, and no more: the lamp is
+        still what lights the room. Still no shadow maps — they are what costs
+        frames here, and the room reads without them.
       */}
-      <ambientLight intensity={0.1} color="#8294ad" />
-      <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.14]} />
+      <ambientLight intensity={0.3} color="#8294ad" />
+      <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.36]} />
       <Lamp x={booksLeft + 0.18} />
 
       <Suspense fallback={null}>

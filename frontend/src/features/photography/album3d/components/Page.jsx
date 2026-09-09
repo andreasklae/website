@@ -83,7 +83,7 @@ function getPageGeometry(thickness) {
  * a page that stayed at reading brightness in an unlit room looked like a
  * screen, not paper.
  */
-const PAGE_EXPOSURE = 1.16
+const PAGE_EXPOSURE = 0.92
 
 const PAPER = new Color('#efeae0')
 const EDGE = new Color('#d9d2c4')
@@ -98,7 +98,8 @@ const edgeMaterials = [
 
 export default function Page({
   number, page, opened, bookClosed, sheetCount, rigid, pageDepth = PAGE_DEPTH,
-  edgeColour, frontTexture, backTexture, onPointerMove, onClick, onPointerOut,
+  edgeColour, selfLit = true, frontTexture, backTexture,
+  onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
@@ -152,15 +153,20 @@ export default function Page({
       [mesh.material[5], backTexture],
     ]
     for (const [material, texture] of pair) {
+      // A printed page is shown by its own emission: nothing of the lamp's
+      // colour lands on it, and tone mapping is skipped, so a photograph is
+      // the colour it was taken at. A cloth BOARD is a surface in the room
+      // like any other and is lit like one — a cover that ignored the lamp
+      // looked pasted on rather than sitting on a shelf.
+      const emits = selfLit && Boolean(texture)
       material.map = texture || null
-      // Black diffuse where there is an image: the page is shown by its own
-      // emission instead, so nothing of the lamp's colour lands on it. Bare
-      // paper keeps its diffuse and is lit by the room like everything else.
-      material.color.set(texture ? '#000000' : PAPER)
-      material.emissiveMap = texture || null
+      material.color.set(emits ? '#000000' : texture ? '#ffffff' : PAPER)
+      material.emissiveMap = emits ? texture : null
+      material.emissiveIntensity = 0
+      material.toneMapped = !emits
       material.needsUpdate = true
     }
-  }, [mesh, frontTexture, backTexture])
+  }, [mesh, frontTexture, backTexture, selfLit])
 
   useEffect(() => () => { mesh.material[4].dispose(); mesh.material[5].dispose() }, [mesh])
 
