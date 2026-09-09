@@ -59,6 +59,17 @@ const SPINE_SEAT = -PAGE_WIDTH / 2
 /** Depth the chosen album settles at, which is what the camera frames. */
 export const READING_PLANE_Z = -PAGE_WIDTH / 2 + PAGE_WIDTH * 0.35
 
+/**
+ * Where the hinge ends up once the album has turned.
+ *
+ * A shut album lies wholly to one side of its binding, so leaving the hinge in
+ * the album's own slot puts the whole cover off to that side of the row. Half
+ * a page to the left and the cover is centred over the shelf it came from.
+ * Applied with the turn, so the album still pulls straight out of its slot
+ * before drifting across.
+ */
+export const TURNED_X = -PAGE_WIDTH / 2
+
 // Covers are painted at a fraction of page resolution. They are never read
 // like a page, and five full-size boards would cost ~28MB of texture.
 const COVER_SCALE = 0.62
@@ -147,7 +158,7 @@ export default function AlbumBook({ album, full, index, language, active }) {
 
     const { turn, z } = poseFor(motion.out, FORWARD_Z)
     g.rotation.y = SHELF_ROTATION + (READING_ROTATION - SHELF_ROTATION) * turn
-    g.position.set(0, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
+    g.position.set(turn * TURNED_X, motion.lift * 0.055, SPINE_SEAT + z + motion.lift * 0.07)
   })
 
   return (
@@ -175,6 +186,7 @@ export default function AlbumBook({ album, full, index, language, active }) {
     >
       <Album
         planeZ={READING_PLANE_Z}
+        hingeX={TURNED_X}
         full={active ? full : null}
         sheetCount={album.sheetCount}
         active={active}

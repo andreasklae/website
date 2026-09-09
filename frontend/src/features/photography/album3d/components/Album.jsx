@@ -30,7 +30,7 @@ const isTouch = (event) => event.pointerType === 'touch' || event.pointerType ==
  * without it the leaves render as blank paper with the cover on the front.
  */
 export default function Album({
-  full, sheetCount, active, language, planeZ = 0,
+  full, sheetCount, active, language, planeZ = 0, hingeX = 0,
   coverTexture = null, backCoverTexture = null, spineTexture = null,
 }) {
   const mode = useAlbumStore((s) => s.mode)
@@ -164,17 +164,19 @@ export default function Album({
     setFocus({
       // Captured once, together with the screen position it was captured at,
       // so the zoom can hold that exact spot under the pointer.
-      anchor: keep ? previous.anchor : worldPointFor(event.uv.x, event.uv.y, sheetIndex, delayedPage),
+      anchor: keep
+        ? previous.anchor
+        : worldPointFor(event.uv.x, event.uv.y, sheetIndex, delayedPage, hingeX),
       ndc0: keep ? previous.ndc0 : ndc,
       // Live pointer, in normalised device coordinates: pure screen space, so
       // it cannot feed back into the camera that consumes it.
       ndc,
-      box: focusBoxFor(hit.rect, sheetIndex, delayedPage),
+      box: focusBoxFor(hit.rect, sheetIndex, delayedPage, hingeX),
       // The plane the anchor lives on. Without it the camera solves against
       // an undefined depth and the whole rig goes to NaN.
       z: planeZ,
     })
-  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, manager, planeZ])
+  }, [mode, hitTest, setHoveredSlot, setFocus, delayedPage, heldStack, manager, planeZ, hingeX])
 
   const handlePointerOut = useCallback(() => {
     currentHit.current = null

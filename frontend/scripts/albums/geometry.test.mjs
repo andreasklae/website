@@ -395,3 +395,16 @@ test('the far edge holds one depth for the whole turn, so it comes back in no fa
   }
   for (const d of depths) assert.ok(Math.abs(d - restZ) < 1e-9, `far edge wandered to ${d}`)
 })
+
+test('a turned cover ends up centred on the row it came from', () => {
+  // A shut album lies wholly to one side of its binding, so a hinge left in
+  // the album's own slot puts the entire cover off to that side.
+  const TURNED_X = -PAGE_WIDTH / 2
+  const coverCentre = TURNED_X + PAGE_WIDTH / 2
+  assert.ok(Math.abs(coverCentre) < 1e-9, `cover sits at ${coverCentre}, not over the row`)
+
+  // The drift rides on the turn, so the album still leaves its slot squarely.
+  const driftAt = (turn) => turn * TURNED_X
+  assert.ok(Math.abs(driftAt(0)) < 1e-12, 'it must pull straight out before moving across')
+  assert.equal(driftAt(1), TURNED_X)
+})

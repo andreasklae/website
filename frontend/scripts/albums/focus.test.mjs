@@ -6,11 +6,11 @@ import assert from 'node:assert/strict'
 
 const FACE_W = 1024, FACE_H = 1367, PAGE_WIDTH = 1.28, PAGE_HEIGHT = 1.71
 
-function focusBoxFor(rect, sheetIndex, page) {
+function focusBoxFor(rect, sheetIndex, page, hingeX = 0) {
   const opened = sheetIndex < page
   const u0 = rect.x / FACE_W, u1 = (rect.x + rect.w) / FACE_W
   const v0 = 1 - (rect.y + rect.h) / FACE_H, v1 = 1 - rect.y / FACE_H
-  const toWorldX = (u) => (opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH)
+  const toWorldX = (u) => hingeX + (opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH)
   const x0 = toWorldX(u0), x1 = toWorldX(u1)
   return {
     x: (x0 + x1) / 2,
@@ -156,4 +156,23 @@ test('the solution uses no camera-derived input, so it cannot oscillate', () => 
     close(again.x, first.x, 1e-12)
     close(again.y, first.y, 1e-12)
   }
+})
+
+test('anchors follow the album when it drifts across as it turns', () => {
+  // The album does not stay in its own slot: it moves half a page to the left
+  // as it turns, so the cover ends up centred over the row. Everything the
+  // focus maths measures is taken from the hinge, so the hinge has to be an
+  // input — otherwise every anchor lands half a page from its photograph.
+  const hingeX = -PAGE_WIDTH / 2
+  const rect = { x: 200, y: 300, w: 400, h: 600 }
+
+  const atOrigin = focusBoxFor(rect, 5, 5)
+  const shifted = focusBoxFor(rect, 5, 5, hingeX)
+  close(shifted.x, atOrigin.x + hingeX)
+  close(shifted.w, atOrigin.w)
+
+  // And on the left-hand page, which is mirrored.
+  const leftAtOrigin = focusBoxFor(rect, 4, 5)
+  const leftShifted = focusBoxFor(rect, 4, 5, hingeX)
+  close(leftShifted.x, leftAtOrigin.x + hingeX)
 })

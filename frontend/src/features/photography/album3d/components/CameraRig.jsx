@@ -5,7 +5,7 @@ import { MathUtils, Vector3 } from 'three'
 import { MODES, SIDES, useAlbumStore } from '../lib/store'
 import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
-import { READING_PLANE_Z } from './AlbumBook'
+import { READING_PLANE_Z, TURNED_X } from './AlbumBook'
 
 // One place decides where the camera is. Each mode names the box it has to
 // frame; the distance is then solved from the live canvas aspect, so nothing
@@ -38,7 +38,8 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide }) {
         // A shut album lies wholly to one side of its binding, so the cover's
         // middle is half a page off the hinge. The camera moves to meet it
         // rather than the book sliding to meet the camera.
-        target: [PAGE_WIDTH / 2, 0, READING_PLANE_Z],
+        // The cover's own middle: half a page along from the hinge.
+        target: [TURNED_X + PAGE_WIDTH / 2, 0, READING_PLANE_Z],
         height: 0.02,
         pad: 1.16,
       }
@@ -49,13 +50,13 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide }) {
       if (closedSide) {
         return {
           box: [PAGE_WIDTH * 1.14, PAGE_HEIGHT * 1.1],
-          target: [closedSide * (PAGE_WIDTH / 2), 0, READING_PLANE_Z],
+          target: [TURNED_X + closedSide * (PAGE_WIDTH / 2), 0, READING_PLANE_Z],
           height: 0.02,
           pad: 1.16,
         }
       }
       if (narrow) {
-        const x = side === SIDES.RIGHT ? PAGE_WIDTH / 2 : -PAGE_WIDTH / 2
+        const x = TURNED_X + (side === SIDES.RIGHT ? PAGE_WIDTH / 2 : -PAGE_WIDTH / 2)
         return {
           box: [PAGE_WIDTH * 1.1, PAGE_HEIGHT * 1.06],
           target: [x, -0.02, READING_PLANE_Z],
@@ -65,7 +66,7 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide }) {
       }
       return {
         box: [PAGE_WIDTH * 2.12, PAGE_HEIGHT * 1.06],
-        target: [0, -0.05, READING_PLANE_Z],
+        target: [TURNED_X, -0.05, READING_PLANE_Z],
         height: mode === MODES.ZOOM ? 0.3 : 0.7,
         pad: mode === MODES.ZOOM ? 1.04 : 1.12,
       }

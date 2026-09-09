@@ -6,11 +6,17 @@ import { FACE_W, FACE_H } from './faceCanvas'
 export const PAGE_WIDTH = 1.28
 export const PAGE_HEIGHT = 1.71
 
-/** World-space point on the open album for a face UV. */
-export function worldPointFor(u, v, sheetIndex, page) {
+/**
+ * World-space point on the open album for a face UV.
+ *
+ * `hingeX` is where the binding actually sits: the album drifts across as it
+ * turns, and everything below is measured from the hinge, so leaving it out
+ * puts every anchor half a page from the photograph it belongs to.
+ */
+export function worldPointFor(u, v, sheetIndex, page, hingeX = 0) {
   const opened = sheetIndex < page
   return {
-    x: opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH,
+    x: hingeX + (opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH),
     y: (v - 0.5) * PAGE_HEIGHT,
   }
 }
@@ -38,6 +44,9 @@ export const LEAN_PAN_GAIN = 1.7
 /** The camera is never allowed to wander further than the open spread. */
 const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
 
+/** Centre of the spread the focus sits on, so the bounds travel with it. */
+const boundsCentre = (focus) => focus.box?.hingeX ?? 0
+
 /**
  * Where the camera must look for the world point `anchor` to sit under the
  * pointer, given where the pointer is on screen and how much world the camera
@@ -63,8 +72,9 @@ export function anchoredTarget(focus, halfW, halfH) {
   // view follows the pointer rather than sliding away from it.
   const x = anchor.x - ndc0.x * halfW + (ndc.x - ndc0.x) * LEAN_PAN_GAIN * halfW
   const y = anchor.y - ndc0.y * halfH + (ndc.y - ndc0.y) * LEAN_PAN_GAIN * halfH
+  const cx = boundsCentre(focus)
   return {
-    x: clamp(x, -BOUNDS.x, BOUNDS.x),
+    x: clamp(x, cx - BOUNDS.x, cx + BOUNDS.x),
     y: clamp(y, -BOUNDS.y, BOUNDS.y),
   }
 }
@@ -84,7 +94,7 @@ export function anchoredTarget(focus, halfW, halfH) {
  * @param sheetIndex  which sheet the face belongs to
  * @param page  the sheet the album is currently open at
  */
-export function focusBoxFor(rect, sheetIndex, page) {
+export function focusBoxFor(rect, sheetIndex, page, hingeX = 0) {
   const opened = sheetIndex < page
 
   const u0 = rect.x / FACE_W
@@ -93,7 +103,7 @@ export function focusBoxFor(rect, sheetIndex, page) {
   const v0 = 1 - (rect.y + rect.h) / FACE_H
   const v1 = 1 - rect.y / FACE_H
 
-  const toWorldX = (u) => (opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH)
+  const toWorldX = (u) => hingeX + (opened ? -(1 - u) * PAGE_WIDTH : u * PAGE_WIDTH)
 
   const x0 = toWorldX(u0)
   const x1 = toWorldX(u1)
@@ -103,5 +113,6 @@ export function focusBoxFor(rect, sheetIndex, page) {
     y: ((v0 + v1) / 2 - 0.5) * PAGE_HEIGHT,
     w: Math.abs(x1 - x0),
     h: (v1 - v0) * PAGE_HEIGHT,
+    hingeX,
   }
 }
