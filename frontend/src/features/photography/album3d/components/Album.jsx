@@ -1,6 +1,7 @@
 import { useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
+import Binding from './Binding'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
@@ -17,7 +18,7 @@ const WINDOW = 3
 /** Touch devices have no hover, so every hover affordance needs a tap path. */
 const isTouch = (event) => event.pointerType === 'touch' || event.pointerType === 'pen'
 
-export default function Album({ album, language, planeZ = 0 }) {
+export default function Album({ album, language, planeZ = 0, spineTexture = null }) {
   const mode = useAlbumStore((s) => s.mode)
   const page = useAlbumStore((s) => s.page)
   const heldStack = useAlbumStore((s) => s.heldStack)
@@ -190,6 +191,8 @@ export default function Album({ album, language, planeZ = 0 }) {
 
   return (
     <group ref={group}>
+      <Binding sheetCount={sheets.length} spineTexture={spineTexture} />
+
       {sheets.map((_, sheetIndex) => {
         const front = manager.entries.get(sheetIndex * 2)
         const back = manager.entries.get(sheetIndex * 2 + 1)
@@ -197,6 +200,7 @@ export default function Album({ album, language, planeZ = 0 }) {
           <Page
             key={sheetIndex}
             number={sheetIndex}
+            page={delayedPage}
             sheetCount={sheets.length}
             opened={delayedPage > sheetIndex}
             bookClosed={bookClosed}

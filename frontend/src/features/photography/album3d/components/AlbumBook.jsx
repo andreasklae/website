@@ -25,7 +25,7 @@ export const READING_ROTATION = -Math.PI / 2
 export const FORWARD_Z = PAGE_WIDTH * 0.3
 
 /** Shared by the turn out and the turn back, so one is the reverse of the other. */
-const TURN_SMOOTHING = 0.42
+export const TURN_SMOOTHING = 0.42
 
 const boxGeometry = new BoxGeometry(1, 1, 1)
 const BOARD = new Color('#3a342c')
@@ -83,7 +83,7 @@ function useCoverTexture(album, language) {
   return texture
 }
 
-export default function AlbumBook({ album, index, language, offsetX, active }) {
+export default function AlbumBook({ album, index, language, offsetX, active, hidden }) {
   const mesh = useRef()
   const mode = useAlbumStore((s) => s.mode)
   const hoveredAlbum = useAlbumStore((s) => s.hoveredAlbum)
@@ -137,7 +137,7 @@ export default function AlbumBook({ album, index, language, offsetX, active }) {
 
   useFrame((_, delta) => {
     const m = mesh.current
-    if (!m) return
+    if (!m || hidden) return
     // One smoothing constant for both axes, and the same one whichever way the
     // album is going. Turning out and turning back are then the exact reverse
     // of each other — with different constants the book slid home faster than
@@ -151,10 +151,10 @@ export default function AlbumBook({ album, index, language, offsetX, active }) {
     )
   })
 
-  // While the album is open its pages ARE the album, so the block hides — but
-  // stays mounted, keeping its rotation, so closing rewinds from where it is
-  // instead of snapping back to spine-on.
-  const openedOut = active && (mode === MODES.OPEN || mode === MODES.ZOOM)
+  // The bound album takes over the moment this one is chosen — both are
+  // edge-on and showing the same spine at that instant, so the handover is
+  // invisible. This block stays mounted and simply stops being drawn.
+  const openedOut = hidden
 
   return (
     <mesh

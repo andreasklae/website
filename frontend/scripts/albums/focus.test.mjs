@@ -67,12 +67,9 @@ const clamp2 = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 
 function anchoredTarget(focus, halfW, halfH) {
   const { anchor, ndc, ndc0 } = focus
-  const ex = (ndc0.x + (ndc.x - ndc0.x) * LEAN_PAN_GAIN) * halfW
-  const ey = (ndc0.y + (ndc.y - ndc0.y) * LEAN_PAN_GAIN) * halfH
-  return {
-    x: clamp2(anchor.x - ex, -BOUNDS.x, BOUNDS.x),
-    y: clamp2(anchor.y - ey, -BOUNDS.y, BOUNDS.y),
-  }
+  const x = anchor.x - ndc0.x * halfW + (ndc.x - ndc0.x) * LEAN_PAN_GAIN * halfW
+  const y = anchor.y - ndc0.y * halfH + (ndc.y - ndc0.y) * LEAN_PAN_GAIN * halfH
+  return { x: clamp2(x, -BOUNDS.x, BOUNDS.x), y: clamp2(y, -BOUNDS.y, BOUNDS.y) }
 }
 
 const halfHAt = (d) => d * Math.tan((30 * Math.PI) / 180 / 2)
@@ -124,7 +121,8 @@ test('moving the pointer pans, but by less than one-for-one', () => {
   const anchor = { x: 0.2, y: 0.1 }
   const still = anchoredTarget({ anchor, ndc: ndc0, ndc0 }, halfW, halfH)
   const moved = anchoredTarget({ anchor, ndc: { x: 0.3, y: 0 }, ndc0 }, halfW, halfH)
-  assert.ok(moved.x < still.x, 'pointer moving right must pan the view')
+  // The view must FOLLOW the pointer: right means right.
+  assert.ok(moved.x > still.x, 'panning must follow the pointer, not oppose it')
   const shift = Math.abs(moved.x - still.x)
   const pinned = 0.3 * halfW
   assert.ok(shift < pinned, 'a one-for-one pin would trap the pointer on the photo forever')

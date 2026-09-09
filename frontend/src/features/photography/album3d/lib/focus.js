@@ -57,11 +57,14 @@ const BOUNDS = { x: PAGE_WIDTH, y: PAGE_HEIGHT * 0.5 }
  */
 export function anchoredTarget(focus, halfW, halfH) {
   const { anchor, ndc, ndc0 } = focus
-  const ex = (ndc0.x + (ndc.x - ndc0.x) * LEAN_PAN_GAIN) * halfW
-  const ey = (ndc0.y + (ndc.y - ndc0.y) * LEAN_PAN_GAIN) * halfH
+  // Holding the anchor under the pointer is the `- ndc0 * half` term. The pan
+  // is ADDED on top: moving the pointer right walks the camera right, so the
+  // view follows the pointer rather than sliding away from it.
+  const x = anchor.x - ndc0.x * halfW + (ndc.x - ndc0.x) * LEAN_PAN_GAIN * halfW
+  const y = anchor.y - ndc0.y * halfH + (ndc.y - ndc0.y) * LEAN_PAN_GAIN * halfH
   return {
-    x: clamp(anchor.x - ex, -BOUNDS.x, BOUNDS.x),
-    y: clamp(anchor.y - ey, -BOUNDS.y, BOUNDS.y),
+    x: clamp(x, -BOUNDS.x, BOUNDS.x),
+    y: clamp(y, -BOUNDS.y, BOUNDS.y),
   }
 }
 

@@ -59,7 +59,8 @@ const edgeMaterials = [
 ]
 
 export default function Page({
-  number, opened, bookClosed, sheetCount, frontTexture, backTexture, onPointerMove, onClick, onPointerOut,
+  number, page, opened, bookClosed, sheetCount, frontTexture, backTexture,
+  onPointerMove, onClick, onPointerOut,
 }) {
   const group = useRef()
   const skinnedMeshRef = useRef()
@@ -113,33 +114,42 @@ export default function Page({
     let turningTime = Math.min(400, performance.now() - turnedAt.current) / 400
     turningTime = Math.sin(turningTime * Math.PI)
 
-    let targetRotation = opened ? -Math.PI / 2 : Math.PI / 2
-    if (!bookClosed) targetRotation += degToRad(number * 0.8) // fan the block
+    // Fan the block slightly, bounded however many sheets there are. The
+    // reference fans by a fixed angle per sheet, which on a 26-sheet album
+    // tilts the outer leaves ~20 degrees and swings them across the spread.
+    const fan = degToRad(Math.min(number, 20) * 0.3)
+    const targetRotation = (opened ? -Math.PI / 2 : Math.PI / 2) + (bookClosed ? 0 : fan)
 
     const bones = skinnedMeshRef.current.skeleton.bones
     for (let i = 0; i < bones.length; i++) {
-      const target = i === 0 ? group.current : bones[i]
-      if (!target) continue
-
-      const insideCurve = i < 8 ? Math.sin(i * 0.2 + 0.25) : 0
-      const outsideCurve = i >= 8 ? Math.cos(i * 0.3 + 0.09) : 0
-      const turning = Math.sin(i * Math.PI * (1 / bones.length)) * turningTime
-
-      let rotationAngle =
-        insideCurveStrength * insideCurve * targetRotation -
-        outsideCurveStrength * outsideCurve * targetRotation +
-        turningCurveStrength * turning * targetRotation
-      let foldAngle = degToRad(Math.sign(targetRotation) * 2)
-
-      if (bookClosed) {
-        rotationAngle = i === 0 ? targetRotation : 0
-        foldAngle = 0
+      if (i === 0) {
+        // The leaf's own turn. Taken in full, so a page at rest lies flat.
+        easing.dampAngle(group.current.rotation, 'y', targetRotation, easingFactor, delta)
+        continue
       }
 
-      easing.dampAngle(target.rotation, 'y', rotationAngle, easingFactor, delta)
+      // Curl lives entirely in the turn. The reference scales its curve terms
+      // by targetRotation alone, so every leaf keeps a permanent ~80 degree
+      // bend along its length — which looks like a book but buckles a
+      // photograph and lifts part of the leaf over the one in front of it.
+      const insideCurve = i < 8 ? Math.sin(i * 0.2 + 0.25) : 0
+      const outsideCurve = i >= 8 ? Math.cos(i * 0.3 + 0.09) : 0
+      const turning = Math.sin(i * Math.PI * (1 / bones.length))
 
-      const foldIntensity = i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turningTime : 0
-      easing.dampAngle(target.rotation, 'x', foldAngle * foldIntensity, easingFactorFold, delta)
+      const curl = bookClosed
+        ? 0
+        : (insideCurveStrength * insideCurve -
+            outsideCurveStrength * outsideCurve +
+            turningCurveStrength * turning) *
+          targetRotation *
+          turningTime
+
+      easing.dampAngle(bones[i].rotation, 'y', curl, easingFactor, delta)
+
+      const foldIntensity =
+        i > 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turningTime : 0
+      const fold = bookClosed ? 0 : degToRad(Math.sign(targetRotation) * 2) * foldIntensity
+      easing.dampAngle(bones[i].rotation, 'x', fold, easingFactorFold, delta)
     }
   })
 
@@ -153,7 +163,11 @@ export default function Page({
       <primitive
         object={mesh}
         ref={skinnedMeshRef}
-        position-z={-number * PAGE_DEPTH + (opened ? 1 : 0) * PAGE_DEPTH}
+        // The WHOLE block shifts with the current sheet, so both halves of an
+        // open spread sit level. Offsetting opened and unopened leaves
+        // separately instead — which is what this used to do — steps the two
+        // pages apart at the crease by the depth of everything turned so far.
+        position-z={(page - number) * PAGE_DEPTH}
       />
     </group>
   )

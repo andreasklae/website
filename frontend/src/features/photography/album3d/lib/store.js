@@ -103,9 +103,14 @@ export const useAlbumStore = create((set, get) => ({
   },
   putBackStack: () => set({ heldStack: null }),
 
-  /** Put the album back on the shelf. */
+  /**
+   * Put the album back on the shelf. The album DATA is deliberately kept: the
+   * bound album has to stay on screen and turn all the way home before the
+   * shelved block takes over, and dropping it here would make it vanish
+   * mid-turn. selectAlbum clears it when a different one is chosen.
+   */
   close: () => set({
-    mode: MODES.SHELF, activeId: null, album: null,
+    mode: MODES.SHELF, activeId: null,
     page: 0, side: SIDES.LEFT, zoomed: null, focus: null, heldStack: null, hoveredSlot: null,
   }),
 }))

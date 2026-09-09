@@ -51,10 +51,16 @@ export function slotRects(face) {
   const columns = slots.every(slotIsPortrait)
 
   if (columns) {
-    // Tighter gutter than the row split: side-by-side portraits need the width.
     const w = (CONTENT.w - GAP) / 2
+    // Nudge one up and the other down. Two portraits at identical heights read
+    // as a grid; a small stagger reads as someone placing them.
+    const stagger = CONTENT.h * 0.045
     return slots.slice(0, 2).map((slot, i) => ({
-      slot, x: CONTENT.x + i * (w + GAP), y: CONTENT.y, w, h: CONTENT.h,
+      slot,
+      x: CONTENT.x + i * (w + GAP),
+      y: CONTENT.y + (i === 0 ? 0 : stagger),
+      w,
+      h: CONTENT.h - stagger,
     }))
   }
 

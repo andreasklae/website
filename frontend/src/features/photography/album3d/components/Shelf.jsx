@@ -47,7 +47,7 @@ export function partingOffsets(layout, activeId, spread) {
   return layout.map((_, i) => (i < active ? -room : i > active ? room : 0))
 }
 
-export default function Shelf({ layout, language, activeId, spread }) {
+export default function Shelf({ layout, language, activeId, hiddenId, spread }) {
   const offsets = partingOffsets(layout, activeId, spread)
 
   return (
@@ -60,6 +60,7 @@ export default function Shelf({ layout, language, activeId, spread }) {
             language={language}
             offsetX={offsets[i]}
             active={album.id === activeId}
+            hidden={album.id === hiddenId}
           />
         </group>
       ))}
