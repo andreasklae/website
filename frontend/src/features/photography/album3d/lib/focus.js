@@ -20,7 +20,7 @@ export function worldPointFor(u, v, sheetIndex, page) {
  * actually travels. Fitting a photograph exactly is a ~60% cut in distance,
  * which reads as a jump rather than a lean, so only a fraction of it is taken.
  */
-export const LEAN_DISTANCE = 0.3
+export const LEAN_DISTANCE = 0.45
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
 

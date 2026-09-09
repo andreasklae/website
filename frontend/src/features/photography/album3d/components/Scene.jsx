@@ -67,7 +67,6 @@ export default function Scene({ shelf, album, language }) {
               <ActiveAlbum
                 album={album}
                 language={language}
-                thickness={slot.thickness}
                 index={slotIndex}
                 active={isActive}
                 onRetired={retire}

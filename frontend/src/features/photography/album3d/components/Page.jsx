@@ -114,11 +114,20 @@ export default function Page({
     let turningTime = Math.min(400, performance.now() - turnedAt.current) / 400
     turningTime = Math.sin(turningTime * Math.PI)
 
-    // Fan the block slightly, bounded however many sheets there are. The
-    // reference fans by a fixed angle per sheet, which on a 26-sheet album
-    // tilts the outer leaves ~20 degrees and swings them across the spread.
-    const fan = degToRad(Math.min(number, 20) * 0.3)
-    const targetRotation = (opened ? -Math.PI / 2 : Math.PI / 2) + (bookClosed ? 0 : fan)
+    // Fan the block slightly, bounded however many sheets there are. A fixed
+    // angle per sheet tilts the outer leaves of a 26-sheet album ~20 degrees
+    // and swings them across the spread.
+    //
+    // The SIGN matters more than the amount. A leaf turns between +90 and -90
+    // degrees, and dampAngle takes the shortest way round — at exactly 180
+    // apart there is no shortest way, so leaves pick a side arbitrarily and
+    // some sweep behind the book instead of over the front of it. Fanning the
+    // two rest poses TOWARD each other keeps them under 180 apart, which puts
+    // the short way through 0: the leaf stands up toward the reader mid-turn,
+    // which is the way a page actually turns.
+    const fan = degToRad(1.5 + Math.min(number, 20) * 0.3)
+    const base = opened ? -Math.PI / 2 : Math.PI / 2
+    const targetRotation = bookClosed ? base : base + (opened ? fan : -fan)
 
     const bones = skinnedMeshRef.current.skeleton.bones
     for (let i = 0; i < bones.length; i++) {

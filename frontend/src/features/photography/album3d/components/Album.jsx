@@ -1,7 +1,8 @@
-import { useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
+import { easing } from 'maath'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Page, { PAGE_WIDTH, PAGE_HEIGHT, PAGE_DEPTH } from './Page'
-import Binding from './Binding'
+import Binding, { COVER_BOARD } from './Binding'
 import { FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
@@ -189,8 +190,28 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
 
   const bookClosed = delayedPage === 0 || delayedPage === sheets.length
 
+  // Centre the block on the album's own origin, in ALBUM-LOCAL space, so it
+  // occupies exactly the volume the shelved block does — in every state, at
+  // every rotation. Doing this in the parent frame instead means the offset
+  // travels along whichever world axis the album happens to be turned to.
+  //
+  // Leaves hinge at z=0 and pile up along -x: turned ones lie to +z, untouched
+  // ones to -z, so a shut album sits wholly on one side and a spread straddles
+  // the hinge. The numbers come from geometry.test.mjs.
+  const depth = sheets.length * PAGE_DEPTH + COVER_BOARD * 2
+  const minZ = delayedPage < sheets.length ? -PAGE_WIDTH : 0
+  const maxZ = delayedPage > 0 ? PAGE_WIDTH : 0
+  const centre = useRef({ x: depth / 2, z: -(minZ + maxZ) / 2 }).current
+  const blockRef = useRef()
+
+  useFrame((_, delta) => {
+    if (!blockRef.current) return
+    easing.damp3(blockRef.current.position, [depth / 2, 0, -(minZ + maxZ) / 2], 0.35, delta)
+  })
+
   return (
     <group ref={group}>
+     <group ref={blockRef} position={[centre.x, 0, centre.z]}>
       <Binding sheetCount={sheets.length} spineTexture={spineTexture} />
 
       {sheets.map((_, sheetIndex) => {
@@ -212,7 +233,7 @@ export default function Album({ album, language, planeZ = 0, spineTexture = null
           />
         )
       })}
-
+      </group>
     </group>
   )
 }

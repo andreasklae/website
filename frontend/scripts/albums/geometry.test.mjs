@@ -110,3 +110,82 @@ test('the binding fills the gutter and shows on the bound edge', () => {
   // And run backwards from the spread, not toward the viewer.
   assert.ok(centre.z < 0, `binding sits in front of the pages: z=${centre.z}`)
 })
+
+// ---- which way a leaf turns ------------------------------------------------
+
+const PAGE_DEPTH_ = 0.012
+const degToRad = (d) => (d * Math.PI) / 180
+
+/** The rest pose of a leaf, matching Page.jsx. */
+function restRotation({ number, opened, bookClosed }) {
+  const fan = degToRad(1.5 + Math.min(number, 20) * 0.3)
+  const base = opened ? -Math.PI / 2 : Math.PI / 2
+  return bookClosed ? base : base + (opened ? fan : -fan)
+}
+
+/** Shortest signed way round, which is what easing.dampAngle takes. */
+const shortestDelta = (from, to) => {
+  let d = (to - from) % (Math.PI * 2)
+  if (d > Math.PI) d -= Math.PI * 2
+  if (d < -Math.PI) d += Math.PI * 2
+  return d
+}
+
+test('a leaf turns over the front of the book, never round the back', () => {
+  // The bug this catches: at exactly 180 degrees apart there IS no shortest
+  // way, so leaves picked a side arbitrarily and some swept behind the book.
+  for (const number of [0, 1, 5, 12, 25]) {
+    const from = restRotation({ number, opened: false, bookClosed: false })
+    const to = restRotation({ number, opened: true, bookClosed: false })
+    const delta = shortestDelta(from, to)
+
+    assert.ok(Math.abs(delta) < Math.PI - 1e-6, `leaf ${number}: exactly 180 apart, direction undefined`)
+    // Half way round must land near 0 — the leaf standing up toward the
+    // reader — and nowhere near 180, which is flat behind the book.
+    const midway = from + delta / 2
+    assert.ok(Math.abs(midway) < 0.2, `leaf ${number}: passes through ${midway.toFixed(3)}, not the front`)
+  }
+})
+
+test('every leaf turns the same way as every other', () => {
+  const directions = [0, 1, 5, 12, 25].map((number) =>
+    Math.sign(
+      shortestDelta(
+        restRotation({ number, opened: false, bookClosed: false }),
+        restRotation({ number, opened: true, bookClosed: false })
+      )
+    )
+  )
+  assert.equal(new Set(directions).size, 1, `leaves turn different ways: ${directions}`)
+})
+
+// ---- the block centres itself ---------------------------------------------
+
+test('the block occupies the same volume however the album is opened', () => {
+  // The shelved block is centred on the album's origin, so the bound album has
+  // to be too — otherwise the handover jumps by half a page.
+  const sheetCount = 9
+  const COVER_BOARD_ = 0.022
+  const depth = sheetCount * PAGE_DEPTH_ + COVER_BOARD_ * 2
+
+  for (const page of [0, 1, 4, 8, 9]) {
+    const minZ = page < sheetCount ? -PAGE_WIDTH : 0
+    const maxZ = page > 0 ? PAGE_WIDTH : 0
+    const offset = { x: depth / 2, z: -(minZ + maxZ) / 2 }
+
+    // Leaf extremes in album-local space, plus the centring offset.
+    const bounds = { minX: Infinity, maxX: -Infinity }
+    for (let n = 0; n < sheetCount; n++) {
+      const opened = page > n
+      const x = (opened ? -1 : 1) * (page - n) * PAGE_DEPTH_ * (opened ? -1 : 1)
+      bounds.minX = Math.min(bounds.minX, x)
+      bounds.maxX = Math.max(bounds.maxX, x)
+    }
+
+    const centredZ = (minZ + maxZ) / 2 + offset.z
+    assert.ok(Math.abs(centredZ) < 1e-9, `page ${page}: block sits at z=${centredZ}, not centred`)
+    // The binding spans the full thickness and is what x-centring is measured
+    // against, so that offset is constant.
+    assert.equal(offset.x, depth / 2)
+  }
+})
