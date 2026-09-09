@@ -136,25 +136,33 @@ export function paintSpine(canvas, album, { language = 'en', index = 0, aspect =
   }
 
   // The whole block — title lines and date together — is laid out and centred
-  // ACROSS the card. Placing the date after the last line without measuring
-  // the block is what pushed it off the label on shorter titles.
+  // ACROSS the card.
+  //
+  // Spacing has to be reckoned from the GLYPHS, not from the baselines: two
+  // baselines a line-height apart are fine, but a title baseline and a date
+  // baseline a line-height apart put a 68px title straight through a 28px
+  // date. Each gap is half of one plus half of the other, plus air.
   const year = spineDate(album)
   const dateSize = 28
-  const dateGap = year ? dateSize * 1.35 : 0
+  const AIR = 12
 
-  const across = () => (lines.length - 1) * size * 0.92 + dateGap
+  const lineGap = () => size * 1.02
+  const dateGap = () => (year ? size / 2 + dateSize / 2 + AIR : 0)
+  // Outside edges of the block, not just the span between baselines.
+  const across = () =>
+    (lines.length - 1) * lineGap() + dateGap() + size / 2 + (year ? dateSize / 2 : size / 2)
+
   // Shrink until the block fits the card's width as well as its length.
-  while (across() > card.w - 18 && size > 22) size -= 2
+  while (across() > card.w - 16 && size > 20) size -= 2
 
   ctx.font = `700 ${size}px ${HAND}`
-  const lineGap = size * 0.92
-  const start = -across() / 2
-  lines.forEach((line, i) => ctx.fillText(line, 0, start + i * lineGap))
+  const start = -across() / 2 + size / 2
+  lines.forEach((line, i) => ctx.fillText(line, 0, start + i * lineGap()))
 
   if (year) {
     ctx.font = `${dateSize}px ${HAND_INK}`
     ctx.fillStyle = 'rgba(43,39,33,0.55)'
-    ctx.fillText(year, 0, start + (lines.length - 1) * lineGap + dateGap)
+    ctx.fillText(year, 0, start + (lines.length - 1) * lineGap() + dateGap())
   }
 
   ctx.restore()

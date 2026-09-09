@@ -11,8 +11,16 @@
 /** Roughly the thickness of the fattest album under the old reckoning. */
 export const TARGET_DEPTH = 0.33
 
-/** Fraction of the spacing a leaf itself occupies; the rest is the gap. */
-export const LEAF_FRACTION = 0.45
+/**
+ * Fraction of the spacing a leaf itself occupies; the rest is the gap that
+ * keeps two settled leaves from interpenetrating.
+ *
+ * Kept high: at 0.45 the block was more air than paper, and at the crease —
+ * where you look along the leaves rather than at them — you could see between
+ * them and out the other side. A fifth of the spacing is ample clearance and
+ * leaves the block reading as solid.
+ */
+export const LEAF_FRACTION = 0.8
 
 const hash01 = (id) => {
   let h = 2166136261

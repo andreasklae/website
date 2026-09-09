@@ -11,19 +11,29 @@ import { PAGE_HEIGHT } from './dimensions.js'
  * a test asserted it was flush.
  */
 
-/** Deep enough to fill the gutter, shallow enough not to look like a slab. */
-export const SPINE_THICKNESS = 0.026
-
 /**
- * How far the bound face stands out past the leaves' own edges.
+ * How far the binding stands out past the leaves' bound edges.
  *
  * A spine wraps the block rather than butting up against it, and the geometry
  * needs it to: every leaf presents a face on the hinge line, so a binding that
  * ends exactly there is coplanar with all of them and they fight for depth —
- * the leaves show through the spine in stripes. Standing it slightly proud
- * buries their edges inside it, which is where a bound edge belongs anyway.
+ * the leaves show through the spine in stripes. Standing it proud buries their
+ * edges inside it, which is where a bound edge belongs anyway.
  */
-export const SPINE_PROUD = 0.006
+export const SPINE_PROUD = 0.02
+
+/**
+ * How far it reaches back behind the hinge, under the leaves that have not
+ * been turned yet.
+ *
+ * Turned leaves lie one side of the hinge and untouched ones the other, so a
+ * binding weighted to one side leaves the crease open on the other — which
+ * shows as a gap between the pages part-way through a turn, when the leaf that
+ * would have covered it is standing up in the air.
+ */
+export const SPINE_BEHIND = 0.04
+
+export const SPINE_THICKNESS = SPINE_PROUD + SPINE_BEHIND
 
 /**
  * Offset that puts the leaf block's OUTER FACES either side of the album's
@@ -40,7 +50,7 @@ export const blockCentre = (depth, pageDepth) => depth / 2 - (pageDepth * LEAF_F
  * hinge does it deliberately stand a little proud of them.
  */
 export const bindingPose = (depth, pageDepth) => ({
-  position: [-blockCentre(depth, pageDepth), 0, -SPINE_THICKNESS / 2 + SPINE_PROUD],
+  position: [-blockCentre(depth, pageDepth), 0, (SPINE_PROUD - SPINE_BEHIND) / 2],
   scale: [depth, PAGE_HEIGHT, SPINE_THICKNESS],
 })
 

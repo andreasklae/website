@@ -244,7 +244,7 @@ test('the binding lines up with the leaves on every axis', () => {
     const { position, scale } = bindingPose(depth, spacing)
     const boundFace = position[2] + scale[2] / 2
     assert.ok(boundFace > 0, `${id}: bound face is coplanar with the leaf edges`)
-    assert.ok(boundFace < 0.02, `${id}: spine stands ${boundFace} proud, which will read as a slab`)
+    assert.ok(boundFace < 0.05, `${id}: spine stands ${boundFace} proud, which will read as a slab`)
   }
 })
 
@@ -332,8 +332,12 @@ test('settled leaves never touch, so none sinks into the one below', () => {
   for (const [id, sheets] of [['highlights', 26], ['portugal-2025', 8]]) {
     const spacing = pageDepthFor(sheets, depthFor(id))
     const leaf = spacing * LEAF_FRACTION
-    assert.ok(leaf < spacing, 'a leaf must be thinner than the gap between leaves')
-    assert.ok(spacing - leaf > spacing * 0.4, `${id}: only ${spacing - leaf} of clearance`)
+    assert.ok(leaf < spacing, 'a leaf must be thinner than the gap it sits in')
+    // Enough to keep two settled leaves apart, but not so much that the block
+    // becomes more air than paper and you can see through it at the crease.
+    const clearance = spacing - leaf
+    assert.ok(clearance > spacing * 0.1, `${id}: only ${clearance.toFixed(4)} of clearance`)
+    assert.ok(leaf > spacing * 0.6, `${id}: leaves fill only ${(leaf / spacing).toFixed(2)} of the block`)
   }
 })
 

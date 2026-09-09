@@ -87,7 +87,7 @@ export default function Controls({ getText }) {
               {getText({ en: '← Back', no: '← Tilbake' })}
             </button>
             <button className={btn} onClick={closeBook}>
-              {getText({ en: 'Close book', no: 'Lukk boken' })}
+              {getText({ en: 'Close album', no: 'Lukk albumet' })}
             </button>
             <button className={btn} onClick={next} disabled={atEnd}>
               {getText({ en: 'Forward →', no: 'Fram →' })}
