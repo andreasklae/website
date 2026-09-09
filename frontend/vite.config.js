@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
+import { buildAlbums } from './scripts/albums/build.mjs'
 
 // Plugin: Generate a manifest of photography highlights from public folder
 function generateHighlightsManifest() {
@@ -64,9 +65,28 @@ function HighlightsManifestBuildPlugin() {
   }
 }
 
+// Plugin: compile album layouts + image derivatives from the photography content.
+function AlbumsPlugin() {
+  let built = false
+  const run = async () => {
+    if (built) return
+    built = true
+    try {
+      await buildAlbums({ root: process.cwd(), log: (m) => console.log(m) })
+    } catch (err) {
+      console.warn('[albums] build failed:', err?.message || err)
+    }
+  }
+  return {
+    name: 'build-albums',
+    buildStart: run,
+    configureServer: run,
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  plugins: [react(), HighlightsManifestPlugin(), HighlightsManifestBuildPlugin()],
+  plugins: [react(), HighlightsManifestPlugin(), HighlightsManifestBuildPlugin(), AlbumsPlugin()],
   // Serve from root both locally and in production (custom domain)
   // If you later host under a subpath, override via VITE_BASE_URL env.
   base: process.env.VITE_BASE_URL || '/',

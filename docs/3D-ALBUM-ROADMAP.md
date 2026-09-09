@@ -128,9 +128,21 @@ The brief left gaps; these are the calls being made. Flagged so they are easy to
 - [x] Phase 0 — Research
 - [x] Phase 1 — Asset pipeline *(428 images, 295 MB of derivatives, ~75 s cold / instant cached)*
 - [x] Phase 2 — Layout compiler *(5 tests, 100% image coverage verified)*
-- [ ] Phase 3 — Scene shell & perf floor
-- [ ] Phase 4 — Shelf & spines
-- [ ] Phase 5 — Cover reveal
-- [ ] Phase 6 — Pages & turning
-- [ ] Phase 7 — Interactions
-- [ ] Phase 8 — Polish & integration
+- [x] Phase 3 — Scene shell & perf floor *(fit-solving camera rig, texture residency, lazy 3D chunk)*
+- [x] Phase 4 — Shelf & spines *(cloth boards, brass label holders, two-line handwritten titles)*
+- [x] Phase 5 — Cover reveal *(built; motion unverified — see note)*
+- [x] Phase 6 — Pages & turning *(bone-skinned pages; face compositing verified visually)*
+- [~] Phase 7 — Interactions *(hover-zoom, stack sifting, nav wired; needs a live browser to confirm feel)*
+- [~] Phase 8 — Polish & integration *(code-split, WebGL fallback, reduced motion done; mobile pass outstanding)*
+
+---
+
+## 6. Verification note
+
+Page compositing was verified by painting real album faces to canvas and
+inspecting them: cover, memo, postcard, printed photos, and the stack all
+render as intended. The **animated 3D flow could not be verified in this
+session** — the automated browser pane reports `document.hidden === true`, so
+`requestAnimationFrame` never fires and the render loop is suspended. Static
+renders are correct; the shelf-to-cover-to-open transitions, page turning,
+and hover-zoom need a real visible browser (`npm run dev`, then `/photography`).

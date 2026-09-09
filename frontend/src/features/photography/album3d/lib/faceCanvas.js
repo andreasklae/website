@@ -1,0 +1,401 @@
+// Composites one album page face into a single canvas.
+//
+// One canvas per face means one texture and one draw call per page, which is
+// what keeps the frame budget flat while pages are turning. Slot geometry is
+// returned alongside so the scene can place invisible hit-test planes for
+// hover and zoom without re-deriving the layout.
+
+import { HAND, HAND_INK } from './fonts'
+
+export const FACE_W = 1024
+export const FACE_H = 1367 // 0.749 — matches the page mesh aspect
+const MARGIN = 62
+const GAP = 26
+
+const PAPER = '#f4f1ea'
+const PAPER_EDGE = '#e6e0d4'
+const INK = '#2b2721'
+
+const CONTENT = { x: MARGIN, y: MARGIN, w: FACE_W - MARGIN * 2, h: FACE_H - MARGIN * 2 }
+
+const pick = (value, language) => {
+  if (value == null) return ''
+  if (typeof value === 'string') return value
+  return value[language] ?? value.en ?? Object.values(value)[0] ?? ''
+}
+
+/** Slot rectangles for a face, given how many units each slot occupies. */
+export function slotRects(face) {
+  const rects = []
+  let y = CONTENT.y
+  for (const slot of face.slots || []) {
+    const full = slot.kind === 'photo' ? slot.orientation === 'portrait'
+      : slot.kind === 'cover' || slot.kind === 'back-cover'
+    const h = full ? CONTENT.h : (CONTENT.h - GAP) / 2
+    rects.push({ slot, x: CONTENT.x, y, w: CONTENT.w, h })
+    y += h + GAP
+  }
+  return rects
+}
+
+/** Fits a rect inside a box preserving aspect (contain). */
+const contain = (box, aspect) => {
+  let w = box.w
+  let h = w / aspect
+  if (h > box.h) { h = box.h; w = h * aspect }
+  return { x: box.x + (box.w - w) / 2, y: box.y + (box.h - h) / 2, w, h }
+}
+
+function paper(ctx) {
+  ctx.fillStyle = PAPER
+  ctx.fillRect(0, 0, FACE_W, FACE_H)
+  // Faint fibre so a blank page never reads as flat white.
+  ctx.save()
+  ctx.globalAlpha = 0.035
+  for (let i = 0; i < 900; i++) {
+    ctx.fillStyle = i % 2 ? '#8a8070' : '#ffffff'
+    ctx.fillRect(Math.random() * FACE_W, Math.random() * FACE_H, 1.5, 1.5)
+  }
+  ctx.restore()
+  const edge = ctx.createLinearGradient(0, 0, FACE_W * 0.18, 0)
+  edge.addColorStop(0, 'rgba(0,0,0,0.10)')
+  edge.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = edge
+  ctx.fillRect(0, 0, FACE_W * 0.18, FACE_H)
+}
+
+function shadow(ctx, blur, alpha, dy = 6) {
+  ctx.shadowColor = `rgba(0,0,0,${alpha})`
+  ctx.shadowBlur = blur
+  ctx.shadowOffsetY = dy
+}
+const noShadow = (ctx) => { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0 }
+
+/** Draws `image` into `rect`, cropping to fill rather than letterboxing. */
+function drawCover(ctx, image, rect) {
+  const ia = image.naturalWidth / image.naturalHeight
+  const ra = rect.w / rect.h
+  let sw = image.naturalWidth
+  let sh = image.naturalHeight
+  if (ia > ra) sw = image.naturalHeight * ra
+  else sh = image.naturalWidth / ra
+  ctx.drawImage(
+    image,
+    (image.naturalWidth - sw) / 2, (image.naturalHeight - sh) / 2, sw, sh,
+    rect.x, rect.y, rect.w, rect.h
+  )
+}
+
+/**
+ * Draws a print at an explicit rect: white border, soft shadow, and a degree
+ * or two of rotation so the page never looks like a CSS grid.
+ */
+function drawPrintAt(ctx, image, fit, { tilt = 0, border = 0.035, color = '#ddd', cover = false } = {}) {
+  const pad = Math.min(fit.w, fit.h) * border
+  const cx = fit.x + fit.w / 2
+  const cy = fit.y + fit.h / 2
+
+  ctx.save()
+  ctx.translate(cx, cy)
+  ctx.rotate(tilt)
+  ctx.translate(-cx, -cy)
+
+  shadow(ctx, 26, 0.28, 8)
+  ctx.fillStyle = '#fffdf8'
+  ctx.fillRect(fit.x - pad, fit.y - pad, fit.w + pad * 2, fit.h + pad * 2.6) // deeper lower lip
+  noShadow(ctx)
+
+  if (image) {
+    if (cover) drawCover(ctx, image, fit)
+    else ctx.drawImage(image, fit.x, fit.y, fit.w, fit.h)
+  } else {
+    ctx.fillStyle = color
+    ctx.fillRect(fit.x, fit.y, fit.w, fit.h)
+  }
+
+  // Slight sheen across the print.
+  const g = ctx.createLinearGradient(fit.x, fit.y, fit.x + fit.w, fit.y + fit.h)
+  g.addColorStop(0, 'rgba(255,255,255,0.10)')
+  g.addColorStop(0.5, 'rgba(255,255,255,0)')
+  g.addColorStop(1, 'rgba(0,0,0,0.06)')
+  ctx.fillStyle = g
+  ctx.fillRect(fit.x, fit.y, fit.w, fit.h)
+
+  ctx.restore()
+  return fit
+}
+
+/** Fits the print inside `box` by aspect, then draws it. */
+function printedPhoto(ctx, image, box, aspect, opts = {}) {
+  return drawPrintAt(ctx, image, contain(box, aspect), opts)
+}
+
+/** Word-wraps text and returns the number of lines drawn. */
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = Infinity) {
+  const paragraphs = String(text || '').split(/\n+/)
+  let line = 0
+  for (const para of paragraphs) {
+    let current = ''
+    for (const word of para.split(/\s+/).filter(Boolean)) {
+      const test = current ? `${current} ${word}` : word
+      if (ctx.measureText(test).width > maxWidth && current) {
+        if (line >= maxLines) return { lines: line, truncated: true }
+        ctx.fillText(current, x, y + line * lineHeight)
+        line++
+        current = word
+      } else {
+        current = test
+      }
+    }
+    if (current) {
+      if (line >= maxLines) return { lines: line, truncated: true }
+      ctx.fillText(current, x, y + line * lineHeight)
+      line++
+    }
+    line += 0.35 // paragraph break
+  }
+  return { lines: line, truncated: false }
+}
+
+/** A postcard: handwritten chapter text, sized to sit in a normal photo slot. */
+function postcard(ctx, box, slot, language, tilt = -0.012) {
+  const card = contain(box, 1.5)
+  const cx = card.x + card.w / 2
+  const cy = card.y + card.h / 2
+
+  ctx.save()
+  ctx.translate(cx, cy); ctx.rotate(tilt); ctx.translate(-cx, -cy)
+
+  shadow(ctx, 24, 0.26, 8)
+  ctx.fillStyle = '#fdf8ec'
+  ctx.fillRect(card.x, card.y, card.w, card.h)
+  noShadow(ctx)
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.18)'
+  ctx.lineWidth = 2
+  ctx.strokeRect(card.x + 10, card.y + 10, card.w - 20, card.h - 20)
+
+  // Divider and stamp box, as on the back of a real postcard.
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)'
+  ctx.beginPath()
+  ctx.moveTo(card.x + card.w * 0.62, card.y + 28)
+  ctx.lineTo(card.x + card.w * 0.62, card.y + card.h - 28)
+  ctx.stroke()
+  ctx.strokeRect(card.x + card.w - 116, card.y + 28, 84, 100)
+  ctx.save()
+  ctx.font = `26px ${HAND}`
+  ctx.fillStyle = 'rgba(0,0,0,0.28)'
+  ctx.textAlign = 'center'
+  ctx.fillText('POST', card.x + card.w - 74, card.y + 74)
+  ctx.fillText('CARD', card.x + card.w - 74, card.y + 102)
+  ctx.restore()
+
+  const padX = card.x + 34
+  let y = card.y + 76
+
+  ctx.fillStyle = INK
+  ctx.font = `700 52px ${HAND}`
+  ctx.fillText(pick(slot.title, language), padX, y)
+  y += 22
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)'
+  ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(padX + 150, y); ctx.stroke()
+  y += 52
+
+  ctx.font = `36px ${HAND}`
+  ctx.fillStyle = 'rgba(43,39,33,0.88)'
+  const bodyWidth = card.w * 0.62 - 68
+  const maxLines = Math.floor((card.h - (y - card.y) - 50) / 40)
+  const { truncated } = wrapText(ctx, pick(slot.text, language), padX, y, bodyWidth, 40, maxLines)
+
+  if (truncated) {
+    ctx.font = `30px ${HAND}`
+    ctx.fillStyle = 'rgba(43,39,33,0.5)'
+    ctx.fillText(language === 'no' ? '… les mer' : '… read more', padX, card.y + card.h - 34)
+  }
+
+  ctx.restore()
+  return card
+}
+
+/** A memo: a loose note clipped to the page, summarising what follows. */
+function memo(ctx, box, slot, language) {
+  const card = contain(box, 1.55)
+  const cx = card.x + card.w / 2, cy = card.y + card.h / 2
+  ctx.save()
+  ctx.translate(cx, cy); ctx.rotate(0.014); ctx.translate(-cx, -cy)
+
+  shadow(ctx, 22, 0.22, 7)
+  ctx.fillStyle = '#fbf6e6'
+  ctx.fillRect(card.x, card.y, card.w, card.h)
+  noShadow(ctx)
+
+  // Ruled lines, as on a notepad.
+  ctx.strokeStyle = 'rgba(60,90,120,0.13)'
+  ctx.lineWidth = 1.5
+  for (let y = card.y + 104; y < card.y + card.h - 20; y += 46) {
+    ctx.beginPath(); ctx.moveTo(card.x + 30, y); ctx.lineTo(card.x + card.w - 30, y); ctx.stroke()
+  }
+
+  ctx.fillStyle = INK
+  ctx.font = `700 54px ${HAND}`
+  ctx.fillText(pick(slot.title, language), card.x + 36, card.y + 74)
+
+  ctx.font = `38px ${HAND}`
+  ctx.fillStyle = 'rgba(43,39,33,0.86)'
+  const maxLines = Math.floor((card.h - 150) / 46)
+  wrapText(ctx, pick(slot.text, language), card.x + 36, card.y + 148, card.w - 72, 46, maxLines)
+
+  const meta = slot.meta
+  if (meta?.camera || meta?.dates) {
+    ctx.font = `30px ${HAND_INK}`
+    ctx.fillStyle = 'rgba(43,39,33,0.45)'
+    const line = [pick(meta.camera, language), meta.dates?.start].filter(Boolean).join('  ·  ')
+    ctx.fillText(line, card.x + 36, card.y + card.h - 26)
+  }
+
+  ctx.restore()
+  return card
+}
+
+/**
+ * A stack of photographs. Every sibling is drawn in the SAME frame as the top
+ * print — only nudged and rotated — so their corners show past it and the pile
+ * reads as a pile. Letting each sibling fit its own aspect would re-centre
+ * them and produce a row of separate photos instead.
+ */
+function photoStack(ctx, box, slot, images, { offset = 0 } = {}) {
+  const count = slot.photos.length
+  const visible = Math.min(count, 4)
+  const top = slot.photos[offset % count]
+
+  // Leave room around the frame for the siblings to peek out of.
+  const frame = contain({ x: box.x + 16, y: box.y + 14, w: box.w - 32, h: box.h - 34 }, top.aspect)
+
+  for (let i = visible - 1; i >= 1; i--) {
+    const sib = slot.photos[(offset + i) % count]
+    const dir = i % 2 ? 1 : -1
+    drawPrintAt(ctx, images.get(sib.src), {
+      x: frame.x + dir * (7 + i * 6),
+      y: frame.y + i * 6,
+      w: frame.w,
+      h: frame.h,
+    }, { tilt: dir * (0.016 + i * 0.012), border: 0.03, color: sib.color, cover: true })
+  }
+
+  drawPrintAt(ctx, images.get(top.src), frame, {
+    tilt: -0.006, border: 0.035, color: top.color, cover: true,
+  })
+
+  // Counter, written on the page rather than printed on the photo.
+  ctx.save()
+  ctx.font = `32px ${HAND}`
+  ctx.fillStyle = 'rgba(43,39,33,0.55)'
+  ctx.textAlign = 'right'
+  ctx.fillText(`${(offset % count) + 1} / ${count}`, frame.x + frame.w + 6, frame.y + frame.h + 52)
+  ctx.restore()
+
+  return frame
+}
+
+function coverFace(ctx, slot, language, images) {
+  // Cloth-bound board rather than paper.
+  const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
+  g.addColorStop(0, '#3d3730')
+  g.addColorStop(1, '#2a251f')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, FACE_W, FACE_H)
+  ctx.save()
+  ctx.globalAlpha = 0.05
+  for (let i = 0; i < 2600; i++) {
+    ctx.fillStyle = i % 2 ? '#fff' : '#000'
+    ctx.fillRect(Math.random() * FACE_W, Math.random() * FACE_H, 2, 1)
+  }
+  ctx.restore()
+
+  if (slot.photo) {
+    printedPhoto(ctx, images.get(slot.photo.src), {
+      x: MARGIN + 40, y: MARGIN + 90, w: CONTENT.w - 80, h: CONTENT.h * 0.62,
+    }, slot.photo.aspect, { tilt: -0.014, border: 0.05, color: slot.photo.color })
+  }
+
+  ctx.save()
+  ctx.textAlign = 'center'
+  ctx.fillStyle = '#f2ece0'
+  ctx.font = `700 92px ${HAND}`
+  ctx.fillText(pick(slot.title, language), FACE_W / 2, FACE_H - 210)
+
+  const sub = [pick(slot.subtitle, language), slot.dates?.start].filter(Boolean).join('   ·   ')
+  if (sub) {
+    ctx.font = `36px ${HAND}`
+    ctx.fillStyle = 'rgba(242,236,224,0.6)'
+    ctx.fillText(sub, FACE_W / 2, FACE_H - 150)
+  }
+  ctx.restore()
+}
+
+function backCoverFace(ctx, slot, language) {
+  const g = ctx.createLinearGradient(0, 0, FACE_W, FACE_H)
+  g.addColorStop(0, '#2a251f')
+  g.addColorStop(1, '#3d3730')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, FACE_W, FACE_H)
+  ctx.save()
+  ctx.textAlign = 'center'
+  ctx.font = `40px ${HAND_INK}`
+  ctx.fillStyle = 'rgba(242,236,224,0.32)'
+  ctx.fillText(pick(slot.title, language), FACE_W / 2, FACE_H - 120)
+  ctx.restore()
+}
+
+/**
+ * Paints a face. `images` is a Map of src -> HTMLImageElement for whatever has
+ * loaded so far; anything missing falls back to its average colour, so a face
+ * is always drawable and simply sharpens as textures arrive.
+ */
+export function paintFace(canvas, face, { language = 'en', images = new Map(), stackOffsets = {} } = {}) {
+  const ctx = canvas.getContext('2d')
+  canvas.width = FACE_W
+  canvas.height = FACE_H
+  ctx.textBaseline = 'alphabetic'
+  ctx.textAlign = 'left'
+
+  const first = face.slots?.[0]
+  if (first?.kind === 'cover') { coverFace(ctx, first, language, images); return [] }
+  if (first?.kind === 'back-cover') { backCoverFace(ctx, first, language); return [] }
+
+  paper(ctx)
+
+  const rects = slotRects(face)
+  const hitboxes = []
+
+  rects.forEach(({ slot, x, y, w, h }, i) => {
+    const box = { x, y, w, h }
+    let drawn
+    if (slot.kind === 'photo') {
+      drawn = printedPhoto(ctx, images.get(slot.src), box, slot.aspect, {
+        tilt: (i % 2 ? 1 : -1) * 0.009, color: slot.color,
+      })
+    } else if (slot.kind === 'postcard') {
+      drawn = postcard(ctx, box, slot, language, (i % 2 ? 1 : -1) * 0.012)
+    } else if (slot.kind === 'memo') {
+      drawn = memo(ctx, box, slot, language)
+    } else if (slot.kind === 'stack') {
+      drawn = photoStack(ctx, box, slot, images, { offset: stackOffsets[i] || 0 })
+    }
+    if (drawn) hitboxes.push({ index: i, slot, rect: drawn })
+  })
+
+  return hitboxes
+}
+
+/** Every image source a face needs, in draw order. */
+export function faceSources(face) {
+  const out = []
+  for (const slot of face.slots || []) {
+    if (slot.kind === 'photo') out.push(slot)
+    else if (slot.kind === 'cover' && slot.photo) out.push(slot.photo)
+    else if (slot.kind === 'stack') out.push(...slot.photos.slice(0, 5))
+  }
+  return out
+}
