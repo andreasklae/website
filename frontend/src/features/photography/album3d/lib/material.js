@@ -6,6 +6,8 @@
  * noise would reshuffle the grain underneath you each time.
  */
 
+import { herringbone } from './herringbone.js'
+
 /** Small, fast, deterministic PRNG (mulberry32). */
 export function seeded(seed) {
   let a = seed >>> 0
@@ -436,4 +438,77 @@ export function paintTimberDetail(ctx, w, h, seed = 1) {
     ctx.stroke()
   }
   ctx.restore()
+}
+
+/**
+ * How many plank lengths and widths fit across one tile of the parquet
+ * texture. Both must divide the canvas exactly or the tiling seams.
+ */
+export const HERRINGBONE_PERIODS = { x: 5, y: 25 }
+
+/**
+ * Herringbone parquet.
+ *
+ * The plank size is taken from the canvas rather than given, so the pattern
+ * tiles: rotated to 45 degrees its lattice becomes axis-aligned, with a period
+ * of sqrt(2)*L across and sqrt(2)*W down, and choosing L and W so those divide
+ * the canvas exactly makes the wrap seamless. Planks that run off an edge have
+ * an identical counterpart coming back on the other side, so clipping them is
+ * all that is needed.
+ */
+export function paintHerringbone(ctx, w, h, colour, seed = 1) {
+  const rnd = seeded(seed)
+
+  // 5 plank-lengths across the tile and 25 widths down: blocks at 5:1, the
+  // proportion an oak parquet floor is laid in. Coarse enough that the
+  // chevrons read as parquet rather than as fine stripes once the tile is
+  // spread over a few metres of floor.
+  const plankL = w / HERRINGBONE_PERIODS.x / Math.SQRT2
+  const plankW = h / HERRINGBONE_PERIODS.y / Math.SQRT2
+
+  ctx.fillStyle = shade(colour, 0.45)
+  ctx.fillRect(0, 0, w, h)
+
+  const planks = herringbone({ width: w, height: h, plankW, plankL })
+
+  for (const plank of planks) {
+    const [p0, p1, , p3] = plank.points
+    const e1 = [p1[0] - p0[0], p1[1] - p0[1]]
+    const e2 = [p3[0] - p0[0], p3[1] - p0[1]]
+    const l1 = Math.hypot(e1[0], e1[1])
+    const l2 = Math.hypot(e2[0], e2[1])
+    const [long, across] = l1 >= l2 ? [e1, e2] : [e2, e1]
+    const L = Math.max(l1, l2)
+    const W = Math.min(l1, l2)
+
+    // Work in the plank's own frame, so the grain runs along it.
+    ctx.save()
+    ctx.transform(long[0] / L, long[1] / L, across[0] / W, across[1] / W, p0[0], p0[1])
+
+    // No two blocks in a floor are cut from the same part of the tree.
+    ctx.fillStyle = shade(colour, (rnd() - 0.5) * 0.3)
+    ctx.fillRect(0, 0, L, W)
+
+    ctx.beginPath()
+    ctx.rect(0, 0, L, W)
+    ctx.clip()
+
+    for (let i = 0; i < 5; i++) {
+      const y = rnd() * W
+      ctx.globalAlpha = 0.05 + rnd() * 0.13
+      ctx.strokeStyle = rnd() > 0.4 ? '#33200f' : '#d8ae77'
+      ctx.lineWidth = 0.6 + rnd() * 1.4
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.bezierCurveTo(L * 0.3, y + (rnd() - 0.5) * W * 0.4, L * 0.7, y + (rnd() - 0.5) * W * 0.4, L, y + (rnd() - 0.5) * W * 0.3)
+      ctx.stroke()
+    }
+    ctx.globalAlpha = 1
+
+    // The joint between blocks, which is what makes parquet read as parquet.
+    ctx.strokeStyle = 'rgba(26,15,6,0.7)'
+    ctx.lineWidth = Math.max(1, W * 0.07)
+    ctx.strokeRect(0, 0, L, W)
+    ctx.restore()
+  }
 }

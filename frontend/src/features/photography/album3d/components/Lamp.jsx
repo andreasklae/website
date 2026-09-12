@@ -5,6 +5,7 @@ import { Color } from 'three'
 import { MODES, useAlbumStore } from '../lib/store'
 import { lampLevel } from '../lib/lampLevel'
 import { CORD_LEN, LAMP_Y, LAMP_Z, SHADE_RADIUS } from '../lib/lampPose'
+import { CEILING_Y } from '../lib/room'
 
 /** Seconds of darkness before the lamp is switched on. */
 const SWITCH_ON_AT = 2.2
@@ -26,6 +27,9 @@ const GLASS = new Color('#12301f')
 
 /** How far the fitting rises out of shot while an album is being read. */
 const STOW_HEIGHT = 2.6
+
+/** Length of flex between the fitting and the ceiling rose. */
+const FLEX_LEN = CEILING_Y - LAMP_Y
 
 /**
  * Peak output, in candela.
@@ -146,10 +150,15 @@ export default function Lamp({ x = 0 }) {
           <meshBasicMaterial color={WARM} transparent opacity={0} depthWrite={false} toneMapped={false} />
         </mesh>
 
-        {/* The flex it hangs by, running up out of shot. */}
-        <mesh position={[0, 1.9, 0]}>
-          <cylinderGeometry args={[0.009, 0.009, 3.4, 6]} />
+        {/* The flex, running up to the ceiling it actually hangs from. */}
+        <mesh position={[0, FLEX_LEN / 2, 0]}>
+          <cylinderGeometry args={[0.009, 0.009, FLEX_LEN, 6]} />
           <meshStandardMaterial color="#2e2721" roughness={0.9} />
+        </mesh>
+        {/* The rose it comes out of. */}
+        <mesh position={[0, FLEX_LEN, 0]}>
+          <cylinderGeometry args={[0.11, 0.13, 0.05, 20]} />
+          <meshStandardMaterial color="#d9d2c6" roughness={0.85} />
         </mesh>
 
         {/* The shade: a green glass dome over the bulb. Open underneath, so

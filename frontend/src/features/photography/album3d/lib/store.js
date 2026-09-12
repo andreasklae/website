@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { ZOOM } from './shelfView.js'
 
 /**
  * The scene is a small state machine. Every camera move and animation is
@@ -51,6 +52,14 @@ export const useAlbumStore = create((set, get) => ({
   hoveredX: null,
   /** The room's lamp. Off when the page opens; it comes on by itself shortly after. */
   lampOn: false,
+
+  // How close the shelf view sits. A divisor on the fitting distance, so
+  // below 1 is further away; the wheel moves it.
+  zoom: ZOOM.start,
+  zoomBy: (factor) => set((s) => ({
+    zoom: Math.min(ZOOM.max, Math.max(ZOOM.min, s.zoom * factor)),
+  })),
+
   /** A single photograph, enlarged over the page. */
   zoomed: null,
   /**

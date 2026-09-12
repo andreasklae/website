@@ -9,6 +9,7 @@
 // position, which means this maths has to live somewhere importable.
 
 import { MathUtils } from 'three'
+import { ROOM_DEPTH } from './room.js'
 
 /**
  * How far to the right of the shelf the camera stands, and how far the row is
@@ -33,6 +34,25 @@ export const SHELF_VIEW = {
   height: -0.02,
 }
 
+/**
+ * How far out the view starts, and how far the viewer may take it.
+ *
+ * The shot opens well back from the bay so the room is the subject and the
+ * bookcase is something in it, and the wheel moves between the two. Zoom is a
+ * divisor on the fitting distance: below 1 is further away.
+ */
+export const ZOOM = { min: 0.5, max: 1.7, start: 0.68 }
+
+/**
+ * The furthest the camera may go, whatever the viewport.
+ *
+ * Framing the row by WIDTH means a narrow window pushes the camera back until
+ * the row fits across it, and on a tall phone that is already several metres;
+ * multiplied by a zoom-out it would put the viewer outside their own walls.
+ * The row is allowed to overflow a very narrow frame instead.
+ */
+export const MAX_DISTANCE = ROOM_DEPTH * 0.62
+
 /** Distance at which a w x h box exactly fills the frame, with padding. */
 export function fitDistance(fov, aspect, [w, h], pad) {
   const vFov = MathUtils.degToRad(fov)
@@ -45,6 +65,11 @@ export function fitDistance(fov, aspect, [w, h], pad) {
  * The shelf shot. Resting on an album draws the camera along the row toward it
  * and in a little, so you are looking at that book rather than at the shelf.
  */
+/** The fitting distance for a shelf shot at a given zoom, capped to the room. */
+export function shelfDistance(shot, fov, aspect, zoom = ZOOM.start) {
+  return Math.min(MAX_DISTANCE, fitDistance(fov, aspect, shot.box, shot.pad) / zoom)
+}
+
 export function shelfShot({ shelfWidth, hoveredX = null, bayHeight }) {
   const leaning = hoveredX != null
   const lean = leaning ? SHELF_VIEW.lean : 0
@@ -65,8 +90,8 @@ export function shelfShot({ shelfWidth, hoveredX = null, bayHeight }) {
 }
 
 /** Where the camera ends up, and what it looks at, for a given shot. */
-export function cameraPose(shot, fov, aspect) {
-  const distance = fitDistance(fov, aspect, shot.box, shot.pad)
+export function cameraPose(shot, fov, aspect, zoom = ZOOM.start) {
+  const distance = shelfDistance(shot, fov, aspect, zoom)
   return {
     position: [shot.target[0] + (shot.offsetX ?? 0), shot.height, distance + shot.target[2]],
     lookAt: shot.target,

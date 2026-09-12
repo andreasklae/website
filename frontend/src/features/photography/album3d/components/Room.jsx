@@ -1,32 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  BoxGeometry, CanvasTexture, ClampToEdgeWrapping, LinearFilter, LinearMipmapLinearFilter,
-  ImageBitmapLoader, MeshStandardMaterial, PlaneGeometry, RepeatWrapping, SRGBColorSpace, Vector2,
+  BoxGeometry, CanvasTexture, ClampToEdgeWrapping, ImageBitmapLoader, LinearFilter,
+  LinearMipmapLinearFilter, MeshStandardMaterial, PlaneGeometry, RepeatWrapping,
+  SRGBColorSpace, Vector2,
 } from 'three'
 import {
-  normalFromCanvas, paintCloth, paintPlaster, paintTimberDetail, paintWood,
-  roughnessFromCanvas, seedFrom, vignette,
+  normalFromCanvas, paintCloth, paintHerringbone, paintPlaster, paintTimberDetail,
+  paintWood, roughnessFromCanvas, seedFrom, vignette,
 } from '../lib/material'
 import { getAssetPath } from '../../../../utils/paths'
-import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
+import {
+  BAY_HEIGHT, BOARD, CASE_BACK_Z, CASE_FRONT_Z, CASE_TOP_Y, CEILING_Y, FLOOR_Y,
+  METRE, PANEL_Z, ROOM_DEPTH, SHELF_FLOOR_Y, SLIDE_ROOM, WALL_Z, shelfBoards,
+} from '../lib/room'
+import { panelRect, roomWidth } from '../lib/wallPanel'
 
-// The books' own footprint, which everything here is built around rather than
-// guessed at. They stand on y = -PAGE_HEIGHT/2 and run back from their spines.
-export const SHELF_FLOOR_Y = -PAGE_HEIGHT / 2
-const SPINE_Z = -PAGE_WIDTH / 2
-const BOOK_BACK_Z = SPINE_Z - PAGE_WIDTH
-
-/** Room for the row to slide sideways when an album is picked out. */
-export const SLIDE_ROOM = 1.15
-
-const BOARD = 0.075
-// Headroom enough for an album to be lifted and turned inside the bay.
-const INTERIOR_H = PAGE_HEIGHT * 1.42
-const FRONT_Z = SPINE_Z + 0.16
-const BACK_Z = BOOK_BACK_Z - 0.1
+export { SHELF_FLOOR_Y, SLIDE_ROOM }
 
 const box = new BoxGeometry(1, 1, 1)
 const plane = new PlaneGeometry(1, 1)
+
+/** How much floor one tile of parquet covers. */
+const PARQUET_TILE = 3 * METRE
 
 /** A canvas of the given size with `paint` run over it. */
 const painted = (w, h, paint) => {
@@ -106,7 +101,7 @@ const bayBack = (ctx, w, h, colour, seed) => {
 }
 
 /**
- * A verdure tapestry hung on the wall behind the bookcase.
+ * A verdure tapestry hung on the wall behind the bookcase, floor to ceiling.
  *
  * Its relief is the weave, not the picture: embossing the colour map would
  * emboss the trees and the sky along with it. So the normal map is a separate
@@ -121,7 +116,7 @@ const bayBack = (ctx, w, h, colour, seed) => {
  * Decoded as an ImageBitmap rather than an <img>, which keeps a two-megapixel
  * decode off the main thread while the scene is coming up.
  */
-function Tapestry({ x, y, z, width }) {
+function Tapestry({ rect }) {
   const [map, setMap] = useState(null)
 
   useEffect(() => {
@@ -154,35 +149,53 @@ function Tapestry({ x, y, z, width }) {
     const weave = painted(512, 512, (ctx, w, h) => paintCloth(ctx, w, h, '#808080', seedFrom('tapestry-weave')))
     return new MeshStandardMaterial({
       map,
-      normalMap: wrapped(normalFromCanvas(weave, 2.2), [width * 7, (width / 2.466) * 7]),
+      normalMap: wrapped(normalFromCanvas(weave, 2.2), [rect.width * 2.4, rect.height * 2.4]),
       normalScale: new Vector2(0.7, 0.7),
       roughness: 0.94,
       metalness: 0,
     })
-  }, [map, width])
+  }, [map, rect.width, rect.height])
 
-  useEffect(() => () => { material?.map?.dispose(); material?.normalMap?.dispose(); material?.dispose() }, [material])
+  useEffect(() => () => {
+    material?.map?.dispose()
+    material?.normalMap?.dispose()
+    material?.dispose()
+  }, [material])
 
   if (!material) return null
-  const height = width / (map.image.width / map.image.height)
-  return <mesh geometry={plane} material={material} position={[x, y, z]} scale={[width, height, 1]} />
+  return (
+    <mesh
+      geometry={plane}
+      material={material}
+      position={[rect.cx, rect.cy, PANEL_Z]}
+      scale={[rect.width, rect.height, 1]}
+    />
+  )
 }
 
 /**
  * The bookcase and the room it stands in.
  *
- * Sized from where the books actually are — they sit on the bottom board, back
- * against the left upright, with the rest of the bay left clear so the row has
- * somewhere to go when one is picked out.
+ * Everything is at one scale, set by how big a photograph album actually is —
+ * see lib/room.js. The case stands on the floor with its album bay at reading
+ * height, under a two-and-a-half metre ceiling, rather than floating in a box
+ * sized to whatever happened to be in frame.
  */
 export default function Room({ booksLeft, booksRight }) {
   const interiorLeft = booksLeft - 0.02
   const interiorRight = booksRight + SLIDE_ROOM
   const interiorW = interiorRight - interiorLeft
   const midX = (interiorLeft + interiorRight) / 2
-  const depth = FRONT_Z - BACK_Z
-  const midZ = (FRONT_Z + BACK_Z) / 2
-  const topY = SHELF_FLOOR_Y + INTERIOR_H
+  const depth = CASE_FRONT_Z - CASE_BACK_Z
+  const midZ = (CASE_FRONT_Z + CASE_BACK_Z) / 2
+  const caseMidY = (FLOOR_Y + CASE_TOP_Y) / 2
+  const caseH = CASE_TOP_Y - FLOOR_Y
+
+  const panel = panelRect(midX)
+  const ROOM_W = roomWidth(interiorW)
+  const roomMidZ = CASE_BACK_Z + ROOM_DEPTH / 2
+  const wallH = CEILING_Y - FLOOR_Y
+  const wallMidY = (FLOOR_Y + CEILING_Y) / 2
 
   // Sizes are kept as small as each surface can stand: deriving relief means
   // walking every pixel of every map in JS, and that is paid on the main
@@ -202,67 +215,64 @@ export default function Room({ booksLeft, booksRight }) {
     relief: 1.2, roughness: [0.62, 0.94], size: [512, 512],
   })
   const wall = useSurface({
-    seed: 'wall', colour: '#6d6455', repeat: [5, 5], paint: paintPlaster,
+    seed: 'wall', colour: '#6d6455', repeat: [6, 3], paint: paintPlaster,
     relief: 1.1, roughness: [0.8, 0.99], size: [512, 512],
   })
-  const floor = useSurface({
-    seed: 'floor', colour: '#4a3520', repeat: [7, 7], paint: timber,
-    relief: 1.5, size: [512, 512],
+  // Whitewashed, and flat: a ceiling is the one surface in a room with nothing
+  // going on, and it is what tells you the room has a top at all.
+  const ceiling = useSurface({
+    seed: 'ceiling', colour: '#e8e4dc', repeat: [8, 6], paint: paintPlaster,
+    relief: 0.8, roughness: [0.88, 1.0], size: [512, 512],
   })
-
-  const ROOM_W = interiorW + 16
-  const ROOM_H = 9
-  const ROOM_D = 14
-  const WALL_Z = BACK_Z - 0.14
+  // Varnished parquet, so the lamp finds it. The tile is square because the
+  // pattern only wraps when both its periods divide the canvas exactly.
+  const floor = useSurface({
+    seed: 'floor', colour: '#7a5330', repeat: [ROOM_W / PARQUET_TILE, ROOM_DEPTH / PARQUET_TILE],
+    paint: paintHerringbone, relief: 1.3, roughness: [0.26, 0.55], size: [1024, 1024],
+  })
 
   return (
     <group>
-      {/* --- the room, behind everything ----------------------------------- */}
+      {/* --- the room ------------------------------------------------------ */}
       <mesh geometry={box} material={wall}
-        position={[midX, SHELF_FLOOR_Y + 0.4, WALL_Z]}
-        scale={[ROOM_W, ROOM_H * 2, 0.12]} />
+        position={[midX, wallMidY, WALL_Z]}
+        scale={[ROOM_W, wallH, 0.12]} />
       <mesh geometry={box} material={wall}
-        position={[midX - ROOM_W / 2, SHELF_FLOOR_Y + 0.4, midZ + ROOM_D / 2]}
-        scale={[0.12, ROOM_H * 2, ROOM_D]} />
+        position={[midX - ROOM_W / 2, wallMidY, roomMidZ]}
+        scale={[0.12, wallH, ROOM_DEPTH]} />
       <mesh geometry={box} material={wall}
-        position={[midX + ROOM_W / 2, SHELF_FLOOR_Y + 0.4, midZ + ROOM_D / 2]}
-        scale={[0.12, ROOM_H * 2, ROOM_D]} />
+        position={[midX + ROOM_W / 2, wallMidY, roomMidZ]}
+        scale={[0.12, wallH, ROOM_DEPTH]} />
       <mesh geometry={box} material={floor}
-        position={[midX, SHELF_FLOOR_Y - BOARD - INTERIOR_H * 0.9 - BOARD / 2 - 0.4, midZ + ROOM_D / 2]}
-        scale={[ROOM_W, 0.1, ROOM_D]} />
+        position={[midX, FLOOR_Y - 0.05, roomMidZ]}
+        scale={[ROOM_W, 0.1, ROOM_DEPTH]} />
+      <mesh geometry={box} material={ceiling}
+        position={[midX, CEILING_Y + 0.05, roomMidZ]}
+        scale={[ROOM_W, 0.1, ROOM_DEPTH]} />
 
-      {/* Hung a hair clear of the plaster, wide enough to fill the wall the
-          camera can actually see on either side of the case. */}
-      <Tapestry x={midX} y={SHELF_FLOOR_Y + 1.1} z={WALL_Z + 0.07} width={interiorW + 9.5} />
+      <Tapestry rect={panel} />
 
       {/* --- bookcase ------------------------------------------------------ */}
-      {/* bottom board: what the books actually stand on */}
-      <mesh geometry={box} material={boardMat}
-        position={[midX, SHELF_FLOOR_Y - BOARD / 2, midZ]}
-        scale={[interiorW + BOARD * 2, BOARD, depth]} />
-      {/* top board */}
-      <mesh geometry={box} material={boardMat}
-        position={[midX, topY + BOARD / 2, midZ]}
-        scale={[interiorW + BOARD * 2, BOARD, depth]} />
-      {/* left upright — the row rests against this */}
+      {shelfBoards().map((y) => (
+        <mesh key={y} geometry={box} material={boardMat}
+          position={[midX, y, midZ]}
+          scale={[interiorW + BOARD * 2, BOARD, depth]} />
+      ))}
+      {/* the uprights, running the full height of the case */}
       <mesh geometry={box} material={uprightMat}
-        position={[interiorLeft - BOARD / 2, SHELF_FLOOR_Y + INTERIOR_H / 2, midZ]}
-        scale={[BOARD, INTERIOR_H, depth]} />
-      {/* right upright */}
+        position={[interiorLeft - BOARD / 2, caseMidY, midZ]}
+        scale={[BOARD, caseH, depth]} />
       <mesh geometry={box} material={uprightMat}
-        position={[interiorRight + BOARD / 2, SHELF_FLOOR_Y + INTERIOR_H / 2, midZ]}
-        scale={[BOARD, INTERIOR_H, depth]} />
-      {/* back panel */}
+        position={[interiorRight + BOARD / 2, caseMidY, midZ]}
+        scale={[BOARD, caseH, depth]} />
+      {/* back panel: the album bay only, which is the part you see into */}
       <mesh geometry={box} material={backMat}
-        position={[midX, SHELF_FLOOR_Y + INTERIOR_H / 2, BACK_Z - 0.02]}
-        scale={[interiorW + BOARD * 2, INTERIOR_H, 0.04]} />
-      {/* a shelf above and below, so it reads as a bookcase rather than a box */}
-      <mesh geometry={box} material={boardMat}
-        position={[midX, topY + BOARD + INTERIOR_H * 0.9, midZ]}
-        scale={[interiorW + BOARD * 2, BOARD, depth]} />
-      <mesh geometry={box} material={boardMat}
-        position={[midX, SHELF_FLOOR_Y - BOARD - INTERIOR_H * 0.9, midZ]}
-        scale={[interiorW + BOARD * 2, BOARD, depth]} />
+        position={[midX, SHELF_FLOOR_Y + BAY_HEIGHT / 2, CASE_BACK_Z - 0.02]}
+        scale={[interiorW + BOARD * 2, BAY_HEIGHT, 0.04]} />
+      {/* and a plain back behind the rest of it */}
+      <mesh geometry={box} material={uprightMat}
+        position={[midX, caseMidY, CASE_BACK_Z - 0.03]}
+        scale={[interiorW + BOARD * 2, caseH, 0.03]} />
     </group>
   )
 }

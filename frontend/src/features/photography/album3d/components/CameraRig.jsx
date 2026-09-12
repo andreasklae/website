@@ -1,10 +1,10 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { easing } from 'maath'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
 import { MODES, SIDES, useAlbumStore } from '../lib/store'
 import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
-import { fitDistance, shelfShot } from '../lib/shelfView'
+import { fitDistance, shelfDistance, shelfShot } from '../lib/shelfView'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 import { TURNED_X } from './AlbumBook'
 
@@ -89,10 +89,46 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const planeZ = useAlbumStore((s) => s.planeZ)
   const activeX = useAlbumStore((s) => s.activeX)
   const hoveredX = useAlbumStore((s) => s.hoveredX)
-  const { camera, size, pointer } = useThree()
+  const zoom = useAlbumStore((s) => s.zoom)
+  const { camera, gl, size, pointer } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.
   const dist = useRef({ value: 4 }).current
+
+  // The wheel, and a two-finger pinch, move the shelf view in and out. The
+  // listener is not passive because the page must not scroll underneath it.
+  useEffect(() => {
+    const el = gl.domElement
+    const onWheel = (e) => {
+      if (useAlbumStore.getState().mode !== MODES.SHELF) return
+      e.preventDefault()
+      useAlbumStore.getState().zoomBy(Math.exp(-e.deltaY * 0.0016))
+    }
+
+    let pinch = null
+    const spread = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY)
+    const onTouchStart = (e) => { if (e.touches.length === 2) pinch = spread(e.touches) }
+    const onTouchMove = (e) => {
+      if (e.touches.length !== 2 || pinch == null) return
+      if (useAlbumStore.getState().mode !== MODES.SHELF) return
+      e.preventDefault()
+      const now = spread(e.touches)
+      useAlbumStore.getState().zoomBy(now / pinch)
+      pinch = now
+    }
+    const onTouchEnd = () => { pinch = null }
+
+    el.addEventListener('wheel', onWheel, { passive: false })
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [gl])
 
   useFrame((_, delta) => {
     // 1 while the album is still shut, 0 once it is open. There is no shut-at-
@@ -118,7 +154,11 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
       easing.damp3(camera.position, [x, y, focus.z + dist.value], 0.18, delta)
       easing.damp3(current.current, [x, y, focus.z], 0.18, delta)
     } else {
-      const distance = fitDistance(camera.fov, aspect, shot.box, shot.pad)
+      // On the shelf the viewer sets the distance with the wheel; everywhere
+      // else the shot decides it.
+      const distance = mode === MODES.SHELF
+        ? shelfDistance(shot, camera.fov, aspect, zoom)
+        : fitDistance(camera.fov, aspect, shot.box, shot.pad)
       dist.value = distance
 
       // On the shelf the camera drifts with the pointer, which lets you look
