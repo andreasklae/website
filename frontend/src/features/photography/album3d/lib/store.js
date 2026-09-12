@@ -53,11 +53,19 @@ export const useAlbumStore = create((set, get) => ({
   /** The room's lamp. Off when the page opens; it comes on by itself shortly after. */
   lampOn: false,
 
-  // How close the shelf view sits. A divisor on the fitting distance, so
-  // below 1 is further away; the wheel moves it.
-  zoom: ZOOM.start,
-  zoomBy: (factor) => set((s) => ({
-    zoom: Math.min(ZOOM.max, Math.max(ZOOM.min, s.zoom * factor)),
+  /**
+   * How close the shelf view sits: a divisor on the fitting distance, so
+   * below 1 is further away. The wheel moves it.
+   *
+   * Named for the shelf, not just `zoom`, because `zoom` is already an action
+   * further down this same object — enlarging one photograph over the page.
+   * A duplicate key is not an error: the later one simply wins, so the camera
+   * quietly divided its distance by a function, got NaN, and rendered a black
+   * screen with everything still in the scene and nothing in the console.
+   */
+  shelfZoom: ZOOM.start,
+  zoomShelfBy: (factor) => set((s) => ({
+    shelfZoom: Math.min(ZOOM.max, Math.max(ZOOM.min, s.shelfZoom * factor)),
   })),
 
   /** A single photograph, enlarged over the page. */
@@ -149,10 +157,13 @@ export const useAlbumStore = create((set, get) => ({
   }),
 }))
 
+/** The two faces actually being read. Open at sheet `page` shows 2*page-1 and 2*page. */
+export const spreadFaceIndices = (page, faceCount) =>
+  [2 * page - 1, 2 * page].filter((i) => i >= 0 && i < faceCount)
+
 /** Faces visible right now, plus their neighbours — drives texture residency. */
 export const visibleFaceIndices = (page, faceCount) => {
-  // Open at sheet `page` shows face 2*page-1 (left) and 2*page (right).
-  const centre = [2 * page - 1, 2 * page]
+  const centre = spreadFaceIndices(page, faceCount)
   const near = [2 * page - 3, 2 * page - 2, 2 * page + 1, 2 * page + 2]
   return [...centre, ...near].filter((i) => i >= 0 && i < faceCount)
 }

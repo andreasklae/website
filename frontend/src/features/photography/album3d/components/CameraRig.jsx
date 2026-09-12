@@ -89,7 +89,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
   const planeZ = useAlbumStore((s) => s.planeZ)
   const activeX = useAlbumStore((s) => s.activeX)
   const hoveredX = useAlbumStore((s) => s.hoveredX)
-  const zoom = useAlbumStore((s) => s.zoom)
+  const shelfZoom = useAlbumStore((s) => s.shelfZoom)
   const { camera, gl, size, pointer } = useThree()
   const current = useRef(new Vector3(0, 0, 0))
   // Kept across frames so the lean eases from the resting distance.
@@ -102,7 +102,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
     const onWheel = (e) => {
       if (useAlbumStore.getState().mode !== MODES.SHELF) return
       e.preventDefault()
-      useAlbumStore.getState().zoomBy(Math.exp(-e.deltaY * 0.0016))
+      useAlbumStore.getState().zoomShelfBy(Math.exp(-e.deltaY * 0.0016))
     }
 
     let pinch = null
@@ -113,7 +113,7 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
       if (useAlbumStore.getState().mode !== MODES.SHELF) return
       e.preventDefault()
       const now = spread(e.touches)
-      useAlbumStore.getState().zoomBy(now / pinch)
+      useAlbumStore.getState().zoomShelfBy(now / pinch)
       pinch = now
     }
     const onTouchEnd = () => { pinch = null }
@@ -157,8 +157,11 @@ export default function CameraRig({ shelfWidth = 1.4 }) {
       // On the shelf the viewer sets the distance with the wheel; everywhere
       // else the shot decides it.
       const distance = mode === MODES.SHELF
-        ? shelfDistance(shot, camera.fov, aspect, zoom)
+        ? shelfDistance(shot, camera.fov, aspect, shelfZoom)
         : fitDistance(camera.fov, aspect, shot.box, shot.pad)
+      // NaN reaching the camera is unrecoverable — the damping carries it
+      // forward for every frame after — so it stops here.
+      if (!Number.isFinite(distance)) return
       dist.value = distance
 
       // On the shelf the camera drifts with the pointer, which lets you look

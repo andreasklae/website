@@ -5,10 +5,10 @@ import Binding from './Binding'
 import { blockCentre } from '../lib/blockLayout'
 import { shade } from '../lib/material'
 import { BOARD_SHADE } from '../lib/faceCanvas'
-import { FaceTextureManager } from '../lib/textures'
+import { DETAIL_SCALE, FaceTextureManager } from '../lib/textures'
 import { FACE_W, FACE_H } from '../lib/faceCanvas'
 import { focusBoxFor, worldPointFor } from '../lib/focus'
-import { MODES, useAlbumStore, visibleFaceIndices } from '../lib/store'
+import { MODES, spreadFaceIndices, useAlbumStore, visibleFaceIndices } from '../lib/store'
 
 // Every sheet is a real mesh — the page geometry is shared, so the cost of a
 // long album is draw calls, not memory. What is windowed is TEXTURES, which
@@ -43,6 +43,7 @@ export default function Album({
   // they all open together.
   const page = useAlbumStore((s) => (active ? s.page : 0))
   const heldStack = useAlbumStore((s) => s.heldStack)
+  const narrow = useAlbumStore((s) => s.narrow)
   const setHoveredSlot = useAlbumStore((s) => s.setHoveredSlot)
   const zoom = useAlbumStore((s) => s.zoom)
   const takeStack = useAlbumStore((s) => s.takeStack)
@@ -98,6 +99,24 @@ export default function Album({
     manager.keepOnly(wanted)
     invalidate()
   }, [delayedPage, faceCount, manager, invalidate])
+
+  // Once the spread has settled, repaint the two faces in front of the reader
+  // from the full-sized images.
+  //
+  // Deliberately after a pause, and never during a turn: a page you are on the
+  // way past is not worth four times the memory, and fetching for it would
+  // compete with the pages you are actually heading for. The spread is already
+  // readable when this starts — it sharpens in place.
+  useEffect(() => {
+    if (!manager || heldStack) return
+    if (mode !== MODES.OPEN && mode !== MODES.ZOOM) return
+    const timer = setTimeout(() => {
+      // A phone has both less memory and a smaller frame to fill, so it takes
+      // the smaller step up.
+      manager.detail(spreadFaceIndices(delayedPage, faceCount), narrow ? 1.5 : DETAIL_SCALE)
+    }, 280)
+    return () => clearTimeout(timer)
+  }, [manager, delayedPage, faceCount, mode, narrow, heldStack])
 
   // ---- hover / hit testing -------------------------------------------------
 
@@ -156,6 +175,15 @@ export default function Album({
     if (!sameSlot) document.body.style.cursor = 'pointer'
 
     if (!leanable) { setFocus(null); return }
+
+    // The camera is about to move in on this photograph, which is the one
+    // moment it is magnified past what the page derivative can carry. Fetch
+    // the full-sized one for this image alone; it repaints in place when it
+    // lands, and does nothing at all if it is already held.
+    if (!sameSlot) {
+      const source = hit.slot.kind === 'stack' ? hit.slot.photos?.[0] : hit.slot
+      manager.sharpen(faceIndex, source)
+    }
 
     // The anchor — the spot on the page you actually pointed at — is captured
     // once, when the pointer arrives on a slot. Picking it again every frame
