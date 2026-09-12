@@ -4,6 +4,8 @@ import Room, { SLIDE_ROOM } from './Room'
 import Lamp from './Lamp'
 import CameraRig from './CameraRig'
 import { useAlbumStore } from '../lib/store'
+import { lampX } from '../lib/lampPose'
+import DevStill from './DevStill'
 
 export default function Scene({ shelf, album, language }) {
   const layout = useShelfLayout(shelf)
@@ -21,6 +23,7 @@ export default function Scene({ shelf, album, language }) {
   return (
     <>
       <CameraRig shelfWidth={shelfWidth} />
+      {new URLSearchParams(location.search).has('still') && <DevStill />}
 
       {/*
         Enough moonlight to find the lamp's cord by, and no more: the lamp is
@@ -31,7 +34,7 @@ export default function Scene({ shelf, album, language }) {
       <hemisphereLight args={['#8ea3c0', '#3a2c1e', 0.36]} />
       {/* Clear of the case's right-hand upright, so it hangs beside the
           bookcase rather than in front of it. */}
-      <Lamp x={booksRight + SLIDE_ROOM + 0.85} />
+      <Lamp x={lampX(booksRight, SLIDE_ROOM)} />
 
       <Suspense fallback={null}>
         <Room booksLeft={booksLeft} booksRight={booksRight} />

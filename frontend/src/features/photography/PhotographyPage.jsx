@@ -44,15 +44,6 @@ export default function PhotographyPage() {
         >
           {getText({ en: 'Photography', no: 'Foto' }).toUpperCase()}
         </h1>
-        <p
-          className="pt-2 text-sm italic text-[#e9dcc7]/65 md:text-base"
-          style={{ fontFamily: 'Georgia, serif', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}
-        >
-          {getText({
-            en: 'Journals and highlights, kept as photo albums.',
-            no: 'Journaler og høydepunkter, samlet som fotoalbum.',
-          })}
-        </p>
       </header>
     </div>
   )

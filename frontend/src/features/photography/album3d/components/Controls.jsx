@@ -43,12 +43,6 @@ export default function Controls({ getText }) {
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 flex flex-col items-center gap-3 px-4 sm:bottom-8">
-      {mode === MODES.SHELF && (
-        <p className="text-sm italic tracking-wide text-[#e9dcc7]/70">
-          {getText({ en: 'Pick an album from the shelf', no: 'Velg et album fra hyllen' })}
-        </p>
-      )}
-
       {mode === MODES.COVER && (
         <>
           <p className="text-center text-xs italic tracking-wide text-[#e9dcc7]/55">

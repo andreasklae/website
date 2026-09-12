@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
 import { MODES, SIDES, useAlbumStore } from '../lib/store'
 import { LEAN_DISTANCE, anchoredTarget } from '../lib/focus'
+import { fitDistance, shelfShot } from '../lib/shelfView'
 import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
 import { TURNED_X } from './AlbumBook'
 
@@ -11,14 +12,6 @@ import { TURNED_X } from './AlbumBook'
 // frame; the distance is then solved from the live canvas aspect, so nothing
 // is ever cropped — on a short desktop window or a tall phone.
 const lookTarget = new Vector3()
-
-/** Distance at which a w x h box exactly fills the frame, with padding. */
-function fitDistance(fov, aspect, [w, h], pad) {
-  const vFov = MathUtils.degToRad(fov)
-  const forHeight = (h * pad) / 2 / Math.tan(vFov / 2)
-  const forWidth = (w * pad) / 2 / (Math.tan(vFov / 2) * aspect)
-  return Math.max(forHeight, forWidth)
-}
 
 /**
  * The box and look-at point for the current mode.
@@ -73,28 +66,7 @@ function shotFor(mode, { narrow, side, shelfWidth, closedSide, planeZ, activeX, 
       }
     }
     default:
-      // Resting on an album draws the camera along the row toward it and in a
-      // little, so you are looking at that book rather than at the shelf.
-      const leaning = hoveredX != null
-      const lean = leaning ? SHELF_VIEW.lean : 0
-      return {
-        box: [
-          (shelfWidth + 0.35) * (1 - lean * SHELF_VIEW.closeIn),
-          PAGE_HEIGHT * 1.42 * (1 - lean * SHELF_VIEW.closeIn),
-        ],
-        target: [
-          SHELF_VIEW.lookX + (leaning ? (hoveredX - SHELF_VIEW.lookX) * lean : 0),
-          SHELF_VIEW.lookY,
-          0,
-        ],
-        // Near enough level with the books: from above you look down onto the
-        // shelf board rather than along the row.
-        height: -0.02,
-        // Loose enough to take in the lamp and some of the room, not just
-        // the bay — the lamp has a cord you are meant to be able to reach.
-        pad: 1.32,
-        offsetX: SHELF_VIEW.offsetX * (1 - lean * 0.35),
-      }
+      return shelfShot({ shelfWidth, hoveredX, bayHeight: PAGE_HEIGHT * 1.42 })
   }
 }
 
@@ -107,24 +79,6 @@ function leanDistance(shot, focus, fov, aspect) {
 
 /** How far the shelf drifts with the pointer, as a share of what is on screen. */
 const SHELF_PARALLAX = { x: 0.3, y: 0.12 }
-
-/**
- * How far to the right of the shelf the camera stands, and how far the row is
- * off the middle of the bay. Straight on you see nothing but spines; from the
- * side the front board of whichever album has turned to look at you is
- * readable, which is the point of the hover.
- */
-const SHELF_VIEW = {
-  offsetX: 2.35,
-  // Looking to the right of the case puts it over on the left of the frame,
-  // which leaves the right-hand side to the lamp and the room.
-  lookX: 0.92,
-  // Looking above it drops it down the frame, clear of the navbar and clear of
-  // a book that has been lifted out.
-  lookY: 0.62,
-  lean: 0.42,
-  closeIn: 0.2,
-}
 
 export default function CameraRig({ shelfWidth = 1.4 }) {
   const mode = useAlbumStore((s) => s.mode)

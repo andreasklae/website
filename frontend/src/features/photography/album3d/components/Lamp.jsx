@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Color } from 'three'
 import { MODES, useAlbumStore } from '../lib/store'
 import { lampLevel } from '../lib/lampLevel'
-import { PAGE_HEIGHT, PAGE_WIDTH } from './Page'
+import { CORD_LEN, LAMP_Y, LAMP_Z, SHADE_RADIUS } from '../lib/lampPose'
 
 /** Seconds of darkness before the lamp is switched on. */
 const SWITCH_ON_AT = 2.2
@@ -13,8 +13,16 @@ const WARM_UP = 1.5
 
 const WARM = new Color('#ffc78e')
 
-/** Length of the pull cord hanging from the shade. */
-const CORD_LEN = 0.42
+/**
+ * The shade: a dark bottle green, barely translucent.
+ *
+ * Glass this deep passes almost nothing — enough for the filament to bloom
+ * faintly through the shoulder of the dome when the lamp is lit, and no more.
+ * Real transmission would cost a whole extra render pass for one small mesh,
+ * so this is a near-opaque, smooth, low-roughness surface that is lit from
+ * inside instead: a glass look for the price of a standard material.
+ */
+const GLASS = new Color('#12301f')
 
 /** How far the fitting rises out of shot while an album is being read. */
 const STOW_HEIGHT = 2.6
@@ -44,6 +52,7 @@ export default function Lamp({ x = 0 }) {
   const glow = useRef()
   const filament = useRef()
   const cord = useRef()
+  const shade = useRef()
   const fixture = useRef()
   const elapsed = useRef(0)
   const level = useRef(0)
@@ -92,6 +101,9 @@ export default function Lamp({ x = 0 }) {
     if (bounce.current) bounce.current.intensity = out * BOUNCE_CANDELA
     if (filament.current) filament.current.material.emissiveIntensity = out * 3.2
     if (glow.current) glow.current.material.opacity = out * 0.24
+    // Lit from within, so the dome reads as glass with something burning
+    // behind it rather than as a painted bowl.
+    if (shade.current) shade.current.emissiveIntensity = out * 0.5
     if (cord.current) easing.damp(cord.current.position, 'y', -CORD_LEN / 2 - pulled * 0.09, 0.12, delta)
 
     // Once an album is out of the shelf the camera is looking past the lamp,
@@ -104,13 +116,15 @@ export default function Lamp({ x = 0 }) {
     }
   })
 
-  // Hung clear of the case, high on the left, where it is in shot and the cord
-  // can be reached. Off to one side rather than overhead so the shelf is lit
-  // across its face rather than straight down it.
-  // Low enough to clear the navbar floating at the top of the page, and far
-  // enough forward to hang beside the case rather than inside it.
-  const y = PAGE_HEIGHT * 0.08
-  const z = PAGE_WIDTH * 1.3
+  // Hung clear of the case, where it is in shot and the cord can be reached.
+  // Off to one side rather than overhead so the shelf is lit across its face
+  // rather than straight down it, and far enough forward to hang beside the
+  // case rather than inside it. Its height is the most it can be given while
+  // the bead on the end of the cord stays inside the frame — see
+  // scripts/checkLampFraming.mjs, which solves that against the real shot
+  // rather than trusting a screenshot of a half-eased camera.
+  const y = LAMP_Y
+  const z = LAMP_Z
 
   return (
     <group position={[x, y, z]}>
@@ -138,10 +152,26 @@ export default function Lamp({ x = 0 }) {
           <meshStandardMaterial color="#2e2721" roughness={0.9} />
         </mesh>
 
-        {/* A shade above it, which is what makes the light read as a lamp. */}
-        <mesh position={[0, 0.19, 0]}>
-          <coneGeometry args={[0.33, 0.3, 24, 1, true]} />
-          <meshStandardMaterial color="#8d6a44" roughness={0.8} side={2} />
+        {/* The shade: a green glass dome over the bulb. Open underneath, so
+            the light still falls on the shelf rather than being trapped. */}
+        <mesh position={[0, 0.1, 0]}>
+          <sphereGeometry args={[SHADE_RADIUS, 32, 20, 0, Math.PI * 2, 0, Math.PI * 0.56]} />
+          <meshStandardMaterial
+            ref={shade}
+            color={GLASS}
+            emissive={GLASS}
+            emissiveIntensity={0}
+            roughness={0.12}
+            metalness={0}
+            transparent
+            opacity={0.93}
+            side={2}
+          />
+        </mesh>
+        {/* The brass fitter the glass sits in. */}
+        <mesh position={[0, 0.28, 0]}>
+          <cylinderGeometry args={[0.055, 0.075, 0.07, 20]} />
+          <meshStandardMaterial color="#8a6b33" roughness={0.38} metalness={0.75} />
         </mesh>
 
         {/* The pull cord. Generously sized where you grab it, since a two-
