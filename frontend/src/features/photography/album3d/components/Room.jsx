@@ -129,7 +129,13 @@ function Tapestry({ rect }) {
     // upside-down wall.
     loader.setOptions({ imageOrientation: 'flipY' })
     loader.load(getAssetPath('textures/wall-tapestry.webp'), (bitmap) => {
-      if (!live) return bitmap.close?.()
+      // A stale load is dropped rather than closed. React runs this effect,
+      // tears it down and runs it again, so there are always at least two in
+      // flight, and a loader is free to hand the same decoded bitmap to both
+      // callbacks — closing it in one would destroy what the other is about
+      // to upload. Letting it be collected costs a frame's worth of memory
+      // and cannot take the live texture down with it.
+      if (!live) return
       const texture = new CanvasTexture(bitmap)
       texture.flipY = false
       texture.colorSpace = SRGBColorSpace

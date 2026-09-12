@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/ak-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Andreas Klæboe</title>
+    <!--
+      Painted before the stylesheet has even been fetched, so the first frame
+      of a cold load is dark rather than a flash of white. Every page draws its
+      own background over this the moment React mounts; the only thing this
+      colour is ever seen as is the gap before that, and the room the
+      photography page opens in starts dark.
+    -->
+    <style>
+      html, body { background-color: #0b0a09; }
+    </style>
     <meta name="description" content="Andreas Klæboe — MSc student · Software engineer · Photographer" />
     <meta name="theme-color" content="#2563eb" />
     

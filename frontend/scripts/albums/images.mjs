@@ -11,16 +11,23 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import sharp from 'sharp'
 
+// Listed smallest first; the loop below relies on that order.
 export const VARIANTS = {
   // 320px: spine labels, stack siblings, shelf-distance thumbnails
   thumb: { width: 320, quality: 72 },
-  // 1400px: the texture actually composited onto a page face
-  page: { width: 1400, quality: 80 },
-  // 2400px: swapped in only when an image is hover-zoomed
-  zoom: { width: 2400, quality: 82 },
+  // 1400px: the texture composited onto a page face, which draws a photograph
+  // about 1500 across once the spread being read is painted at full detail.
+  page: { width: 1400, quality: 78 },
+  // Swapped in only for the one photograph the camera has leaned in on. 2200
+  // covers a retina display showing it large, and is the point past which the
+  // extra bytes buy nothing anyone can see.
+  zoom: { width: 2200, quality: 78 },
 }
 
-const CACHE_VERSION = 1
+// Bumped when the derivative RULES change, not just the code: the per-file
+// fingerprint is only size and mtime, so without this every image would keep
+// the derivatives it already has and a rule change would do nothing.
+const CACHE_VERSION = 2
 
 /** Stable short id for a source path — sidesteps spaces/unicode in the originals. */
 export const imageId = (relPath) =>
@@ -94,18 +101,31 @@ async function processImage(relPath, { publicDir, outDir, cache, force }) {
   if (!width || !height) return { error: 'no-dimensions' }
 
   const variants = {}
+  let last = null
   for (const [name, cfg] of Object.entries(VARIANTS)) {
-    // Never upscale: skip a variant whose target is wider than the source.
-    if (cfg.width > width && name !== 'thumb') continue
+    // Never upscale — but never skip, either. Capping a derivative at the
+    // source's own width is right; leaving it out is how a 1242x2208 portrait
+    // (an ordinary phone photograph, and a third of this collection) ended up
+    // with nothing but a 320px thumbnail to draw a whole page from.
+    const target = Math.min(cfg.width, width)
+
+    // Once capping has brought this variant down to the previous one's size,
+    // point at that file rather than writing the same pixels again.
+    if (last && target <= last.width * 1.08) {
+      variants[name] = variants[last.name]
+      continue
+    }
+
     const rel = path.join('derived', name, `${id}.webp`)
     const abs = path.join(outDir, rel)
     await fs.mkdir(path.dirname(abs), { recursive: true })
     await sharp(srcPath, { failOn: 'none' })
       .rotate()
-      .resize({ width: Math.min(cfg.width, width), withoutEnlargement: true })
+      .resize({ width: target, withoutEnlargement: true })
       .webp({ quality: cfg.quality })
       .toFile(abs)
     variants[name] = rel
+    last = { name, width: target }
   }
 
   // 1x1 average colour, used to paint a placeholder plane before the texture lands.

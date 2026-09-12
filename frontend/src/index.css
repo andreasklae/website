@@ -10,10 +10,15 @@
   html {
     scroll-behavior: smooth;
     overflow-x: hidden; /* Prevent horizontal scrolling */
+    /* Matches the inline style in index.html, which paints first. Keeping the
+       two in step means the load never flashes white and the overscroll
+       gutter never does either. */
+    background-color: #0b0a09;
   }
   
   body {
     @apply antialiased;
+    background-color: #0b0a09;
     transition: background-color 800ms ease-in-out;
     overflow-x: hidden; /* Prevent horizontal scrolling */
     max-width: 100vw; /* Ensure body doesn't exceed viewport width */

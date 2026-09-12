@@ -82,7 +82,9 @@
   "cover": {
    "src": "portfolio/photography/Stavern sommer 2025/Thumbnail.jpeg",
    "variants": {
-    "thumb": "derived/thumb/fd6f73d78d4c8b50.webp"
+    "thumb": "derived/thumb/fd6f73d78d4c8b50.webp",
+    "page": "derived/page/fd6f73d78d4c8b50.webp",
+    "zoom": "derived/page/fd6f73d78d4c8b50.webp"
    },
    "color": "#836a58",
    "aspect": 1
@@ -144,7 +146,9 @@
   "cover": {
    "src": "portfolio/photography/Semester in Berlin/Thumbnail.jpg",
    "variants": {
-    "thumb": "derived/thumb/41327f294953dde1.webp"
+    "thumb": "derived/thumb/41327f294953dde1.webp",
+    "page": "derived/page/41327f294953dde1.webp",
+    "zoom": "derived/page/41327f294953dde1.webp"
    },
    "color": "#9c9998",
    "aspect": 1
