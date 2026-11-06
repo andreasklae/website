@@ -1,4 +1,4 @@
-<!-- Keep in sync with public/content/cv.json -->
+
 
 # Andreas Klæboe
 
@@ -8,17 +8,18 @@ MSc student in Informatics
 
 ## Summary
 
-Master's student at the University of Oslo pursuing MSc in Informatics: Programming and Systems Architecture, and software engineer at Zypp, working on development of AI agents, backend and frontend. Completed BSc in Informatics: Design, Use, Interaction with an exchange semester at Freie Universität Berlin during my bachelor's studies, focusing on advanced algorithms and machine learning.
+Software engineer at Zypp and Master's student at the University of Oslo pursuing MSc in Informatics: Programming and Systems Architecture backend. Completed BSc in Informatics: Design, Use, Interaction with an exchange semester at Freie Universität Berlin during my bachelor's studies, focusing on advanced algorithms and machine learning.
 
 ---
 
 ## Contact
 
-andreasklaeboe@gmail.com  
+[andreasklaeboe@gmail.com](mailto:andreasklaeboe@gmail.com)  
+[andreas@zypp.io](mailto:andreas@zypp.io)  
 +47 967 98 001  
-www.andreasklaeboe.com  
-https://github.com/andreasklae  
-https://www.linkedin.com/in/andreas-kl%C3%A6boe-80a6523b8
+[www.andreasklaeboe.com](http://www.andreasklaeboe.com)  
+[https://github.com/andreasklae](https://github.com/andreasklae)  
+[https://www.linkedin.com/in/andreas-kl%C3%A6boe-80a6523b8](https://www.linkedin.com/in/andreas-kl%C3%A6boe-80a6523b8)
 
 ---
 
@@ -37,20 +38,19 @@ https://www.linkedin.com/in/andreas-kl%C3%A6boe-80a6523b8
 
 *Aug 2025 – present*
 
-Master's thesis with Simula Research Laboratory, developing a multimodal AI agent application for tourism and travel guidance.
-<br>
+Master's thesis with Simula Research Laboratory: a framework for more productive AI agents without making the model itself smarter.
 
 ### BSc in Informatics: Design, Use, Interaction, University of Oslo
+
 *Aug 2022 – Jun 2025*
-<br>
 
 ### Exchange Studies, Freie Universität Berlin
 
 *Oct 2024 – Mar 2025*
 Courses in advanced algorithms and machine learning.
-<br>
 
 ### Upper Secondary Studies, Stabekk Videregående Skole
+
 *Aug 2017 – Jun 2020*
 General studies, Science and Mathematics
 
@@ -58,13 +58,14 @@ General studies, Science and Mathematics
 
 ## Experience
 
-### Software Engineer — Zypp AS
+### Software Engineer — Zypp
 
 *Mar 2026 – present*
 
 - Development of AI agents
-- Backend development
-- Frontend development
+- Backend services deployed to Azure Container Apps
+- React + TypeScript frontends
+- Infrastructure as code in Terraform, CI/CD on GitHub Actions
 
 ### IT consultant — Initech Consulting AS
 

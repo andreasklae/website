@@ -43,7 +43,7 @@ website/
    The dev server runs on `http://localhost:3000` and hot reloads public assets and source files.
 
 ### Root Scripts
-All commands proxy into the `frontend` workspace:
+Application commands proxy into the `frontend` workspace:
 
 | Command | Description |
 | ------- | ----------- |
@@ -54,6 +54,28 @@ All commands proxy into the `frontend` workspace:
 | `npm run lint` | Run ESLint with the repo rules |
 | `npm run install-deps` | Install frontend dependencies |
 | `npm run deploy` | Build and publish via the frontend deploy script |
+| `npm run cv` | Rebuild `content/cv.json` and both CV PDFs from the CV Markdown |
+
+### Updating the CV
+
+`frontend/public/docs/CV_Andreas_Klaeboe_EN.md` and `CV_Andreas_Klaeboe_NO.md` are the only
+files you edit. Everything else is generated from them:
+
+```
+CV_..._EN.md ─┐
+              ├─> frontend/public/content/cv.json   (rendered by the site)
+CV_..._NO.md ─┘   frontend/public/docs/CV_..._*.pdf  (the downloadable CVs)
+```
+
+Run `npm run cv`, then commit the Markdown together with the regenerated JSON and PDFs. The
+PDF step needs Playwright's Chromium once: `npx playwright install chromium`.
+
+The two files must stay parallel — same sections in the same order, one `###` entry per
+role, a `*dates*` line under each entry. `scripts/build-cv.mjs` fails with the file and entry
+named if they drift apart, rather than emitting a half-empty CV.
+
+The frontend `prebuild` step regenerates `cv.json` only (no browser needed), so the site can
+never be deployed with CV content that disagrees with the Markdown.
 
 ## Content Architecture
 - **JSON sources** in `frontend/public/content/` hold structured information such as CV entries, personal profile text, course metadata, and the photos manifest consumed by `frontend/src/utils/data.jsx`.
